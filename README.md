@@ -68,13 +68,15 @@ Full tables with tools and robustness benchmarks are in [datasets.md](datasets.m
 
 1. WiSE-OD, WACV 2026, Medeiros et al. [[Paper](https://arxiv.org/abs/2507.18925)] — *degraded-modality; benchmark*
 2. Infrared and Visible Image Fusion: From Data Compatibility to Task Adaption, IEEE TPAMI 2025, Liu et al. [[Paper](https://arxiv.org/abs/2501.10761)] — *survey*
-3. MSOD-Bench: Optimizing Multispectral Object Detection, arXiv 2024, Zhou et al. [[Paper](https://arxiv.org/abs/2411.18288)] — *benchmark*
+3. Visible-Thermal Tiny Object Detection: A Benchmark Dataset and Baselines (RGBT-Tiny), IEEE TPAMI 2025, Ying et al. [[Paper](https://arxiv.org/abs/2406.14482)] [[Code](https://github.com/XinyiYing/RGBT-Tiny)] — *aerial*
+4. MSOD-Bench: Optimizing Multispectral Object Detection, arXiv 2024, Zhou et al. [[Paper](https://arxiv.org/abs/2411.18288)] — *benchmark*
 
 ## Pixel-Level Fusion for Detection
 
 1. CDDFuse, CVPR 2023, Zhao et al. [[Paper](https://arxiv.org/abs/2211.14461)] — *image-fusion; task-coupled*
 2. MetaFusion, CVPR 2023, Zhao et al. [[Paper](https://doi.org/10.1109/CVPR52729.2023.01341)] — *image-fusion; task-coupled*
-3. TarDAL: Target-aware Dual Adversarial Learning and a Multi-scenario Multi-Modality Benchmark to Fuse Infrared and Visible for Object Detection, CVPR 2022, Liu et al. [[Paper](https://arxiv.org/abs/2203.16220)] [[Code](https://github.com/JinyuanLiu-CV/TarDAL)] — *image-fusion; task-coupled*
+3. SuperYOLO: Super Resolution Assisted Object Detection in Multimodal Remote Sensing Imagery, IEEE TGRS 2023, Zhang et al. [[Paper](https://doi.org/10.1109/TGRS.2023.3258666)] [[Code](https://github.com/icey-zhang/SuperYOLO)] — *image-fusion; aerial; yolo; efficiency*
+4. TarDAL: Target-aware Dual Adversarial Learning and a Multi-scenario Multi-Modality Benchmark to Fuse Infrared and Visible for Object Detection, CVPR 2022, Liu et al. [[Paper](https://arxiv.org/abs/2203.16220)] [[Code](https://github.com/JinyuanLiu-CV/TarDAL)] — *image-fusion; task-coupled*
 
 ## Feature-Level Fusion
 
@@ -85,13 +87,25 @@ Full tables with tools and robustness benchmarks are in [datasets.md](datasets.m
 3. DAMSDet, ECCV 2024, Guo, Gao, Liu, Meng, Gao [[Paper](https://eccv.ecva.net/virtual/2024/poster/801)] [[Code](https://github.com/gjj45/DAMSDet)] — *transformer; detr*
 4. GM-DETR, CVPR Workshops 2024, Xiao et al. (CVPRW 2024, pp.5541–5549) — *transformer; detr; efficiency*
 5. ICAFusion: Iterative Cross-Attention Guided Feature Fusion for Multispectral Object Detection, Pattern Recognition 2024, Shen et al. [[Paper](https://ieeexplore.ieee.org/abstract/document/10225383)] [[Code](https://github.com/chanchanchan97/ICAFusion)] — *cross-attention*
-6. Cross-Modality Fusion Transformer (CFT), arXiv 2021, Fang, Han, Wang [[Paper](https://arxiv.org/abs/2111.00273)] — *cross-attention; transformer*
+6. Improving RGB-Infrared Object Detection with Cascade Alignment-Guided Transformer (CAGT), Information Fusion 2024, Yuan, Shi, Wang, Wang, Wei [[Paper](https://doi.org/10.1016/j.inffus.2024.102246)] — *alignment; aerial; transformer; cross-attention*
+7. Cross-Modality Fusion Transformer (CFT), arXiv 2021, Fang, Han, Wang [[Paper](https://arxiv.org/abs/2111.00273)] — *cross-attention; transformer*
+8. Guided Attentive Feature Fusion for Multispectral Pedestrian Detection (GAFF), WACV 2021, Zhang, Fromont, Lefèvre, Avignon [[Paper](https://openaccess.thecvf.com/content/WACV2021/html/Zhang_Guided_Attentive_Feature_Fusion_for_Multispectral_Pedestrian_Detection_WACV_2021_paper.html)] — *pedestrian; cross-attention; efficiency*
+9. Cross-Modality Interactive Attention Network for Multispectral Pedestrian Detection (CIAN), Information Fusion 2019, Zhang et al. [[Paper](https://doi.org/10.1016/j.inffus.2018.09.015)] — *pedestrian; cross-attention*
 
 ### Dual-Stream CNN & YOLO-Based Detectors
 
-1. YOLOv11-RGBT, arXiv 2025, Wan et al. [[Paper](https://arxiv.org/abs/2506.14696)] [[Code](https://github.com/wandahangFY/YOLOv11-RGBT)] — *yolo; efficiency*
-2. DEYOLO, ICPR 2024, Chen et al. [[Paper](https://arxiv.org/abs/2412.04931)] — *yolo; dual-stream*
-3. LRAF-Net, IEEE TNNLS 2023, Fu et al. [[Paper](https://doi.org/10.1109/TNNLS.2023.3266452)] — *dual-stream; modality-imbalance*
+1. TFDet: Target-Aware Fusion for RGB-T Pedestrian Detection, IEEE TNNLS 2025, Zhang et al. [[Paper](https://arxiv.org/abs/2305.16580)] — *pedestrian; task-coupled*
+2. Weakly Aligned Feature Fusion for Multimodal Object Detection, IEEE TNNLS 2025, Zhang et al. [[Paper](https://doi.org/10.1109/TNNLS.2021.3105143)] — *alignment; dual-stream*
+3. YOLOv11-RGBT, arXiv 2025, Wan et al. [[Paper](https://arxiv.org/abs/2506.14696)] [[Code](https://github.com/wandahangFY/YOLOv11-RGBT)] — *yolo; efficiency*
+4. DEYOLO, ICPR 2024, Chen et al. [[Paper](https://arxiv.org/abs/2412.04931)] — *yolo; dual-stream*
+5. LRAF-Net, IEEE TNNLS 2023, Fu et al. [[Paper](https://doi.org/10.1109/TNNLS.2023.3266452)] — *dual-stream; modality-imbalance*
+6. BAANet: Learning Bi-Directional Adaptive Attention Gates for Multispectral Pedestrian Detection, ICRA 2022, Yang, Qian, Zhu, Wang, Yang [[Paper](https://arxiv.org/abs/2112.02277)] — *pedestrian; quality-aware*
+7. Learning a Dynamic Cross-Modal Network for Multispectral Pedestrian Detection (DCMNet), ACM MM 2022, Xie et al. [[Paper](https://doi.org/10.1145/3503161.3547895)] — *pedestrian; dynamic-fusion*
+8. Translation, Scale and Rotation: Cross-Modal Alignment Meets RGB-Infrared Vehicle Detection (TSFADet), ECCV 2022, Yuan, Wang, Wei [[Paper](https://arxiv.org/abs/2209.13801)] — *alignment; aerial*
+9. MLPD: Multi-Label Pedestrian Detector in Multispectral Domain, IEEE RA-L 2021, Kim et al. [[Paper](https://doi.org/10.1109/LRA.2021.3099870)] — *pedestrian; alignment*
+10. Weakly Aligned Cross-Modal Learning for Multispectral Pedestrian Detection (AR-CNN), ICCV 2019, Zhang et al. [[Paper](https://arxiv.org/abs/1901.02645)] [[Code](https://github.com/luzhang16/AR-CNN)] — *alignment; pedestrian*
+11. Multispectral Pedestrian Detection via Simultaneous Detection and Segmentation (MSDS-RCNN), BMVC 2018, Li, Song, Tong, Tang [[Paper](https://arxiv.org/abs/1808.04818)] — *pedestrian; dual-stream*
+12. Multispectral Deep Neural Networks for Pedestrian Detection (Halfway Fusion), BMVC 2016, Liu, Zhang, Wang, Metaxas [[Paper](https://arxiv.org/abs/1611.02644)] — *pedestrian; dual-stream*
 
 ### State-Space Models (Mamba)
 
@@ -101,12 +115,17 @@ Full tables with tools and robustness benchmarks are in [datasets.md](datasets.m
 ### Quality- & Conflict-Aware Fusion
 
 1. Learning a Robust RGB-Thermal Detector for Extreme Modality Imbalance, Pattern Recognition Letters 2025, Tian, Yang, Zhu, Wang, He [[Paper](https://arxiv.org/abs/2505.22154)] — *degraded-modality; quality-aware; modality-imbalance*
-2. CALNet (Cross-Modal Conflict-Aware Learning), ACM MM 2023, He, Tang, Zou, Zhang [[Paper](https://doi.org/10.1145/3581783.3612651)] — *conflict-aware; aerial*
+2. Removal and Selection: Improving RGB-Infrared Object Detection via Coarse-to-Fine Fusion, IEEE TITS 2025, Zhao, Yuan, Jiang, Wang, Wei [[Paper](https://arxiv.org/abs/2401.10731)] — *conflict-aware; quality-aware*
+3. CALNet (Cross-Modal Conflict-Aware Learning), ACM MM 2023, He, Tang, Zou, Zhang [[Paper](https://doi.org/10.1145/3581783.3612651)] — *conflict-aware; aerial*
+4. Drone-Based RGB-Infrared Cross-Modality Vehicle Detection via Uncertainty-Aware Learning (UA-CMDet), IEEE TCSVT 2022, Sun, Cao, Zhu, Hu [[Paper](https://doi.org/10.1109/TCSVT.2022.3168279)] [[Code](https://github.com/VisDrone/DroneVehicle)] — *aerial; quality-aware*
+5. Improving Multispectral Pedestrian Detection by Addressing Modality Imbalance Problems (MBNet), ECCV 2020, Zhou, Chen, Cao [[Paper](https://arxiv.org/abs/2008.03043)] [[Code](https://github.com/CalayZhou/MBNet)] — *modality-imbalance; pedestrian; alignment*
+6. Fusion of Multispectral Data Through Illumination-Aware Deep Neural Networks for Pedestrian Detection (IATDNN), Information Fusion 2019, Guan et al. [[Paper](https://arxiv.org/abs/1802.09972)] — *pedestrian; quality-aware*
 
 ## Decision-Level & Evidential Fusion
 
 1. Confidence-Aware Fusion via Dempster–Shafer (CMPD), IEEE TMM 2023, Li, Zhang, Hu, Fu, Zhu (IEEE TMM 25:3420–3431) — *evidential; decision-level; pedestrian*
 2. ProbEn, ECCV 2022, Chen, Shi, Ye, Mertz, Ramanan, Kong [[Paper](https://arxiv.org/abs/2104.02904)] — *missing-modality; decision-level; ensemble; pedestrian*
+3. Illumination-Aware Faster R-CNN for Robust Multispectral Pedestrian Detection, Pattern Recognition 2019, Li, Song, Tong, Tang [[Paper](https://doi.org/10.1016/j.patcog.2018.08.005)] — *pedestrian; quality-aware*
 
 ## Appendix — Related Work Beyond RGBT Detection
 
