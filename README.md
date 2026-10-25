@@ -147,7 +147,6 @@ Not RGBT detection papers. They are collected because their methods or protocols
 - [bibliography.md](bibliography.md) — all entries in a detailed table (contribution and notes), in the same classification as this README
 - [papers.csv](papers.csv) — structured data: section, subsection, tags, links, contribution, notes
 - [references.bib](references.bib) — BibTeX for all entries
-- [learning-roadmap.md](learning-roadmap.md) — a staged learning path through this list (stages 0–6); the roadmap is a reading order, separate from the classification above
 
 ## Adding an Entry
 
