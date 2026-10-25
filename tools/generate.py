@@ -95,7 +95,7 @@ def build_readme(rows, root=ROOT):
     aer = table_after(ds, "## Aerial / UAV Object Detection")
     n_core = sum(1 for r in rows if r["list"] == "core")
     n_app = sum(1 for r in rows if r["list"] == "appendix")
-    L = [GENERATED, "# owesome-RGBT-ObjectDetection", "",
+    L = [GENERATED, "# awesome-RGBT-ObjectDetection", "",
          "A curated collection of **RGBT object detection** resources — papers, datasets, and code.", "",
          "RGBT (also written RGB-T, RGB-Thermal, multispectral, or visible–infrared) object detection fuses a visible-light image with a thermal (LWIR) image to detect objects under conditions where either modality alone fails — darkness, glare, smoke, or adverse weather.", "",
          "**Scope.** Object detection only: general, pedestrian, vehicle, and aerial/UAV detection with paired visible–thermal imagery. Segmentation, salient object detection, crowd counting, and tracking are out of scope (see Related Lists).", "",

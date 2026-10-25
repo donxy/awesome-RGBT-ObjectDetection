@@ -1,5 +1,5 @@
 <!-- Generated from papers.csv by tools/generate.py — do not edit by hand. -->
-# owesome-RGBT-ObjectDetection
+# awesome-RGBT-ObjectDetection
 
 A curated collection of **RGBT object detection** resources — papers, datasets, and code.
 
