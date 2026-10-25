@@ -1,12 +1,13 @@
+<!-- Generated from papers.csv by tools/generate.py — do not edit by hand. -->
 # Detailed Bibliography — RGBT Object Detection
 
-Detailed companion to the [README](README.md): every entry with a one-sentence contribution and notes, in the README's technical-route classification (core list first, appendix second).
+Detailed companion to the [README](README.md): every entry with a one-sentence contribution and notes, in the README's technical-route classification (core list first, appendix second). Generated from papers.csv.
 
 ## Surveys & Benchmarks
 
 | Paper | Link | Tags | Contribution | Notes |
 |---|---|---|---|---|
-| WiSE-OD — Medeiros et al., 2026, WACV | [Paper](https://arxiv.org/abs/2507.18925) | degraded-modality; benchmark; out-of-distribution | Weight-space ensembling for OOD RGB-T detection; introduces LLVIP-C / FLIR-C. | Corruption-benchmark protocol (AP50, mPC) a reviewer may demand alignment with. |
+| WiSE-OD — Medeiros et al., 2026, WACV | [Paper](https://arxiv.org/abs/2507.18925) | degraded-modality; benchmark | Weight-space ensembling for OOD RGB-T detection; introduces LLVIP-C / FLIR-C. | Corruption-benchmark protocol (AP50, mPC) a reviewer may demand alignment with. |
 | Infrared and Visible Image Fusion: From Data Compatibility to Task Adaption — Liu et al., 2025, IEEE TPAMI | [Paper](https://arxiv.org/abs/2501.10761) | survey | Comprehensive IVIF survey organized around task adaptation. | Authoritative section anchor from the TarDAL/M3FD group. |
 | MSOD-Bench: Optimizing Multispectral Object Detection — Zhou et al., 2024, arXiv | [Paper](https://arxiv.org/abs/2411.18288) | benchmark | Standardized re-implementation/benchmark of 20+ RGB-T detectors. | Fair-comparison framing; guards against cherry-picked baseline numbers. |
 
@@ -35,14 +36,14 @@ Detailed companion to the [README](README.md): every entry with a one-sentence c
 |---|---|---|---|---|
 | YOLOv11-RGBT — Wan et al., 2025, arXiv | [Paper](https://arxiv.org/abs/2506.14696) · [Code](https://github.com/wandahangFY/YOLOv11-RGBT) | yolo; efficiency | Six-fusion-mode study over YOLO/RT-DETR with P3 mid-fusion + controllable fine-tuning (MCF). | Direct predecessor: same backbone family and mid-fusion design point as the manuscript's detector. |
 | DEYOLO — Chen et al., 2024, ICPR | [Paper](https://arxiv.org/abs/2412.04931) | yolo; dual-stream | Dual semantic/spatial enhancement modules on YOLOv8 dual streams. | YOLO-line comparator on M3FD + LLVIP. |
-| LRAF-Net — Fu et al., 2023, IEEE TNNLS | [Paper](https://doi.org/10.1109/TNNLS.2023.3266452) | dual-stream; modality-bias; mask-augmentation | Long-range attention fusion + complementary-mask augmentation vs single-modality bias. | Bridges architecture and imbalance sections; FLIR/LLVIP results. |
+| LRAF-Net — Fu et al., 2023, IEEE TNNLS | [Paper](https://doi.org/10.1109/TNNLS.2023.3266452) | dual-stream; modality-imbalance | Long-range attention fusion + complementary-mask augmentation vs single-modality bias. | Bridges architecture and imbalance sections; FLIR/LLVIP results. |
 
 ## Feature-Level Fusion — State-Space Models (Mamba)
 
 | Paper | Link | Tags | Contribution | Notes |
 |---|---|---|---|---|
-| Fusion-Mamba — Dong et al., 2025, IEEE TMM | [Paper](https://doi.org/10.1109/TMM.2025.3599020) | mamba; state-space | State-space (Mamba) cross-modal fusion for IR-VIS detection. | Current SOTA-line representative (M3FD mAP 61.9 in comparative tables). |
-| WaveMamba — Zhu et al., 2025, ICCV | [Paper](https://arxiv.org/abs/2507.18173) · [Code](https://github.com/EhanDong/WaveMamba) | mamba; state-space; frequency-domain | Wavelet frequency-decomposed Mamba fusion with YOLOv8 head. | Latest Mamba-line SOTA claim on M3FD/LLVIP/FLIR-Aligned. |
+| Fusion-Mamba — Dong et al., 2025, IEEE TMM | [Paper](https://doi.org/10.1109/TMM.2025.3599020) | mamba | State-space (Mamba) cross-modal fusion for IR-VIS detection. | Current SOTA-line representative (M3FD mAP 61.9 in comparative tables). |
+| WaveMamba — Zhu et al., 2025, ICCV | [Paper](https://arxiv.org/abs/2507.18173) · [Code](https://github.com/EhanDong/WaveMamba) | mamba; frequency-domain | Wavelet frequency-decomposed Mamba fusion with YOLOv8 head. | Latest Mamba-line SOTA claim on M3FD/LLVIP/FLIR-Aligned. |
 
 ## Feature-Level Fusion — Quality- & Conflict-Aware Fusion
 
@@ -66,16 +67,16 @@ Detailed companion to the [README](README.md): every entry with a one-sentence c
 |---|---|---|---|---|
 | MoME: Resilient Sensor Fusion via Multi-Modal Expert Fusion — Park, Kim, Kim, Choi, 2025, CVPR | [Paper](https://arxiv.org/abs/2503.19776) | expert-routing; degraded-modality; lidar-camera | Per-query routing among camera/LiDAR/fused experts by local feature quality. | Strongest analogue of region-dependent takeover (routing, not correction; 3D driving). |
 | MEFormer — Cha et al., 2024, arXiv | [Paper](https://arxiv.org/abs/2407.19156) | negative-fusion; degraded-modality | Defines and mitigates "negative fusion" from defective modalities. | Names the manuscript's core phenomenon; cite the term. |
-| Multimodal Fusion on Low-quality Data: A Comprehensive Survey — Zhang et al., 2024, arXiv | [Paper](https://arxiv.org/abs/2404.18947) | survey; low-quality-data; missing-modality | Taxonomy separating noisy, incomplete, imbalanced, quality-varying multimodal data. | Cleanest citation legitimizing the corrupted ≠ missing distinction. |
+| Multimodal Fusion on Low-quality Data: A Comprehensive Survey — Zhang et al., 2024, arXiv | [Paper](https://arxiv.org/abs/2404.18947) | survey; degraded-modality; missing-modality | Taxonomy separating noisy, incomplete, imbalanced, quality-varying multimodal data. | Cleanest citation legitimizing the corrupted ≠ missing distinction. |
 | DynMM — Xue & Marculescu, 2023, CVPR Workshops | [Paper](https://arxiv.org/abs/2204.00102) | dynamic-fusion; efficiency | On-the-fly gating over modality and fusion-level computation paths. | Dynamic-fusion precedent (efficiency-motivated). |
-| Provable Dynamic Fusion for Low-Quality Multimodal Data (QMF) — Zhang et al., 2023, ICML | [Paper](https://arxiv.org/abs/2306.02050) | quality-aware; low-quality-data | Energy-based uncertainty drives dynamic decision-level fusion weights, with guarantees. | Reference quality-aware fusion method; classification-only contrast to feature correction. |
-| Trusted Multi-View Classification (TMC) — Han, Zhang, Fu, Zhou, 2021, ICLR | [Paper](https://arxiv.org/abs/2102.02051) | evidential; trusted-fusion | Evidential per-view quality assessment with Dempster–Shafer fusion. | Foundational trusted/quality-aware fusion citation. |
+| Provable Dynamic Fusion for Low-Quality Multimodal Data (QMF) — Zhang et al., 2023, ICML | [Paper](https://arxiv.org/abs/2306.02050) | quality-aware; degraded-modality | Energy-based uncertainty drives dynamic decision-level fusion weights, with guarantees. | Reference quality-aware fusion method; classification-only contrast to feature correction. |
+| Trusted Multi-View Classification (TMC) — Han, Zhang, Fu, Zhou, 2021, ICLR | [Paper](https://arxiv.org/abs/2102.02051) | evidential | Evidential per-view quality assessment with Dempster–Shafer fusion. | Foundational trusted/quality-aware fusion citation. |
 
 ## Appendix: Corruption Robustness Benchmarks (Driving / 3D)
 
 | Paper | Link | Tags | Contribution | Notes |
 |---|---|---|---|---|
-| SB-BEVFusion — Essl et al., 2026, arXiv (ICIP 2026) | [Paper](https://arxiv.org/abs/2605.11799) | corrupted-vs-missing; lidar-camera | BEV fusion explicitly treating corrupted vs missing sensors as distinct cases. | Verbatim corrupted-vs-missing distinction; very recent, camera-LiDAR. |
+| SB-BEVFusion — Essl et al., 2026, arXiv (ICIP 2026) | [Paper](https://arxiv.org/abs/2605.11799) | degraded-modality; lidar-camera | BEV fusion explicitly treating corrupted vs missing sensors as distinct cases. | Verbatim corrupted-vs-missing distinction; very recent, camera-LiDAR. |
 | MultiCorrupt — Beemelmanns, Zhang, Eckstein, 2024, IEEE IV | [Paper](https://arxiv.org/abs/2402.11677) | benchmark; corruption | 10 LiDAR-camera corruptions × 3 severities with Resistance Ability metric. | Severity-graded corruption evaluation model. |
 | Benchmarking Robustness of 3D Object Detection to Common Corruptions — Dong et al., 2023, CVPR | [Paper](https://arxiv.org/abs/2303.11040) | benchmark; corruption | 27-corruption benchmark; fusion models more robust, motion corruptions worst. | Corruption-protocol precedent for the manuscript's degradation suite. |
 
@@ -84,12 +85,12 @@ Detailed companion to the [README](README.md): every entry with a one-sentence c
 | Paper | Link | Tags | Contribution | Notes |
 |---|---|---|---|---|
 | MM-CKD — Sang, Funakoshi, Okumura, 2024, arXiv | [Paper](https://arxiv.org/abs/2410.08692) | missing-modality; distillation | Cross-modal knowledge distillation robust to missing modality (sentiment). | Only distillation-for-missing citation found; non-vision. |
-| MMPareto — Wei & Hu, 2024, ICML | [Paper](https://arxiv.org/abs/2405.17730) | modality-imbalance; gradient-conflict | Pareto-integrated gradients resolving multimodal/unimodal gradient conflict. | Gradient-conflict framing. |
+| MMPareto — Wei & Hu, 2024, ICML | [Paper](https://arxiv.org/abs/2405.17730) | modality-imbalance | Pareto-integrated gradients resolving multimodal/unimodal gradient conflict. | Gradient-conflict framing. |
 | Multimodal Learning with Missing Modalities: A Survey — Wu, Wang, Chen, 2024, arXiv (TMLR) | [Paper](https://arxiv.org/abs/2409.07825) | survey; missing-modality | Survey of imputation/representation/distillation approaches to missing modalities. | Section anchor for Q3. |
-| ReconBoost — Hua, Xu, Bao, Yang, Huang, 2024, ICML | [Paper](https://proceedings.mlr.press/v235/hua24a.html) | modality-imbalance; modality-competition | Modality-alternating boosting with KL reconcilement vs competition. | Most recent reconcilement-framed balancing method. |
+| ReconBoost — Hua, Xu, Bao, Yang, Huang, 2024, ICML | [Paper](https://proceedings.mlr.press/v235/hua24a.html) | modality-imbalance | Modality-alternating boosting with KL reconcilement vs competition. | Most recent reconcilement-framed balancing method. |
 | PMR: Prototypical Modal Rebalance — Fan, Xu, Wang, Wang, Guo, 2023, CVPR | [Paper](https://doi.org/10.1109/CVPR52729.2023.01918) | modality-imbalance | Prototypes accelerate the slow-learning modality; entropy regularizer vs dominant modality. | Balancing line representative. |
 | ShaSpec — Wang et al., 2023, CVPR | [Paper](https://arxiv.org/abs/2307.14126) | missing-modality | Shared-specific features + residual fusion for missing modality at train/test. | Representation-side missing-modality approach. |
-| OGM-GE — Peng, Wei, Deng, Wang, Hu, 2022, CVPR (Oral) | [Paper](https://arxiv.org/abs/2203.15332) | modality-imbalance; gradient-modulation | On-the-fly gradient modulation by modality contribution discrepancy. | Standard balancing citation next to the existing competition papers. |
+| OGM-GE — Peng, Wei, Deng, Wang, Hu, 2022, CVPR (Oral) | [Paper](https://arxiv.org/abs/2203.15332) | modality-imbalance | On-the-fly gradient modulation by modality contribution discrepancy. | Standard balancing citation next to the existing competition papers. |
 | SMIL — Ma et al., 2021, AAAI | [Paper](https://arxiv.org/abs/2103.05677) | missing-modality | Bayesian meta-learning for severely (≤90%) missing modalities. | Canonical missing-modality method citation. |
 
 ## Appendix: Test-Time Adaptation, Intervention & Amortized Optimization
@@ -99,7 +100,7 @@ Detailed companion to the [README](README.md): every entry with a one-sentence c
 | Inference-Time Intervention (ITI) — Li, Patel, Viégas, Pfister, Wattenberg, 2023, NeurIPS Spotlight | [Paper](https://arxiv.org/abs/2306.03341) | test-time-intervention | Shifts selected attention-head activations along probed directions at inference. | Terminological namesake of "intervention"; LLM-only, one clarifying sentence. |
 | MEMO — Zhang, Levine, Finn, 2022, NeurIPS | [Paper](https://arxiv.org/abs/2110.09506) | test-time-adaptation | Per-test-point adaptation via marginal entropy over augmentations. | Single-point test-time intervention precedent. |
 | Tent — Wang, Shelhamer, Liu, Olshausen, Darrell, 2021, ICLR | [Paper](https://arxiv.org/abs/2006.10726) | test-time-adaptation | Test-time entropy minimization over norm affine parameters. | Canonical "adapt at test time" contrast (parameter-level, unsupervised). |
-| OptNet — Amos & Kolter, 2017, ICML | [Paper](https://arxiv.org/abs/1703.00443) | amortized-optimization | Differentiable QP layers via implicit KKT differentiation. | Foundational only; redundant given existing Amos/CF-OPT citations. |
+| OptNet — Amos & Kolter, 2017, ICML | [Paper](https://arxiv.org/abs/1703.00443) | test-time-intervention | Differentiable QP layers via implicit KKT differentiation. | Foundational only; redundant given existing Amos/CF-OPT citations. |
 
 ## Verification Notes
 

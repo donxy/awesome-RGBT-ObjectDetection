@@ -1,3 +1,4 @@
+<!-- Generated from papers.csv by tools/generate.py — do not edit by hand. -->
 # owesome-RGBT-ObjectDetection
 
 A curated collection of **RGBT object detection** resources — papers, datasets, and code.
@@ -8,8 +9,11 @@ RGBT (also written RGB-T, RGB-Thermal, multispectral, or visible–infrared) obj
 
 **How this list is organised — one axis only.** Papers in the main list are RGBT detection papers, classified by *technical route*: the level at which the two modalities are fused (pixel → feature → decision), with architecture families as subsections of feature-level fusion. Challenges such as misalignment, degradation, or missing modalities are **tags** (shown in italics, and a column in papers.csv), not sections — so every paper has exactly one home. Work that is not RGBT detection but transfers to it (general multimodal fusion, imbalance/missing-modality learning, test-time methods, driving robustness) lives in a separate Appendix, clearly marked, instead of being mixed into the main list.
 
+**Single source of truth.** The paper list lives in [papers.csv](papers.csv); README.md, bibliography.md and references.bib are generated from it by [tools/generate.py](tools/generate.py) and checked by tools/validate.py. Edit the CSV, never the generated files.
+
 ## News
 
+- [2026-10-26] Tooling: papers.csv is now the single source of truth — README, bibliography and BibTeX are generated and validated automatically. Tag vocabulary consolidated.
 - [2026-10-25] Reclassified by technical route (fusion level + architecture family), with challenge tags and a separate appendix for non-RGBT related work. 42 papers: 21 core RGBT detection, 21 appendix.
 - [2026-10-25] Initial general, detection-only structure: datasets first, themed paper list, structured data files (CSV / BibTeX), detailed bibliography, learning roadmap.
 
@@ -62,7 +66,7 @@ Full tables with tools and robustness benchmarks are in [datasets.md](datasets.m
 
 ## Surveys & Benchmarks
 
-1. WiSE-OD, WACV 2026, Medeiros et al. [[Paper](https://arxiv.org/abs/2507.18925)] — *degraded-modality; benchmark; out-of-distribution*
+1. WiSE-OD, WACV 2026, Medeiros et al. [[Paper](https://arxiv.org/abs/2507.18925)] — *degraded-modality; benchmark*
 2. Infrared and Visible Image Fusion: From Data Compatibility to Task Adaption, IEEE TPAMI 2025, Liu et al. [[Paper](https://arxiv.org/abs/2501.10761)] — *survey*
 3. MSOD-Bench: Optimizing Multispectral Object Detection, arXiv 2024, Zhou et al. [[Paper](https://arxiv.org/abs/2411.18288)] — *benchmark*
 
@@ -87,12 +91,12 @@ Full tables with tools and robustness benchmarks are in [datasets.md](datasets.m
 
 1. YOLOv11-RGBT, arXiv 2025, Wan et al. [[Paper](https://arxiv.org/abs/2506.14696)] [[Code](https://github.com/wandahangFY/YOLOv11-RGBT)] — *yolo; efficiency*
 2. DEYOLO, ICPR 2024, Chen et al. [[Paper](https://arxiv.org/abs/2412.04931)] — *yolo; dual-stream*
-3. LRAF-Net, IEEE TNNLS 2023, Fu et al. [[Paper](https://doi.org/10.1109/TNNLS.2023.3266452)] — *dual-stream; modality-bias; mask-augmentation*
+3. LRAF-Net, IEEE TNNLS 2023, Fu et al. [[Paper](https://doi.org/10.1109/TNNLS.2023.3266452)] — *dual-stream; modality-imbalance*
 
 ### State-Space Models (Mamba)
 
-1. Fusion-Mamba, IEEE TMM 2025, Dong et al. [[Paper](https://doi.org/10.1109/TMM.2025.3599020)] — *mamba; state-space*
-2. WaveMamba, ICCV 2025, Zhu et al. [[Paper](https://arxiv.org/abs/2507.18173)] [[Code](https://github.com/EhanDong/WaveMamba)] — *mamba; state-space; frequency-domain*
+1. Fusion-Mamba, IEEE TMM 2025, Dong et al. [[Paper](https://doi.org/10.1109/TMM.2025.3599020)] — *mamba*
+2. WaveMamba, ICCV 2025, Zhu et al. [[Paper](https://arxiv.org/abs/2507.18173)] [[Code](https://github.com/EhanDong/WaveMamba)] — *mamba; frequency-domain*
 
 ### Quality- & Conflict-Aware Fusion
 
@@ -112,26 +116,26 @@ Not RGBT detection papers. They are collected because their methods or protocols
 
 1. MoME: Resilient Sensor Fusion via Multi-Modal Expert Fusion, CVPR 2025, Park, Kim, Kim, Choi [[Paper](https://arxiv.org/abs/2503.19776)] — *expert-routing; degraded-modality; lidar-camera*
 2. MEFormer, arXiv 2024, Cha et al. [[Paper](https://arxiv.org/abs/2407.19156)] — *negative-fusion; degraded-modality*
-3. Multimodal Fusion on Low-quality Data: A Comprehensive Survey, arXiv 2024, Zhang et al. [[Paper](https://arxiv.org/abs/2404.18947)] — *survey; low-quality-data; missing-modality*
+3. Multimodal Fusion on Low-quality Data: A Comprehensive Survey, arXiv 2024, Zhang et al. [[Paper](https://arxiv.org/abs/2404.18947)] — *survey; degraded-modality; missing-modality*
 4. DynMM, CVPR Workshops 2023, Xue & Marculescu [[Paper](https://arxiv.org/abs/2204.00102)] — *dynamic-fusion; efficiency*
-5. Provable Dynamic Fusion for Low-Quality Multimodal Data (QMF), ICML 2023, Zhang et al. [[Paper](https://arxiv.org/abs/2306.02050)] — *quality-aware; low-quality-data*
-6. Trusted Multi-View Classification (TMC), ICLR 2021, Han, Zhang, Fu, Zhou [[Paper](https://arxiv.org/abs/2102.02051)] — *evidential; trusted-fusion*
+5. Provable Dynamic Fusion for Low-Quality Multimodal Data (QMF), ICML 2023, Zhang et al. [[Paper](https://arxiv.org/abs/2306.02050)] — *quality-aware; degraded-modality*
+6. Trusted Multi-View Classification (TMC), ICLR 2021, Han, Zhang, Fu, Zhou [[Paper](https://arxiv.org/abs/2102.02051)] — *evidential*
 
 ### Corruption Robustness Benchmarks (Driving / 3D)
 
-1. SB-BEVFusion, arXiv (ICIP 2026) 2026, Essl et al. [[Paper](https://arxiv.org/abs/2605.11799)] — *corrupted-vs-missing; lidar-camera*
+1. SB-BEVFusion, arXiv (ICIP 2026) 2026, Essl et al. [[Paper](https://arxiv.org/abs/2605.11799)] — *degraded-modality; lidar-camera*
 2. MultiCorrupt, IEEE IV 2024, Beemelmanns, Zhang, Eckstein [[Paper](https://arxiv.org/abs/2402.11677)] — *benchmark; corruption*
 3. Benchmarking Robustness of 3D Object Detection to Common Corruptions, CVPR 2023, Dong et al. [[Paper](https://arxiv.org/abs/2303.11040)] — *benchmark; corruption*
 
 ### Modality Imbalance & Missing-Modality Learning (General)
 
 1. MM-CKD, arXiv 2024, Sang, Funakoshi, Okumura [[Paper](https://arxiv.org/abs/2410.08692)] — *missing-modality; distillation*
-2. MMPareto, ICML 2024, Wei & Hu [[Paper](https://arxiv.org/abs/2405.17730)] — *modality-imbalance; gradient-conflict*
+2. MMPareto, ICML 2024, Wei & Hu [[Paper](https://arxiv.org/abs/2405.17730)] — *modality-imbalance*
 3. Multimodal Learning with Missing Modalities: A Survey, arXiv (TMLR) 2024, Wu, Wang, Chen [[Paper](https://arxiv.org/abs/2409.07825)] — *survey; missing-modality*
-4. ReconBoost, ICML 2024, Hua, Xu, Bao, Yang, Huang [[Paper](https://proceedings.mlr.press/v235/hua24a.html)] — *modality-imbalance; modality-competition*
+4. ReconBoost, ICML 2024, Hua, Xu, Bao, Yang, Huang [[Paper](https://proceedings.mlr.press/v235/hua24a.html)] — *modality-imbalance*
 5. PMR: Prototypical Modal Rebalance, CVPR 2023, Fan, Xu, Wang, Wang, Guo [[Paper](https://doi.org/10.1109/CVPR52729.2023.01918)] — *modality-imbalance*
 6. ShaSpec, CVPR 2023, Wang et al. [[Paper](https://arxiv.org/abs/2307.14126)] — *missing-modality*
-7. OGM-GE, CVPR (Oral) 2022, Peng, Wei, Deng, Wang, Hu [[Paper](https://arxiv.org/abs/2203.15332)] — *modality-imbalance; gradient-modulation*
+7. OGM-GE, CVPR (Oral) 2022, Peng, Wei, Deng, Wang, Hu [[Paper](https://arxiv.org/abs/2203.15332)] — *modality-imbalance*
 8. SMIL, AAAI 2021, Ma et al. [[Paper](https://arxiv.org/abs/2103.05677)] — *missing-modality*
 
 ### Test-Time Adaptation, Intervention & Amortized Optimization
@@ -139,19 +143,20 @@ Not RGBT detection papers. They are collected because their methods or protocols
 1. Inference-Time Intervention (ITI), NeurIPS Spotlight 2023, Li, Patel, Viégas, Pfister, Wattenberg [[Paper](https://arxiv.org/abs/2306.03341)] — *test-time-intervention*
 2. MEMO, NeurIPS 2022, Zhang, Levine, Finn [[Paper](https://arxiv.org/abs/2110.09506)] — *test-time-adaptation*
 3. Tent, ICLR 2021, Wang, Shelhamer, Liu, Olshausen, Darrell [[Paper](https://arxiv.org/abs/2006.10726)] — *test-time-adaptation*
-4. OptNet, ICML 2017, Amos & Kolter [[Paper](https://arxiv.org/abs/1703.00443)] — *amortized-optimization*
+4. OptNet, ICML 2017, Amos & Kolter [[Paper](https://arxiv.org/abs/1703.00443)] — *test-time-intervention*
 
 ## Repository Files
 
-- [datasets.md](datasets.md) — dataset tables, KAIST tools, and robustness benchmarks
-- [bibliography.md](bibliography.md) — all entries in a detailed table (contribution and notes), in the same classification as this README
-- [papers.csv](papers.csv) — structured data: section, subsection, tags, links, contribution, notes
-- [references.bib](references.bib) — BibTeX for all entries
-- [learning-roadmap.md](learning-roadmap.md) — a staged learning path through this list (stages 0–6); the roadmap is a reading order, separate from the classification above
+- [papers.csv](papers.csv) — **the single source of truth**: section, subsection, tags, links, DOI, contribution, notes
+- [datasets.md](datasets.md) — dataset tables, KAIST tools, and robustness benchmarks (hand-maintained)
+- [bibliography.md](bibliography.md) — generated detailed table (contribution and notes), same classification as this README
+- [references.bib](references.bib) — generated BibTeX for all entries
+- [learning-roadmap.md](learning-roadmap.md) — a staged reading path through this list (stages 0–6); a reading order, separate from the classification above
+- [tools/generate.py](tools/generate.py) / tools/validate.py — regenerate and validate the list from papers.csv
 
 ## Adding an Entry
 
-One line per paper: `Title, Venue Year, First Author et al., [[Paper](url)] [[Code](url)] — *tags*`. Decide the section by fusion level first (pixel / feature / decision), then the architecture family; put challenges in tags, never in a new section. Non-RGBT work goes to the Appendix. Add the same entry to papers.csv, references.bib, and bibliography.md. Only add entries whose paper link you have verified.
+Add one row to papers.csv (that is the only edit), then run `python3 tools/generate.py && python3 tools/validate.py`. Decide the section by fusion level first (pixel / feature / decision), then the architecture family; put challenges in tags (controlled vocabulary enforced by the validator), never in a new section. Non-RGBT work goes to the Appendix. Only add entries whose paper link you have verified.
 
 ## Related Lists
 
