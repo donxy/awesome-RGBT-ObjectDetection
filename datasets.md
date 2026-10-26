@@ -34,6 +34,11 @@ Datasets and tools for RGBT (visible + thermal/LWIR) object detection. For the p
 |[ATR-UMOD](https://github.com/supercpy/ATR-UMOD)|2025|RGB, LWIR|13K|11|Partially|
 |[MODA](https://github.com/shuaihao-han/MODA)|2026|RGB, NIR|13K|8|Strictly|
 |[Tri-Modal Dataset](https://github.com/radlab-sketch/trimodal-uav-det.git)|2026|RGB, LWIR, Event|10K|1|Partially|
+|[DRTV30K](https://github.com/Vehicle-AHU/DRTV30K)|2026|RGB, LWIR|30K|9|Partially|
+
+## Note — Synthetic-Infrared Datasets
+
+- **FusionRS** ([arXiv:2606.17020](https://arxiv.org/abs/2606.17020)) — 600K spatially aligned RGB / infrared-style / text triples for remote-sensing vision-language learning (retrieval, captioning, VQA). Its infrared channel is **generated from RGB images by style transfer / diffusion, not captured by a thermal sensor**, and it is not an object-detection benchmark, so it is deliberately not mixed into the detection tables above.
 
 ## KAIST Tools
 
