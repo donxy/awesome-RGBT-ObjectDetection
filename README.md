@@ -91,21 +91,22 @@ Full tables with tools and robustness benchmarks are in [datasets.md](datasets.m
 
 ### Attention, Transformers & Foundation Models
 
-1. Modality-Decoupled RGB-Thermal Object Detector via Query Fusion, arXiv 2026, Tian et al. [[Paper](https://arxiv.org/abs/2601.08458)] — *detr; transformer; dual-stream*
-2. Thermal-Det: Language-Guided Cross-Modal Distillation for Open-Vocabulary Thermal Object Detection, CVPR 2026, Ranasinghe et al. [[Paper](https://arxiv.org/abs/2605.10130)] — *foundation-model; distillation*
-3. M-SpecGene: Generalized Foundation Model for RGBT Multispectral Vision, ICCV 2025, Zhou et al. [[Paper](https://openaccess.thecvf.com/content/ICCV2025/html/Zhou_M-SpecGene_Generalized_Foundation_Model_for_RGBT_Multispectral_Vision_ICCV_2025_paper.html)] [[Code](https://github.com/CalayZhou/M-SpecGene)] — *foundation-model*
-4. SAM-Guided Semantic Knowledge Fusion for Visible-Infrared Object Detection, ACM MM 2025, Li et al. [[Paper](https://dl.acm.org/doi/10.1145/3746027.3755718)] [[Code](https://github.com/liting1018/SemFusion)] — *foundation-model*
-5. Towards a Generalizable Fusion Architecture for Multimodal Object Detection, ICCV Workshops 2025, Berjawi, Dupas, Cérin [[Paper](https://arxiv.org/abs/2510.17078)] [[Code](https://github.com/jadberjawi/FMCAF)] — *cross-attention; frequency-domain*
-6. UniRGB-IR, ACM MM 2025, Yuan et al. [[Paper](https://arxiv.org/abs/2404.17360)] — *foundation-model; adapter*
-7. C2Former: Calibrated and Complementary Transformer, IEEE TGRS 2024, Yuan & Wei [[Paper](https://arxiv.org/abs/2306.16175)] [[Code](https://github.com/yuanmaoxun/C2Former)] — *alignment; cross-attention; transformer*
-8. CF-Deformable DETR: An End-to-End Alignment-Free Model for Weakly Aligned Visible-Infrared Object Detection, IJCAI 2024, Fu et al. [[Paper](https://www.ijcai.org/proceedings/2024/0084.pdf)] [[Code](https://github.com/116508/CF-Deformable-DETR)] — *detr; alignment; transformer*
-9. DAMSDet, ECCV 2024, Guo, Gao, Liu, Meng, Gao [[Paper](https://eccv.ecva.net/virtual/2024/poster/801)] [[Code](https://github.com/gjj45/DAMSDet)] — *transformer; detr*
-10. GM-DETR, CVPR Workshops 2024, Xiao et al. (CVPRW 2024, pp.5541–5549) — *transformer; detr; efficiency*
-11. ICAFusion: Iterative Cross-Attention Guided Feature Fusion for Multispectral Object Detection, Pattern Recognition 2024, Shen et al. [[Paper](https://ieeexplore.ieee.org/abstract/document/10225383)] [[Code](https://github.com/chanchanchan97/ICAFusion)] — *cross-attention*
-12. Improving RGB-Infrared Object Detection with Cascade Alignment-Guided Transformer (CAGT), Information Fusion 2024, Yuan, Shi, Wang, Wang, Wei [[Paper](https://doi.org/10.1016/j.inffus.2024.102246)] — *alignment; aerial; transformer; cross-attention*
-13. Cross-Modality Fusion Transformer (CFT), arXiv 2021, Fang, Han, Wang [[Paper](https://arxiv.org/abs/2111.00273)] — *cross-attention; transformer*
-14. Guided Attentive Feature Fusion for Multispectral Pedestrian Detection (GAFF), WACV 2021, Zhang, Fromont, Lefèvre, Avignon [[Paper](https://openaccess.thecvf.com/content/WACV2021/html/Zhang_Guided_Attentive_Feature_Fusion_for_Multispectral_Pedestrian_Detection_WACV_2021_paper.html)] — *pedestrian; cross-attention; efficiency*
-15. Cross-Modality Interactive Attention Network for Multispectral Pedestrian Detection (CIAN), Information Fusion 2019, Zhang et al. [[Paper](https://doi.org/10.1016/j.inffus.2018.09.015)] — *pedestrian; cross-attention*
+1. DyFCLT: Dynamic Frequency-Decoupled Cross-Modal Learning Transformer for Multimodal Tiny Object Detection, CVPR 2026, Li, Dai, Li, Yao, Jiang, Zheng [[Paper](https://openaccess.thecvf.com/content/CVPR2026/papers/Li_DyFCLT_Dynamic_Frequency-Decoupled_Cross-Modal_Learning_Transformer_for_Multimodal_Tiny_Object_CVPR_2026_paper.pdf)] — *transformer; frequency-domain; aerial*
+2. Modality-Decoupled RGB-Thermal Object Detector via Query Fusion, arXiv 2026, Tian et al. [[Paper](https://arxiv.org/abs/2601.08458)] — *detr; transformer; dual-stream*
+3. Thermal-Det: Language-Guided Cross-Modal Distillation for Open-Vocabulary Thermal Object Detection, CVPR 2026, Ranasinghe et al. [[Paper](https://arxiv.org/abs/2605.10130)] — *foundation-model; distillation*
+4. M-SpecGene: Generalized Foundation Model for RGBT Multispectral Vision, ICCV 2025, Zhou et al. [[Paper](https://openaccess.thecvf.com/content/ICCV2025/html/Zhou_M-SpecGene_Generalized_Foundation_Model_for_RGBT_Multispectral_Vision_ICCV_2025_paper.html)] [[Code](https://github.com/CalayZhou/M-SpecGene)] — *foundation-model*
+5. SAM-Guided Semantic Knowledge Fusion for Visible-Infrared Object Detection, ACM MM 2025, Li et al. [[Paper](https://dl.acm.org/doi/10.1145/3746027.3755718)] [[Code](https://github.com/liting1018/SemFusion)] — *foundation-model*
+6. Towards a Generalizable Fusion Architecture for Multimodal Object Detection, ICCV Workshops 2025, Berjawi, Dupas, Cérin [[Paper](https://arxiv.org/abs/2510.17078)] [[Code](https://github.com/jadberjawi/FMCAF)] — *cross-attention; frequency-domain*
+7. UniRGB-IR, ACM MM 2025, Yuan et al. [[Paper](https://arxiv.org/abs/2404.17360)] — *foundation-model; adapter*
+8. C2Former: Calibrated and Complementary Transformer, IEEE TGRS 2024, Yuan & Wei [[Paper](https://arxiv.org/abs/2306.16175)] [[Code](https://github.com/yuanmaoxun/C2Former)] — *alignment; cross-attention; transformer*
+9. CF-Deformable DETR: An End-to-End Alignment-Free Model for Weakly Aligned Visible-Infrared Object Detection, IJCAI 2024, Fu et al. [[Paper](https://www.ijcai.org/proceedings/2024/0084.pdf)] [[Code](https://github.com/116508/CF-Deformable-DETR)] — *detr; alignment; transformer*
+10. DAMSDet, ECCV 2024, Guo, Gao, Liu, Meng, Gao [[Paper](https://eccv.ecva.net/virtual/2024/poster/801)] [[Code](https://github.com/gjj45/DAMSDet)] — *transformer; detr*
+11. GM-DETR, CVPR Workshops 2024, Xiao et al. (CVPRW 2024, pp.5541–5549) — *transformer; detr; efficiency*
+12. ICAFusion: Iterative Cross-Attention Guided Feature Fusion for Multispectral Object Detection, Pattern Recognition 2024, Shen et al. [[Paper](https://ieeexplore.ieee.org/abstract/document/10225383)] [[Code](https://github.com/chanchanchan97/ICAFusion)] — *cross-attention*
+13. Improving RGB-Infrared Object Detection with Cascade Alignment-Guided Transformer (CAGT), Information Fusion 2024, Yuan, Shi, Wang, Wang, Wei [[Paper](https://doi.org/10.1016/j.inffus.2024.102246)] — *alignment; aerial; transformer; cross-attention*
+14. Cross-Modality Fusion Transformer (CFT), arXiv 2021, Fang, Han, Wang [[Paper](https://arxiv.org/abs/2111.00273)] — *cross-attention; transformer*
+15. Guided Attentive Feature Fusion for Multispectral Pedestrian Detection (GAFF), WACV 2021, Zhang, Fromont, Lefèvre, Avignon [[Paper](https://openaccess.thecvf.com/content/WACV2021/html/Zhang_Guided_Attentive_Feature_Fusion_for_Multispectral_Pedestrian_Detection_WACV_2021_paper.html)] — *pedestrian; cross-attention; efficiency*
+16. Cross-Modality Interactive Attention Network for Multispectral Pedestrian Detection (CIAN), Information Fusion 2019, Zhang et al. [[Paper](https://doi.org/10.1016/j.inffus.2018.09.015)] — *pedestrian; cross-attention*
 
 ### Dual-Stream CNN & YOLO-Based Detectors
 
