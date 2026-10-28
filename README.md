@@ -171,7 +171,7 @@ Not RGBT detection papers. They are collected because their methods or protocols
 
 1. MODA: The First Challenging Benchmark for Multispectral Object Detection in Aerial Images, AAAI 2026, Han et al. [[Paper](https://arxiv.org/abs/2512.09489)] [[Code](https://github.com/shuaihao-han/MODA)] — *benchmark; aerial*
 2. SM3Det: A Unified Model for Multi-Modal Remote Sensing Object Detection, AAAI 2026, Li et al. [[Paper](https://arxiv.org/abs/2412.20665)] [[Code](https://github.com/zcablii/SM3Det)] — *aerial; expert-routing*
-3. MoME: Resilient Sensor Fusion via Multi-Modal Expert Fusion, CVPR 2025, Park, Kim, Kim, Choi [[Paper](https://arxiv.org/abs/2503.19776)] — *expert-routing; degraded-modality; lidar-camera*
+3. Resilient Sensor Fusion Under Adverse Sensor Failures via Multi-Modal Expert Fusion, CVPR 2025, Park, Kim, Kim, Choi [[Paper](https://arxiv.org/abs/2503.19776)] — *expert-routing; degraded-modality; lidar-camera*
 4. MEFormer, arXiv 2024, Cha, Joo, Park, Lee, Kim, Kim [[Paper](https://arxiv.org/abs/2407.19156)] — *negative-fusion; degraded-modality*
 5. Multimodal Fusion on Low-quality Data: A Comprehensive Survey, arXiv 2024, Zhang, Wei, Han, Fu, Peng, Deng, Hu, Xu, Wen, Hu, Zhang [[Paper](https://arxiv.org/abs/2404.18947)] — *survey; degraded-modality; missing-modality*
 6. DynMM, CVPR Workshops 2023, Xue & Marculescu [[Paper](https://arxiv.org/abs/2204.00102)] — *dynamic-fusion; efficiency*
