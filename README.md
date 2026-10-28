@@ -158,7 +158,7 @@ Full tables with tools and robustness benchmarks are in [datasets.md](datasets.m
 ## Decision-Level & Evidential Fusion
 
 1. Multiscale Cross-modal Homogeneity Enhancement and Confidence-aware Fusion for Multispectral Pedestrian Detection, IEEE TMM 2024, Li et al. [[Paper](https://doi.org/10.1109/TMM.2023.3272471)] [[Code](https://github.com/RimXidian/MCHE-CF-for-Multispectral-Pedestrian-Detection)] — *decision-level; pedestrian*
-2. Stabilizing Multispectral Pedestrian Detection with Evidential Hybrid Fusion, IEEE TCSVT 2024, Li et al. [[Paper](https://doi.org/10.1109/TCSVT.2023.3306870)] — *evidential; pedestrian*
+2. Stabilizing Multispectral Pedestrian Detection with Evidential Hybrid Fusion, IEEE TCSVT 2024, Li, Zhang, Hu, Zhu, Fu, Chen [[Paper](https://doi.org/10.1109/TCSVT.2023.3306870)] — *evidential; pedestrian*
 3. Confidence-Aware Fusion via Dempster–Shafer (CMPD), IEEE TMM 2023, Li, Zhang, Hu, Fu, Zhu [[Paper](https://ieeexplore.ieee.org/document/9739079)] — *evidential; decision-level; pedestrian*
 4. ProbEn, ECCV 2022, Chen, Shi, Ye, Mertz, Ramanan, Kong [[Paper](https://arxiv.org/abs/2104.02904)] — *missing-modality; decision-level; ensemble; pedestrian*
 5. Illumination-Aware Faster R-CNN for Robust Multispectral Pedestrian Detection, Pattern Recognition 2019, Li, Song, Tong, Tang [[Paper](https://doi.org/10.1016/j.patcog.2018.08.005)] — *pedestrian; quality-aware*
