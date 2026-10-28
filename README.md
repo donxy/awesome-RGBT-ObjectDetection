@@ -132,7 +132,7 @@ Full tables with tools and robustness benchmarks are in [datasets.md](datasets.m
 
 1. Multispectral State-Space Feature Fusion: Bridging Shared and Cross-Parametric Interactions for Object Detection, Information Fusion 2026, Shen et al. [[Paper](https://doi.org/10.1016/j.inffus.2025.103895)] — *mamba*
 2. Contextually-Guided State Space Fusion for Misaligned Multi-Spectral Object Detection (CSSFDet), ACM MM 2025, Jin et al. [[Paper](https://dl.acm.org/doi/10.1145/3746027.3754550)] — *mamba; alignment; aerial*
-3. Fusion-Mamba, IEEE TMM 2025, Dong et al. [[Paper](https://doi.org/10.1109/TMM.2025.3599020)] — *mamba*
+3. Fusion-Mamba, IEEE TMM 2025, Dong, Zhu, Lin, Luo, Shen, Liu, Zhang, Guo, Zhang [[Paper](https://doi.org/10.1109/TMM.2025.3599020)] — *mamba*
 4. Pseudo Visible Feature Fine-Grained Fusion for Thermal Object Detection (PFGF), CVPR 2025, Li et al. [[Paper](https://openaccess.thecvf.com/content/CVPR2025/papers/Li_Pseudo_Visible_Feature_Fine-Grained_Fusion_for_Thermal_Object_Detection_CVPR_2025_paper.pdf)] [[Code](https://github.com/liting1018/PFGF)] — *mamba; missing-modality*
 5. WaveMamba, ICCV 2025, Zhu, Dong, Yang, Li, Yang, Ren, Zhu, Feng, Li, Lin, Wang, Luo, Zhang [[Paper](https://arxiv.org/abs/2507.18173)] [[Code](https://github.com/EhanDong/WaveMamba)] — *mamba; frequency-domain*
 6. Mask-Guided Mamba Fusion for Drone-based Visible-Infrared Vehicle Detection, IEEE TGRS 2024, Wang et al. [[Paper](https://doi.org/10.1109/TGRS.2024.3452550)] — *mamba; aerial*
