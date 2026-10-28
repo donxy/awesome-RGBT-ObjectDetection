@@ -140,8 +140,8 @@ Full tables with tools and robustness benchmarks are in [datasets.md](datasets.m
 ### Quality- & Conflict-Aware Fusion
 
 1. Bridging Multimodal Fusion and Expert Routing via Spectral Reliability Descriptors for Robust Object Detection, arXiv 2026, Wu [[Paper](https://arxiv.org/abs/2606.01173)] — *quality-aware; expert-routing; degraded-modality; aerial*
-2. Distribution-Aligned Multimodal Fusion for Robust Object Detection, CVPR 2026, Hao et al. [[Paper](https://openaccess.thecvf.com/content/CVPR2026/papers/Hao_Distribution-Aligned_Multimodal_Fusion_for_Robust_Object_Detection_CVPR_2026_paper.pdf)] — *degraded-modality; quality-aware*
-3. InfraNet: Quality-Aware RGB Guidance for Infrared Object Detection, ECCV 2026, Feng et al. [[Paper](https://eccv.ecva.net/virtual/2026/poster/3873)] — *quality-aware; missing-modality*
+2. Distribution-Aligned Multimodal Fusion for Robust Object Detection, CVPR 2026, Hao, Pu, Wang, She [[Paper](https://openaccess.thecvf.com/content/CVPR2026/papers/Hao_Distribution-Aligned_Multimodal_Fusion_for_Robust_Object_Detection_CVPR_2026_paper.pdf)] — *degraded-modality; quality-aware*
+3. InfraNet: Quality-Aware RGB Guidance for Infrared Object Detection, ECCV 2026, Feng, Zhu, Yang, Xu, Ren, Yang, Liu, Zhang, Wang, Yang, Zhang [[Paper](https://eccv.ecva.net/virtual/2026/poster/3873)] — *quality-aware; missing-modality*
 4. EI²Det: Edge-Guided Illumination-Aware Interactive Learning for Visible-Infrared Object Detection, IEEE TCSVT 2025, Hu et al. [[Paper](https://doi.org/10.1109/TCSVT.2025.3539625)] [[Code](https://github.com/hukefy/EI2Det)] — *quality-aware*
 5. Efficient Multispectral Object Detection with Attentive Feature Aggregation Leveraging Zero-Shot Implicit Illumination Guidance, Information Fusion 2025, Xiong et al. [[Paper](https://doi.org/10.1016/j.inffus.2025.102939)] — *efficiency; quality-aware*
 6. Learning a Robust RGB-Thermal Detector for Extreme Modality Imbalance, Pattern Recognition Letters 2025, Tian, Yang, Zhu, Wang, He [[Paper](https://arxiv.org/abs/2505.22154)] — *degraded-modality; quality-aware; modality-imbalance*
