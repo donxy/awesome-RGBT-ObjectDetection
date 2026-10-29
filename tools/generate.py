@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
-"""Generate README.md, bibliography.md and references.bib from papers.csv.
+"""Generate README.md, bibliography.md, references.bib and the website
+exports (papers.json, deep.json, datasets.json) from papers.csv.
 
 papers.csv is the single source of truth for the paper list. Edit the CSV,
 then run:  python3 tools/generate.py
 Static README text (intro, scope, news, file list) lives in this script;
-dataset summary tables are read from datasets.md.
+dataset summary tables are read from datasets.md. Site-only note texts
+(card takeaway / comment, deep-read sections, figure captions) live in
+site_content.json, keyed by paper title, and are merged in at export time;
+figure images themselves are website assets (rgbt-notes/figs/<slug>.webp),
+only their file names are exported here.
 """
-import csv, re, os, sys
+import csv, re, os, sys, json, unicodedata
 from collections import OrderedDict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,6 +37,97 @@ GENERATED = "<!-- Generated from papers.csv by tools/generate.py — do not edit
 SRC_NOTE = ("Dataset statistics below are compiled from the datasets' official pages and the public list "
             "[Awesome-RGBT-Fusion](https://github.com/yuanmaoxun/Awesome-RGBT-Fusion) (accessed 2026-10-25); "
             "always confirm numbers on the official page before citing them.")
+
+DEEP_SECTIONS = ["问题定义", "方法细节", "实验设置", "关键数字", "消融说明了什么", "局限"]
+
+# Tag presentation metadata for the website filter panel: Chinese label and
+# panel group for every tag in the controlled vocabulary (validate.py checks
+# this table covers the vocabulary exactly).
+TAG_META = {
+    # 挑战 — the problem a paper addresses
+    "alignment":            {"zh": "对齐", "group": "挑战"},
+    "conflict-aware":       {"zh": "冲突感知", "group": "挑战"},
+    "corruption":           {"zh": "腐蚀", "group": "挑战"},
+    "degraded-modality":    {"zh": "模态退化", "group": "挑战"},
+    "efficiency":           {"zh": "效率", "group": "挑战"},
+    "missing-modality":     {"zh": "模态缺失", "group": "挑战"},
+    "modality-imbalance":   {"zh": "模态不平衡", "group": "挑战"},
+    "negative-fusion":      {"zh": "负融合", "group": "挑战"},
+    "quality-aware":        {"zh": "质量感知", "group": "挑战"},
+    "test-time-adaptation": {"zh": "测试时适配", "group": "挑战"},
+    "test-time-intervention": {"zh": "测试时干预", "group": "挑战"},
+    # 架构 — architecture / mechanism family
+    "adapter":          {"zh": "适配器", "group": "架构"},
+    "cross-attention":  {"zh": "跨模态注意力", "group": "架构"},
+    "decision-level":   {"zh": "决策级", "group": "架构"},
+    "detr":             {"zh": "DETR", "group": "架构"},
+    "distillation":     {"zh": "蒸馏", "group": "架构"},
+    "dual-stream":      {"zh": "双流", "group": "架构"},
+    "dynamic-fusion":   {"zh": "动态融合", "group": "架构"},
+    "ensemble":         {"zh": "集成", "group": "架构"},
+    "evidential":       {"zh": "证据理论", "group": "架构"},
+    "expert-routing":   {"zh": "专家路由", "group": "架构"},
+    "foundation-model": {"zh": "基础模型", "group": "架构"},
+    "frequency-domain": {"zh": "频域", "group": "架构"},
+    "image-fusion":     {"zh": "图像融合", "group": "架构"},
+    "mamba":            {"zh": "Mamba", "group": "架构"},
+    "task-coupled":     {"zh": "任务耦合", "group": "架构"},
+    "transformer":      {"zh": "Transformer", "group": "架构"},
+    "yolo":             {"zh": "YOLO", "group": "架构"},
+    # 场景与类型 — application scene / entry type
+    "aerial":       {"zh": "航拍", "group": "场景与类型"},
+    "benchmark":    {"zh": "基准", "group": "场景与类型"},
+    "lidar-camera": {"zh": "激光–相机", "group": "场景与类型"},
+    "pedestrian":   {"zh": "行人", "group": "场景与类型"},
+    "survey":       {"zh": "综述", "group": "场景与类型"},
+    "thermal-only-inference": {"zh": "仅热红外推理", "group": "场景与类型"},
+}
+
+
+def slugify(title):
+    """Stable URL/anchor slug from a paper title (e.g. 'WiSE-OD' -> 'wise-od')."""
+    t = unicodedata.normalize("NFKD", title)
+    t = "".join(c for c in t if not unicodedata.combining(c))
+    t = re.sub(r"[^a-z0-9]+", "-", t.lower()).strip("-")
+    return t or "paper"
+
+
+def eff_slug(title, content):
+    """A paper's website slug: an explicit 'slug' in site_content.json wins,
+    so permalinks and figure file names stay stable across title edits."""
+    return content.get(title, {}).get("slug") or slugify(title)
+
+
+def load_content(root=ROOT):
+    path = os.path.join(root, "site_content.json")
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def parse_datasets(root=ROOT):
+    """Structured dataset rows from the datasets.md tables (website export)."""
+    ds = open(os.path.join(root, "datasets.md"), encoding="utf-8").read()
+
+    def rows_after(marker, keys):
+        out = []
+        for line in table_after(ds, marker)[2:]:  # skip header + separator
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            m = re.match(r"\[(.*?)\]\((.*?)\)", cells[0])
+            name = re.sub(r"<[^>]+>", "", m.group(1)) if m else cells[0]
+            row = {"name": name, "url": m.group(2) if m else ""}
+            for k, v in zip(keys, cells[1:]):
+                row[k] = v
+            out.append(row)
+        return out
+
+    return {
+        "general": rows_after("## General & Pedestrian Detection",
+                              ["year", "modality", "images", "classes"]),
+        "aerial": rows_after("## Aerial / UAV Object Detection",
+                             ["year", "modality", "images", "classes", "alignment"]),
+    }
 
 
 def load_rows(root=ROOT):
@@ -100,8 +196,9 @@ def build_readme(rows, root=ROOT):
          "RGBT (also written RGB-T, RGB-Thermal, multispectral, or visible–infrared) object detection fuses a visible-light image with a thermal (LWIR) image to detect objects under conditions where either modality alone fails — darkness, glare, smoke, or adverse weather.", "",
          "**Scope.** Object detection only: general, pedestrian, vehicle, and aerial/UAV detection with paired visible–thermal imagery. Segmentation, salient object detection, crowd counting, and tracking are out of scope (see Related Lists).", "",
          "**How this list is organised — one axis only.** Papers in the main list are RGBT detection papers, classified by *technical route*: the level at which the two modalities are fused (pixel → feature → decision), with architecture families as subsections of feature-level fusion. Challenges such as misalignment, degradation, or missing modalities are **tags** (shown in italics, and a column in papers.csv), not sections — so every paper has exactly one home. Work that is not RGBT detection but transfers to it (general multimodal fusion, imbalance/missing-modality learning, test-time methods, driving robustness) lives in a separate Appendix, clearly marked, instead of being mixed into the main list.", "",
-         "**Single source of truth.** The paper list lives in [papers.csv](papers.csv); README.md, bibliography.md and references.bib are generated from it by [tools/generate.py](tools/generate.py) and checked by tools/validate.py. Edit the CSV, never the generated files.", "",
+         "**Single source of truth.** The paper list lives in [papers.csv](papers.csv); README.md, bibliography.md and references.bib are generated from it by [tools/generate.py](tools/generate.py) and checked by tools/validate.py. Edit the CSV, never the generated files. The notes website ([donxy.github.io/rgbt-notes](https://donxy.github.io/rgbt-notes/)) reads the generated papers.json / deep.json / datasets.json exports (papers.csv merged with the site-only texts in site_content.json), so the site and this repository share one dataset.", "",
          "## News", "",
+         "- [2026-10-29] Website data pipeline: the notes site now consumes this repo's generated JSON exports (papers / deep reads / datasets); figure images split into per-paper files on the site.",
          "- [2026-10-26] Tooling: papers.csv is now the single source of truth — README, bibliography and BibTeX are generated and validated automatically. Tag vocabulary consolidated.",
          "- [2026-10-25] Reclassified by technical route (fusion level + architecture family), with challenge tags and a separate appendix for non-RGBT related work. 42 papers: 21 core RGBT detection, 21 appendix.",
          "- [2026-10-25] Initial general, detection-only structure: datasets first, themed paper list, structured data files (CSV / BibTeX), detailed bibliography, learning roadmap.", "",
@@ -136,6 +233,8 @@ def build_readme(rows, root=ROOT):
         L.append("")
     L += ["## Repository Files", "",
           "- [papers.csv](papers.csv) — **the single source of truth**: section, subsection, tags, links, DOI, contribution, notes",
+          "- [site_content.json](site_content.json) — site-only note texts for the website (card takeaway/comment, deep-read sections, figure captions), keyed by paper title; merged with papers.csv at export time",
+          "- [papers.json](papers.json) / [deep.json](deep.json) / [datasets.json](datasets.json) — generated exports consumed by the notes website; do not edit by hand",
           "- [datasets.md](datasets.md) — dataset tables, KAIST tools, and robustness benchmarks (hand-maintained)",
           "- [bibliography.md](bibliography.md) — generated detailed table (contribution and notes), same classification as this README",
           "- [references.bib](references.bib) — generated BibTeX for all entries",
@@ -220,11 +319,77 @@ def build_bib(rows):
             + "\n\n".join(entries) + "\n")
 
 
+def ordered_rows(rows, content):
+    """Papers in website/README display order: canonical section groups,
+    then the site_content.json 'ord' within each group (CSV order as fallback)."""
+    csv_idx = {r["title"]: i for i, r in enumerate(rows)}
+
+    def key(r):
+        return (content.get(r["title"], {}).get("ord", 100000 + csv_idx[r["title"]]),
+                csv_idx[r["title"]])
+
+    out = []
+    for _, items in group_core(rows).items():
+        out += sorted(items, key=key)
+    for _, items in group_appendix(rows).items():
+        out += sorted(items, key=key)
+    return out
+
+
+def build_papers_json(rows, content):
+    papers = []
+    for r in ordered_rows(rows, content):
+        c = content.get(r["title"], {})
+        slug = eff_slug(r["title"], content)
+        papers.append({
+            "id": slug,
+            "list": r["list"],
+            "sec": r["section"],
+            "sub": r["subsection"] or "",
+            "title": r["title"],
+            "authors": r["authors"],
+            "year": int(r["year"]),
+            "venue": r["venue"],
+            "paper": r["paper_link"],
+            "code": r["code_link"],
+            "doi": r.get("doi", ""),
+            "tags": [t.strip() for t in r["tags"].split(";") if t.strip()],
+            "basis": "full" if r["notes_basis"] == "full-text" else "",
+            "deep": bool(c.get("deep")),
+            "take": c.get("take", ""),
+            "note": c.get("note", ""),
+            "paperNote": c.get("paperNote", ""),
+            "fig": f"figs/{slug}.webp" if c.get("figCap") else "",
+            "figAlt": c.get("figAlt", ""),
+            "figCap": c.get("figCap", ""),
+            "figSrc": c.get("figSrc", ""),
+        })
+    return json.dumps({"tagMeta": TAG_META, "papers": papers},
+                      ensure_ascii=False, separators=(",", ":")) + "\n"
+
+
+def build_deep_json(rows, content):
+    deep = {}
+    for r in ordered_rows(rows, content):
+        c = content.get(r["title"], {})
+        if c.get("deep"):
+            deep[eff_slug(r["title"], content)] = c["deep"]
+    return json.dumps(deep, ensure_ascii=False, separators=(",", ":")) + "\n"
+
+
+def build_datasets_json(root=ROOT):
+    return json.dumps(parse_datasets(root), ensure_ascii=False, separators=(",", ":")) + "\n"
+
+
 def build_all(root=ROOT):
     rows = load_rows(root)
+    content = load_content(root)
     return {"README.md": build_readme(rows, root),
             "bibliography.md": build_bibliography(rows),
-            "references.bib": build_bib(rows)}
+            "references.bib": build_bib(rows),
+            "papers.json": build_papers_json(rows, content),
+            "deep.json": build_deep_json(rows, content),
+            "datasets.json": build_datasets_json(root)}
 
 
 if __name__ == "__main__":

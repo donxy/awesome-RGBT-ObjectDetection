@@ -9,10 +9,11 @@ RGBT (also written RGB-T, RGB-Thermal, multispectral, or visible–infrared) obj
 
 **How this list is organised — one axis only.** Papers in the main list are RGBT detection papers, classified by *technical route*: the level at which the two modalities are fused (pixel → feature → decision), with architecture families as subsections of feature-level fusion. Challenges such as misalignment, degradation, or missing modalities are **tags** (shown in italics, and a column in papers.csv), not sections — so every paper has exactly one home. Work that is not RGBT detection but transfers to it (general multimodal fusion, imbalance/missing-modality learning, test-time methods, driving robustness) lives in a separate Appendix, clearly marked, instead of being mixed into the main list.
 
-**Single source of truth.** The paper list lives in [papers.csv](papers.csv); README.md, bibliography.md and references.bib are generated from it by [tools/generate.py](tools/generate.py) and checked by tools/validate.py. Edit the CSV, never the generated files.
+**Single source of truth.** The paper list lives in [papers.csv](papers.csv); README.md, bibliography.md and references.bib are generated from it by [tools/generate.py](tools/generate.py) and checked by tools/validate.py. Edit the CSV, never the generated files. The notes website ([donxy.github.io/rgbt-notes](https://donxy.github.io/rgbt-notes/)) reads the generated papers.json / deep.json / datasets.json exports (papers.csv merged with the site-only texts in site_content.json), so the site and this repository share one dataset.
 
 ## News
 
+- [2026-10-29] Website data pipeline: the notes site now consumes this repo's generated JSON exports (papers / deep reads / datasets); figure images split into per-paper files on the site.
 - [2026-10-26] Tooling: papers.csv is now the single source of truth — README, bibliography and BibTeX are generated and validated automatically. Tag vocabulary consolidated.
 - [2026-10-25] Reclassified by technical route (fusion level + architecture family), with challenge tags and a separate appendix for non-RGBT related work. 42 papers: 21 core RGBT detection, 21 appendix.
 - [2026-10-25] Initial general, detection-only structure: datasets first, themed paper list, structured data files (CSV / BibTeX), detailed bibliography, learning roadmap.
@@ -209,6 +210,8 @@ Not RGBT detection papers. They are collected because their methods or protocols
 ## Repository Files
 
 - [papers.csv](papers.csv) — **the single source of truth**: section, subsection, tags, links, DOI, contribution, notes
+- [site_content.json](site_content.json) — site-only note texts for the website (card takeaway/comment, deep-read sections, figure captions), keyed by paper title; merged with papers.csv at export time
+- [papers.json](papers.json) / [deep.json](deep.json) / [datasets.json](datasets.json) — generated exports consumed by the notes website; do not edit by hand
 - [datasets.md](datasets.md) — dataset tables, KAIST tools, and robustness benchmarks (hand-maintained)
 - [bibliography.md](bibliography.md) — generated detailed table (contribution and notes), same classification as this README
 - [references.bib](references.bib) — generated BibTeX for all entries

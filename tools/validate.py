@@ -10,6 +10,12 @@ Checks (errors fail, warnings are reported):
 - content warnings (never fail): DOI year vs catalogued year (journal issue-year
   exceptions listed in DOI_YEAR_EXCEPTIONS), arXiv DOIs in the doi column, and
   paper_link publisher domain inconsistent with the venue's publisher
+- website exports (papers.json, deep.json, datasets.json) are up to date; site_content.json
+  covers exactly the CSV titles, with unique effective slugs / display orders, canonical
+  deep-read section titles, and figure captions paired with deep reads
+- generate.TAG_META covers the tag vocabulary exactly (website filter panel)
+- deep-read papers without a figure-source string (figSrc) raise one aggregated warning;
+  the website omits the source line for them
 Run:  python3 tools/validate.py   (exit code 1 on errors)
 """
 import csv, os, re, sys
@@ -127,6 +133,41 @@ def main():
     n_bib = len(re.findall(r"@\w+\{", fresh["references.bib"]))
     if n_bib != len(rows):
         errors.append(f"references.bib: {n_bib} entries vs {len(rows)} CSV rows")
+    # website content store integrity
+    content = generate.load_content()
+    ctitles = set(content)
+    if ctitles != set(titles):
+        for t in sorted(set(titles) - ctitles):
+            errors.append(f"site_content.json: missing entry for CSV title: {t[:50]}")
+        for t in sorted(ctitles - set(titles)):
+            errors.append(f"site_content.json: entry with no CSV title: {t[:50]}")
+    ords = [c.get("ord") for c in content.values()]
+    if len(ords) != len(set(ords)) or any(o is None for o in ords):
+        errors.append("site_content.json: 'ord' values missing or not unique")
+    slugs = [generate.eff_slug(t, content) for t in titles]
+    if len(slugs) != len(set(slugs)):
+        errors.append("paper titles do not map to unique website slugs")
+    if set(generate.TAG_META) != TAG_VOCAB:
+        errors.append("generate.TAG_META does not cover the tag vocabulary exactly: "
+                      f"missing={sorted(TAG_VOCAB - set(generate.TAG_META))}, "
+                      f"extra={sorted(set(generate.TAG_META) - TAG_VOCAB)}")
+    n_no_figsrc = 0
+    for t in titles:
+        c = content.get(t, {})
+        deep = c.get("deep")
+        if deep:
+            if [s[0] for s in deep] != generate.DEEP_SECTIONS:
+                errors.append(f"site_content.json ({t[:40]}): deep-read section titles are not the canonical six")
+            if not c.get("figCap") or not c.get("figAlt"):
+                errors.append(f"site_content.json ({t[:40]}): deep read without figure caption/alt")
+            if not c.get("figSrc"):
+                n_no_figsrc += 1
+        elif c.get("figCap"):
+            errors.append(f"site_content.json ({t[:40]}): figure caption without a deep read")
+        if not c.get("take") or not c.get("note"):
+            errors.append(f"site_content.json ({t[:40]}): missing card takeaway or comment")
+    if n_no_figsrc:
+        warnings.append(f"{n_no_figsrc} deep-read papers have no figSrc; the website omits their figure-source line")
     n_core = sum(1 for r in rows if r["list"] == "core")
     print(f"papers.csv: {len(rows)} rows (core {n_core}, appendix {len(rows) - n_core})")
     for w in warnings:
