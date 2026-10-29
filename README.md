@@ -73,8 +73,8 @@ Full tables with tools and robustness benchmarks are in [datasets.md](datasets.m
 4. Fusion Meets Diverse Conditions: A High-diversity Benchmark and Baseline for UAV-based Multimodal Object Detection with Condition Cues, ICCV 2025, Chen et al. [[Paper](https://openaccess.thecvf.com/content/ICCV2025/papers/Chen_Fusion_Meets_Diverse_Conditions_A_High-diversity_Benchmark_and_Baseline_for_ICCV_2025_paper.pdf)] — *benchmark; aerial; degraded-modality*
 5. Infrared and Visible Image Fusion: From Data Compatibility to Task Adaption, IEEE TPAMI 2025, Liu, Wu, Liu, Wang, Jiang, Ma, Zhong, Fan, Liu [[Paper](https://arxiv.org/abs/2501.10761)] — *survey*
 6. Visible-Thermal Tiny Object Detection: A Benchmark Dataset and Baselines (RGBT-Tiny), IEEE TPAMI 2025, Ying et al. [[Paper](https://arxiv.org/abs/2406.14482)] [[Code](https://github.com/XinyiYing/RGBT-Tiny)] — *aerial*
-7. MSOD-Bench: Optimizing Multispectral Object Detection, arXiv 2024, Zhou, Cheng, Fang, Zhang, Yan, Jia, Xu, Wang, Cao [[Paper](https://arxiv.org/abs/2411.18288)] — *benchmark*
-8. Misaligned Visible-Thermal Object Detection: A Drone-based Benchmark and Baseline (DVTOD), IEEE TIV 2024, Song et al. [[Paper](https://doi.org/10.1109/TIV.2024.3398429)] [[Code](https://github.com/VDT-2048/DVTOD)] — *benchmark; aerial; alignment*
+7. Misaligned Visible-Thermal Object Detection: A Drone-based Benchmark and Baseline (DVTOD), IEEE TIV 2024, Song et al. [[Paper](https://doi.org/10.1109/TIV.2024.3398429)] [[Code](https://github.com/VDT-2048/DVTOD)] — *benchmark; aerial; alignment*
+8. Optimizing Multispectral Object Detection: A Bag of Tricks and Comprehensive Benchmarks, arXiv 2024, Zhou, Cheng, Fang, Zhang, Yan, Jia, Xu, Wang, Cao [[Paper](https://arxiv.org/abs/2411.18288)] — *benchmark*
 9. When Pedestrian Detection Meets Multi-Modal Learning: Generalist Model and Benchmark Dataset (MMPedestron), ECCV 2024, Zhang et al. [[Paper](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/06487.pdf)] [[Code](https://github.com/BubblyYi/MMPedestron)] — *benchmark; pedestrian; foundation-model*
 
 ## Pixel-Level Fusion for Detection
@@ -174,7 +174,7 @@ Not RGBT detection papers. They are collected because their methods or protocols
 3. Resilient Sensor Fusion Under Adverse Sensor Failures via Multi-Modal Expert Fusion, CVPR 2025, Park, Kim, Kim, Choi [[Paper](https://arxiv.org/abs/2503.19776)] — *expert-routing; degraded-modality; lidar-camera*
 4. MEFormer, arXiv 2024, Cha, Joo, Park, Lee, Kim, Kim [[Paper](https://arxiv.org/abs/2407.19156)] — *negative-fusion; degraded-modality*
 5. Multimodal Fusion on Low-quality Data: A Comprehensive Survey, arXiv 2024, Zhang, Wei, Han, Fu, Peng, Deng, Hu, Xu, Wen, Hu, Zhang [[Paper](https://arxiv.org/abs/2404.18947)] — *survey; degraded-modality; missing-modality*
-6. DynMM, CVPR Workshops 2023, Xue & Marculescu [[Paper](https://arxiv.org/abs/2204.00102)] — *dynamic-fusion; efficiency*
+6. Dynamic Multimodal Fusion, CVPR Workshops 2023, Xue & Marculescu [[Paper](https://arxiv.org/abs/2204.00102)] — *dynamic-fusion; efficiency*
 7. Provable Dynamic Fusion for Low-Quality Multimodal Data (QMF), ICML 2023, Zhang, Wu, Zhang, Hu, Fu, Zhou, Peng [[Paper](https://arxiv.org/abs/2306.02050)] — *quality-aware; degraded-modality*
 8. Trusted Multi-View Classification (TMC), ICLR 2021, Han, Zhang, Fu, Zhou [[Paper](https://arxiv.org/abs/2102.02051)] — *evidential*
 
@@ -186,7 +186,7 @@ Not RGBT detection papers. They are collected because their methods or protocols
 
 ### Modality Imbalance & Missing-Modality Learning (General)
 
-1. Multimodal Learning with Missing Modalities: A Survey, TMLR 2026, Wu, Wang, Chen, Carneiro [[Paper](https://arxiv.org/abs/2409.07825)] — *survey; missing-modality*
+1. Deep Multimodal Learning with Missing Modality: A Survey, TMLR 2026, Wu, Wang, Chen, Carneiro [[Paper](https://arxiv.org/abs/2409.07825)] — *survey; missing-modality*
 2. MM-CKD, arXiv 2024, Sang, Funakoshi, Okumura [[Paper](https://arxiv.org/abs/2410.08692)] — *missing-modality; distillation*
 3. MMPareto, ICML 2024, Wei & Hu [[Paper](https://arxiv.org/abs/2405.17730)] — *modality-imbalance*
 4. ReconBoost, ICML 2024, Hua, Xu, Bao, Yang, Huang [[Paper](https://proceedings.mlr.press/v235/hua24a.html)] — *modality-imbalance*
