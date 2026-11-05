@@ -4,37 +4,37 @@ Datasets and tools for RGBT (visible + thermal/LWIR) object detection. For the p
 
 ## General & Pedestrian Detection
 
-|Dataset                        | Years |Modality     |Images| Classes|
-|-------------------------------|-------|-------------|------|--------|
-|[KAIST](https://soonminhwang.github.io/rgbt-ped-detection/)|2015|RGB, LWIR|95K|1|
-|[CVC-14](http://adas.cvc.uab.es/elektra/enigma-portfolio/cvc-14-visible-fir-day-night-pedestrian-sequence-dataset/)|2016|RGB, LWIR|8K|1|
-|[FLIR](https://www.flir.cn/oem/adas/adas-dataset-form/)|2018|RGB, LWIR|20K|5|
-|[FLIR-aligned](https://github.com/zonaqiu/FLIR-align)|2020|RGB, LWIR|5K|3|
-|[Utokyo](https://www.mi.t.u-tokyo.ac.jp/static/projects/mil_multispectral/)|2017|RGB, NIR, MIR, FIR|7K|5|
-|[LLVIP](https://bupt-ai-cz.github.io/LLVIP/)|2021| RGB, LWIR|15K|1|
-|[M<sup>3</sup>FD](https://github.com/dlut-dimt/TarDAL)|2022|RGB, LWIR|4K|6|
-|[Multi-Spectral Stereo](https://github.com/UkcheolShin/MS2-MultiSpectralStereoDataset)|2023|RGB, NIR, LWIR|195K|4|
-|[SMOD](https://www.kaggle.com/datasets/zizhaochen6/sjtu-multispectral-object-detection-smod-dataset)|2024|RGB, LWIR|8K|4|
-|[MMPD](https://github.com/jin-s13/MMPD-Dataset)|2024|RGB, LWIR|260K|1|
-|[InfraParis](https://ensta-u2is-ai.github.io/infraParis/)|2024| RGB, LWIR, Depth|7K|19|
-|[MFAD](https://github.com/hukefy/EI2Det)|2025|RGB, LWIR|12K|6|
-|[MMVIP](https://github.com/yyppptjr/MMVIP)|2026|RGB, LWIR|128K|2|
-|[RGBT-Ground](https://github.com/crazyxiaoxi/RGBTVG)|2026|RGB, LWIR|40K|5|
+| Dataset | Year | Modalities | Images | Classes |
+|---|---|---|---|---|
+| [KAIST](https://soonminhwang.github.io/rgbt-ped-detection/) | 2015 | RGB, LWIR | 95K | 1 |
+| [CVC-14](http://adas.cvc.uab.es/elektra/enigma-portfolio/cvc-14-visible-fir-day-night-pedestrian-sequence-dataset/) | 2016 | RGB, LWIR | 8K | 1 |
+| [FLIR](https://www.flir.cn/oem/adas/adas-dataset-form/) | 2018 | RGB, LWIR | 20K | 5 |
+| [FLIR-aligned](https://github.com/zonaqiu/FLIR-align) | 2020 | RGB, LWIR | 5K | 3 |
+| [Utokyo](https://www.mi.t.u-tokyo.ac.jp/static/projects/mil_multispectral/) | 2017 | RGB, NIR, MIR, FIR | 7K | 5 |
+| [LLVIP](https://bupt-ai-cz.github.io/LLVIP/) | 2021 | RGB, LWIR | 15K | 1 |
+| [M<sup>3</sup>FD](https://github.com/dlut-dimt/TarDAL) | 2022 | RGB, LWIR | 4K | 6 |
+| [Multi-Spectral Stereo](https://github.com/UkcheolShin/MS2-MultiSpectralStereoDataset) | 2023 | RGB, NIR, LWIR | 195K | 4 |
+| [SMOD](https://www.kaggle.com/datasets/zizhaochen6/sjtu-multispectral-object-detection-smod-dataset) | 2024 | RGB, LWIR | 8K | 4 |
+| [MMPD](https://github.com/jin-s13/MMPD-Dataset) | 2024 | RGB, LWIR | 260K | 1 |
+| [InfraParis](https://ensta-u2is-ai.github.io/infraParis/) | 2024 | RGB, LWIR, Depth | 7K | 19 |
+| [MFAD](https://github.com/hukefy/EI2Det) | 2025 | RGB, LWIR | 12K | 6 |
+| [MMVIP](https://github.com/yyppptjr/MMVIP) | 2026 | RGB, LWIR | 128K | 2 |
+| [RGBT-Ground](https://github.com/crazyxiaoxi/RGBTVG) | 2026 | RGB, LWIR | 40K | 5 |
 
 ## Aerial / UAV Object Detection
 
-|Dataset                        | Years |Modality     |Images| Classes|Alignment|
-|-------------------------------|-------|-------------|------|--------|---------|
-|[DroneVehicle](https://github.com/VisDrone/DroneVehicle)|2021|RGB, LWIR|56K|5|Partially|
-|[VEDAI](https://downloads.greyc.fr/vedai/)|2014|RGB, NIR|1K|9|Strictly|
-|[NII-CU](https://www.nii-cu-multispectral.org/)|2022|RGB, LWIR|5K|1|Strictly|
-|[DVTOD](https://github.com/VDT-2048/DVTOD)|2024|RGB, LWIR|2K|3|Misaligned|
-|[VTSaR](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10833840)|2024|RGB, LWIR|40K|1|Strictly|
-|[RGBT-Tiny](https://github.com/XinyiYing/RGBT-Tiny)|2025|RGB, LWIR|93K|7|Partially|
-|[ATR-UMOD](https://github.com/supercpy/ATR-UMOD)|2025|RGB, LWIR|13K|11|Partially|
-|[MODA](https://github.com/shuaihao-han/MODA)|2026|RGB, NIR|13K|8|Strictly|
-|[Tri-Modal Dataset](https://github.com/radlab-sketch/trimodal-uav-det.git)|2026|RGB, LWIR, Event|10K|1|Partially|
-|[DRTV30K](https://github.com/Vehicle-AHU/DRTV30K)|2026|RGB, LWIR|30K|9|Partially|
+| Dataset | Year | Modalities | Images | Classes | Alignment |
+|---|---|---|---|---|---|
+| [DroneVehicle](https://github.com/VisDrone/DroneVehicle) | 2021 | RGB, LWIR | 56K | 5 | Partially |
+| [VEDAI](https://downloads.greyc.fr/vedai/) | 2014 | RGB, NIR | 1K | 9 | Strictly |
+| [NII-CU](https://www.nii-cu-multispectral.org/) | 2022 | RGB, LWIR | 5K | 1 | Strictly |
+| [DVTOD](https://github.com/VDT-2048/DVTOD) | 2024 | RGB, LWIR | 2K | 3 | Misaligned |
+| [VTSaR](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10833840) | 2024 | RGB, LWIR | 40K | 1 | Strictly |
+| [RGBT-Tiny](https://github.com/XinyiYing/RGBT-Tiny) | 2025 | RGB, LWIR | 93K | 7 | Partially |
+| [ATR-UMOD](https://github.com/supercpy/ATR-UMOD) | 2025 | RGB, LWIR | 13K | 11 | Partially |
+| [MODA](https://github.com/shuaihao-han/MODA) | 2026 | RGB, NIR | 13K | 8 | Strictly |
+| [Tri-Modal Dataset](https://github.com/radlab-sketch/trimodal-uav-det.git) | 2026 | RGB, LWIR, Event | 10K | 1 | Partially |
+| [DRTV30K](https://github.com/Vehicle-AHU/DRTV30K) | 2026 | RGB, LWIR | 30K | 9 | Partially |
 
 ## Note — Synthetic-Infrared Datasets
 

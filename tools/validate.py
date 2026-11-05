@@ -19,7 +19,7 @@ import generate
 ROOT = generate.ROOT
 TAG_VOCAB = {
     "adapter", "aerial", "alignment", "benchmark", "conflict-aware", "corruption",
-    "cross-attention", "decision-level", "degraded-modality", "detr", "distillation",
+    "cross-attention", "degraded-modality", "detr", "distillation",
     "dual-stream", "dynamic-fusion", "efficiency", "ensemble", "evidential",
     "expert-routing", "foundation-model", "frequency-domain", "image-fusion",
     "lidar-camera", "mamba", "missing-modality", "modality-imbalance",
@@ -73,6 +73,10 @@ def main():
     titles = [r["title"] for r in rows]
     if len(titles) != len(set(titles)):
         errors.append("duplicate titles in papers.csv")
+    if rows and "paper_id" in rows[0]:
+        pids = [r["paper_id"] for r in rows]
+        if len(pids) != len(set(pids)):
+            errors.append("duplicate paper_id in papers.csv")
     for i, r in enumerate(rows, 2):
         for f in REQUIRED:
             if not r.get(f, "").strip():
@@ -94,6 +98,23 @@ def main():
         for t in [x.strip() for x in r["tags"].split(";") if x.strip()]:
             if t not in TAG_VOCAB:
                 errors.append(f"row {i} ({r['title'][:30]}): tag not in vocabulary: '{t}'")
+        if "paper_id" in r:
+            if not re.fullmatch(r"[a-z0-9]+", r["paper_id"] or ""):
+                errors.append(f"row {i}: malformed paper_id '{r['paper_id']}'")
+            if r["fusion_level"] not in ("pixel", "feature", "decision", "na"):
+                errors.append(f"row {i}: illegal fusion_level '{r['fusion_level']}'")
+            if r.get("scope") not in ("Core", "Related", "Reference"):
+                errors.append(f"row {i}: illegal scope '{r.get('scope')}'")
+            arch = [x.strip() for x in r["architecture"].split(";") if x.strip()]
+            if not arch or any(a not in ("CNN", "YOLO", "Transformer", "DETR", "Mamba", "Other", "na") for a in arch):
+                errors.append(f"row {i}: illegal architecture '{r['architecture']}'")
+            if "na" in arch and len(arch) > 1:
+                errors.append(f"row {i}: architecture 'na' must stand alone")
+            for m in [x.strip() for x in r["mechanisms"].split(";") if x.strip()]:
+                if m not in ("Attention", "Routing", "Quality-Aware", "Conflict-Aware",
+                             "Alignment", "Distillation", "Evidential", "Dynamic Fusion",
+                             "Negative Fusion", "Frequency-Domain"):
+                    errors.append(f"row {i}: illegal mechanism '{m}'")
         if not r["paper_link"].startswith("http"):
             warnings.append(f"row {i} ({r['title'][:40]}): paper_link is not a URL")
         if r["code_link"] and not r["code_link"].startswith("http"):
@@ -109,6 +130,41 @@ def main():
         vf, lf = venue_family(r["venue"]), link_family(r["paper_link"])
         if vf and lf and vf != lf:
             warnings.append(f"row {i} ({r['title'][:40]}): paper_link domain is {lf} but venue '{r['venue']}' is {vf} — link probably wrong")
+        if not r["venue"].startswith("arXiv") and \
+           not any(c in r["venue"] for c in generate.CONFERENCE_TOKENS) and \
+           not any(j in r["venue"] for j in generate.JOURNAL_TOKENS):
+            warnings.append(f"row {i} ({r['title'][:40]}): venue '{r['venue']}' is in neither BibTeX token list — defaults to @misc; classify it in tools/generate.py")
+    # datasets.csv / protocols.csv (REQ-06 structured sources, 2026-11-04)
+    try:
+        dsets = generate.load_datasets()
+    except FileNotFoundError:
+        errors.append("datasets.csv is missing")
+        dsets = []
+    dnames = [d["dataset"] for d in dsets]
+    if len(dnames) != len(set(dnames)):
+        errors.append("duplicate dataset names in datasets.csv")
+    for j, d in enumerate(dsets, 2):
+        for f in ("dataset", "section", "year", "modalities", "images_as_listed", "classes", "source"):
+            if not d.get(f, "").strip():
+                errors.append(f"datasets.csv row {j} ({d.get('dataset', '?')}): empty field '{f}'")
+        if d["section"] not in ("general", "aerial"):
+            errors.append(f"datasets.csv row {j}: illegal section '{d['section']}'")
+    BIG5 = {"KAIST", "LLVIP", "M<sup>3</sup>FD", "FLIR-aligned", "DroneVehicle"}
+    for d in dsets:
+        if d["dataset"] in BIG5 and not (d["metrics"].strip() and d["protocol"].strip()):
+            errors.append(f"datasets.csv: priority dataset {d['dataset']} lacks metrics/protocol (REQ-06)")
+    protos = []
+    ppath = os.path.join(ROOT, "protocols.csv")
+    if not os.path.exists(ppath):
+        errors.append("protocols.csv is missing")
+    else:
+        with open(ppath, encoding="utf-8") as f:
+            protos = list(csv.DictReader(f))
+        for j, p in enumerate(protos, 2):
+            for f in ("protocol", "source_paper", "datasets", "degradation_types", "severity", "scope", "metrics"):
+                if not p.get(f, "").strip():
+                    errors.append(f"protocols.csv row {j}: empty field '{f}'")
+    print(f"datasets.csv: {len(dsets)} datasets; protocols.csv: {len(protos)} protocols")
     # generated files up to date?
     fresh = generate.build_all()
     for name, text in fresh.items():

@@ -10,6 +10,7 @@ import csv, re, os, sys
 from collections import OrderedDict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATASETS_CSV = os.path.join(ROOT, "datasets.csv")
 
 CORE_SECTIONS = [
     ("Surveys & Benchmarks", [None]),
@@ -18,13 +19,13 @@ CORE_SECTIONS = [
         "Attention, Transformers & Foundation Models",
         "Dual-Stream CNN & YOLO-Based Detectors",
         "State-Space Models (Mamba)",
-        "Quality- & Conflict-Aware Fusion",
     ]),
-    ("Decision-Level & Evidential Fusion", [None]),
+    ("Decision-Level Fusion", [None]),
 ]
 APPENDIX_SECTIONS = [
+    "Surveys (General Multimodal)",
+    "Benchmarks & Evaluation Studies",
     "Robust & Dynamic Fusion (General Multimodal)",
-    "Corruption Robustness Benchmarks (Driving / 3D)",
     "Modality Imbalance & Missing-Modality Learning (General)",
     "Test-Time Adaptation, Intervention & Amortized Optimization",
 ]
@@ -37,6 +38,43 @@ SRC_NOTE = ("Dataset statistics below are compiled from the datasets' official p
 def load_rows(root=ROOT):
     with open(os.path.join(root, "papers.csv"), encoding="utf-8") as f:
         return list(csv.DictReader(f))
+
+
+def load_datasets(root=ROOT):
+    with open(os.path.join(root, "datasets.csv"), encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+def dataset_table_lines(root, section):
+    rows = [d for d in load_datasets(root) if d["section"] == section]
+    if section == "general":
+        lines = ["| Dataset | Year | Modalities | Images | Classes |",
+                 "|---|---|---|---|---|"]
+        lines += [f"| [{d['dataset']}]({d['url']}) | {d['year']} | {d['modalities']} | {d['images_as_listed']} | {d['classes']} |" for d in rows]
+    else:
+        lines = ["| Dataset | Year | Modalities | Images | Classes | Alignment |",
+                 "|---|---|---|---|---|---|"]
+        lines += [f"| [{d['dataset']}]({d['url']}) | {d['year']} | {d['modalities']} | {d['images_as_listed']} | {d['classes']} | {d['alignment']} |" for d in rows]
+    return lines
+
+
+def build_datasets_md(root=ROOT):
+    """datasets.md with its two tables regenerated from datasets.csv (the
+    structured source since the REQ-06 migration, 2026-11-04); the prose
+    sections (synthetic-IR note, KAIST tools, robustness benchmarks) are
+    preserved verbatim."""
+    text = open(os.path.join(root, "datasets.md"), encoding="utf-8").read()
+    for marker, section in (("## General & Pedestrian Detection", "general"),
+                            ("## Aerial / UAV Object Detection", "aerial")):
+        lines = text.splitlines()
+        hi = next(i for i, ln in enumerate(lines) if ln.startswith(marker))
+        start = next(i for i in range(hi, len(lines)) if lines[i].startswith("|"))
+        end = start
+        while end < len(lines) and lines[end].startswith("|"):
+            end += 1
+        lines[start:end] = dataset_table_lines(root, section)
+        text = "\n".join(lines) + "\n"
+    return text
 
 
 def sort_key(r):
@@ -89,8 +127,8 @@ def group_appendix(rows):
     return groups
 
 
-def build_readme(rows, root=ROOT):
-    ds = open(os.path.join(root, "datasets.md"), encoding="utf-8").read()
+def build_readme(rows, root=ROOT, ds_text=None):
+    ds = ds_text if ds_text is not None else open(os.path.join(root, "datasets.md"), encoding="utf-8").read()
     ped = table_after(ds, "## General & Pedestrian Detection")
     aer = table_after(ds, "## Aerial / UAV Object Detection")
     n_core = sum(1 for r in rows if r["list"] == "core")
@@ -102,6 +140,7 @@ def build_readme(rows, root=ROOT):
          "**How this list is organised — one axis only.** Papers in the main list are RGBT detection papers, classified by *technical route*: the level at which the two modalities are fused (pixel → feature → decision), with architecture families as subsections of feature-level fusion. Challenges such as misalignment, degradation, or missing modalities are **tags** (shown in italics, and a column in papers.csv), not sections — so every paper has exactly one home. Work that is not RGBT detection but transfers to it (general multimodal fusion, imbalance/missing-modality learning, test-time methods, driving robustness) lives in a separate Appendix, clearly marked, instead of being mixed into the main list.", "",
          "**Single source of truth.** The paper list lives in [papers.csv](papers.csv); README.md, bibliography.md and references.bib are generated from it by [tools/generate.py](tools/generate.py) and checked by tools/validate.py. Edit the CSV, never the generated files.", "",
          "## News", "",
+         "- [2026-11-04] Classification audit and repair (see [CLASSIFICATION.md](CLASSIFICATION.md)): the single-axis rule is now enforced in the data, not just stated. The Quality- & Conflict-Aware subsection was dissolved into the architecture subsections (quality/conflict mechanisms are tags again); Decision-Level Fusion holds only true decision-level fusion (the evidential CNN fusions moved to feature level); WiSE-OD moved to Surveys & Benchmarks; the appendix was regrouped by contribution type (surveys / benchmarks & evaluation / general methods / test-time paradigms).",
          "- [2026-10-26] Tooling: papers.csv is now the single source of truth — README, bibliography and BibTeX are generated and validated automatically. Tag vocabulary consolidated.",
          "- [2026-10-25] Reclassified by technical route (fusion level + architecture family), with challenge tags and a separate appendix for non-RGBT related work. 42 papers: 21 core RGBT detection, 21 appendix.",
          "- [2026-10-25] Initial general, detection-only structure: datasets first, themed paper list, structured data files (CSV / BibTeX), detailed bibliography, learning roadmap.", "",
@@ -110,7 +149,7 @@ def build_readme(rows, root=ROOT):
          "2. [Surveys & Benchmarks](#surveys--benchmarks)",
          "3. [Pixel-Level Fusion for Detection](#pixel-level-fusion-for-detection)",
          "4. [Feature-Level Fusion](#feature-level-fusion)",
-         "5. [Decision-Level & Evidential Fusion](#decision-level--evidential-fusion)",
+         "5. [Decision-Level Fusion](#decision-level-fusion)",
          "6. [Appendix — Related Work Beyond RGBT Detection](#appendix--related-work-beyond-rgbt-detection)",
          "7. [Repository Files](#repository-files)",
          "8. [Adding an Entry](#adding-an-entry)",
@@ -136,7 +175,10 @@ def build_readme(rows, root=ROOT):
         L.append("")
     L += ["## Repository Files", "",
           "- [papers.csv](papers.csv) — **the single source of truth**: section, subsection, tags, links, DOI, contribution, notes",
-          "- [datasets.md](datasets.md) — dataset tables, KAIST tools, and robustness benchmarks (hand-maintained)",
+          "- [CLASSIFICATION.md](CLASSIFICATION.md) — the classification rules: one axis (fusion stage, then architecture family), mechanisms as tags, appendix grouped by contribution type",
+          "- [datasets.md](datasets.md) — dataset tables (generated from datasets.csv), KAIST tools, and robustness benchmarks",
+          "- [datasets.csv](datasets.csv) — the structured dataset source (REQ-06): modalities, pair counts, splits, metrics, protocols per dataset",
+          "- [protocols.csv](protocols.csv) — robustness evaluation protocols: degradation types, severities, single- vs dual-modality scope, metrics",
           "- [bibliography.md](bibliography.md) — generated detailed table (contribution and notes), same classification as this README",
           "- [references.bib](references.bib) — generated BibTeX for all entries",
           "- [learning-roadmap.md](learning-roadmap.md) — a staged reading path through this list (stages 0–6); a reading order, separate from the classification above",
@@ -189,14 +231,39 @@ def bib_key(r, seen):
     return k
 
 
+CONFERENCE_TOKENS = ["CVPR", "ICCV", "ECCV", "ACM MM", "ICML", "ICLR", "NeurIPS",
+                     "AAAI", "WACV", "BMVC", "ICPR", "ICRA", "IJCAI", "ICIP", "ICME",
+                     "IEEE IV"]
+JOURNAL_TOKENS = ["IEEE T", "IEEE RA-L", "Information Fusion", "Pattern Recognition",
+                  "TMLR", "Neurocomputing", "Expert Systems with Applications",
+                  "Image and Vision Computing"]
+
+
+def venue_type(venue):
+    """BibTeX entry type for a venue string (REQ-09 fix, 2026-11-04).
+
+    The old substring heuristic typed every IEEE venue as a journal (wrong
+    for IEEE IV) and missed Information Fusion / BMVC / ICRA / IJCAI
+    entirely (@misc). Classification is now by explicit token lists;
+    arXiv-only venues stay @misc (preprint). validate.py warns on venues
+    that match neither list, so new venues are classified consciously.
+    """
+    if venue.startswith("arXiv"):
+        return "misc"
+    if any(c in venue for c in CONFERENCE_TOKENS):
+        return "inproceedings"
+    if any(j in venue for j in JOURNAL_TOKENS):
+        return "article"
+    return "misc"
+
+
 def build_bib(rows):
     ordered = [r for _, items in group_core(rows).items() for r in items] + \
               [r for _, items in group_appendix(rows).items() for r in items]
     seen, entries = {}, []
     for r in ordered:
         venue = r["venue"]
-        typ = "article" if any(j in venue for j in ["IEEE", "Pattern Recognition", "TMLR"]) else \
-              ("inproceedings" if any(c in venue for c in ["CVPR", "ECCV", "ICML", "ICLR", "NeurIPS", "AAAI", "ACM MM", "ICCV", "ICPR", "WACV", "ICIP"]) else "misc")
+        typ = venue_type(venue)
         esc = lambda s: s.replace("{", "").replace("}", "")
         def ba(a):
             a = a.strip()
@@ -222,9 +289,11 @@ def build_bib(rows):
 
 def build_all(root=ROOT):
     rows = load_rows(root)
-    return {"README.md": build_readme(rows, root),
+    ds_md = build_datasets_md(root)
+    return {"README.md": build_readme(rows, root, ds_md),
             "bibliography.md": build_bibliography(rows),
-            "references.bib": build_bib(rows)}
+            "references.bib": build_bib(rows),
+            "datasets.md": ds_md}
 
 
 if __name__ == "__main__":

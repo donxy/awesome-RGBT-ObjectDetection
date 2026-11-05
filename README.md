@@ -13,6 +13,7 @@ RGBT (also written RGB-T, RGB-Thermal, multispectral, or visible–infrared) obj
 
 ## News
 
+- [2026-11-04] Classification audit and repair (see [CLASSIFICATION.md](CLASSIFICATION.md)): the single-axis rule is now enforced in the data, not just stated. The Quality- & Conflict-Aware subsection was dissolved into the architecture subsections (quality/conflict mechanisms are tags again); Decision-Level Fusion holds only true decision-level fusion (the evidential CNN fusions moved to feature level); WiSE-OD moved to Surveys & Benchmarks; the appendix was regrouped by contribution type (surveys / benchmarks & evaluation / general methods / test-time paradigms).
 - [2026-10-26] Tooling: papers.csv is now the single source of truth — README, bibliography and BibTeX are generated and validated automatically. Tag vocabulary consolidated.
 - [2026-10-25] Reclassified by technical route (fusion level + architecture family), with challenge tags and a separate appendix for non-RGBT related work. 42 papers: 21 core RGBT detection, 21 appendix.
 - [2026-10-25] Initial general, detection-only structure: datasets first, themed paper list, structured data files (CSV / BibTeX), detailed bibliography, learning roadmap.
@@ -23,7 +24,7 @@ RGBT (also written RGB-T, RGB-Thermal, multispectral, or visible–infrared) obj
 2. [Surveys & Benchmarks](#surveys--benchmarks)
 3. [Pixel-Level Fusion for Detection](#pixel-level-fusion-for-detection)
 4. [Feature-Level Fusion](#feature-level-fusion)
-5. [Decision-Level & Evidential Fusion](#decision-level--evidential-fusion)
+5. [Decision-Level Fusion](#decision-level-fusion)
 6. [Appendix — Related Work Beyond RGBT Detection](#appendix--related-work-beyond-rgbt-detection)
 7. [Repository Files](#repository-files)
 8. [Adding an Entry](#adding-an-entry)
@@ -33,47 +34,48 @@ RGBT (also written RGB-T, RGB-Thermal, multispectral, or visible–infrared) obj
 
 Full tables with tools and robustness benchmarks are in [datasets.md](datasets.md). Summary of the main benchmarks:
 
-|Dataset                        | Years |Modality     |Images| Classes|
-|-------------------------------|-------|-------------|------|--------|
-|[KAIST](https://soonminhwang.github.io/rgbt-ped-detection/)|2015|RGB, LWIR|95K|1|
-|[CVC-14](http://adas.cvc.uab.es/elektra/enigma-portfolio/cvc-14-visible-fir-day-night-pedestrian-sequence-dataset/)|2016|RGB, LWIR|8K|1|
-|[FLIR](https://www.flir.cn/oem/adas/adas-dataset-form/)|2018|RGB, LWIR|20K|5|
-|[FLIR-aligned](https://github.com/zonaqiu/FLIR-align)|2020|RGB, LWIR|5K|3|
-|[Utokyo](https://www.mi.t.u-tokyo.ac.jp/static/projects/mil_multispectral/)|2017|RGB, NIR, MIR, FIR|7K|5|
-|[LLVIP](https://bupt-ai-cz.github.io/LLVIP/)|2021| RGB, LWIR|15K|1|
-|[M<sup>3</sup>FD](https://github.com/dlut-dimt/TarDAL)|2022|RGB, LWIR|4K|6|
-|[Multi-Spectral Stereo](https://github.com/UkcheolShin/MS2-MultiSpectralStereoDataset)|2023|RGB, NIR, LWIR|195K|4|
-|[SMOD](https://www.kaggle.com/datasets/zizhaochen6/sjtu-multispectral-object-detection-smod-dataset)|2024|RGB, LWIR|8K|4|
-|[MMPD](https://github.com/jin-s13/MMPD-Dataset)|2024|RGB, LWIR|260K|1|
-|[InfraParis](https://ensta-u2is-ai.github.io/infraParis/)|2024| RGB, LWIR, Depth|7K|19|
-|[MFAD](https://github.com/hukefy/EI2Det)|2025|RGB, LWIR|12K|6|
-|[MMVIP](https://github.com/yyppptjr/MMVIP)|2026|RGB, LWIR|128K|2|
-|[RGBT-Ground](https://github.com/crazyxiaoxi/RGBTVG)|2026|RGB, LWIR|40K|5|
+| Dataset | Year | Modalities | Images | Classes |
+|---|---|---|---|---|
+| [KAIST](https://soonminhwang.github.io/rgbt-ped-detection/) | 2015 | RGB, LWIR | 95K | 1 |
+| [CVC-14](http://adas.cvc.uab.es/elektra/enigma-portfolio/cvc-14-visible-fir-day-night-pedestrian-sequence-dataset/) | 2016 | RGB, LWIR | 8K | 1 |
+| [FLIR](https://www.flir.cn/oem/adas/adas-dataset-form/) | 2018 | RGB, LWIR | 20K | 5 |
+| [FLIR-aligned](https://github.com/zonaqiu/FLIR-align) | 2020 | RGB, LWIR | 5K | 3 |
+| [Utokyo](https://www.mi.t.u-tokyo.ac.jp/static/projects/mil_multispectral/) | 2017 | RGB, NIR, MIR, FIR | 7K | 5 |
+| [LLVIP](https://bupt-ai-cz.github.io/LLVIP/) | 2021 | RGB, LWIR | 15K | 1 |
+| [M<sup>3</sup>FD](https://github.com/dlut-dimt/TarDAL) | 2022 | RGB, LWIR | 4K | 6 |
+| [Multi-Spectral Stereo](https://github.com/UkcheolShin/MS2-MultiSpectralStereoDataset) | 2023 | RGB, NIR, LWIR | 195K | 4 |
+| [SMOD](https://www.kaggle.com/datasets/zizhaochen6/sjtu-multispectral-object-detection-smod-dataset) | 2024 | RGB, LWIR | 8K | 4 |
+| [MMPD](https://github.com/jin-s13/MMPD-Dataset) | 2024 | RGB, LWIR | 260K | 1 |
+| [InfraParis](https://ensta-u2is-ai.github.io/infraParis/) | 2024 | RGB, LWIR, Depth | 7K | 19 |
+| [MFAD](https://github.com/hukefy/EI2Det) | 2025 | RGB, LWIR | 12K | 6 |
+| [MMVIP](https://github.com/yyppptjr/MMVIP) | 2026 | RGB, LWIR | 128K | 2 |
+| [RGBT-Ground](https://github.com/crazyxiaoxi/RGBTVG) | 2026 | RGB, LWIR | 40K | 5 |
 
-|Dataset                        | Years |Modality     |Images| Classes|Alignment|
-|-------------------------------|-------|-------------|------|--------|---------|
-|[DroneVehicle](https://github.com/VisDrone/DroneVehicle)|2021|RGB, LWIR|56K|5|Partially|
-|[VEDAI](https://downloads.greyc.fr/vedai/)|2014|RGB, NIR|1K|9|Strictly|
-|[NII-CU](https://www.nii-cu-multispectral.org/)|2022|RGB, LWIR|5K|1|Strictly|
-|[DVTOD](https://github.com/VDT-2048/DVTOD)|2024|RGB, LWIR|2K|3|Misaligned|
-|[VTSaR](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10833840)|2024|RGB, LWIR|40K|1|Strictly|
-|[RGBT-Tiny](https://github.com/XinyiYing/RGBT-Tiny)|2025|RGB, LWIR|93K|7|Partially|
-|[ATR-UMOD](https://github.com/supercpy/ATR-UMOD)|2025|RGB, LWIR|13K|11|Partially|
-|[MODA](https://github.com/shuaihao-han/MODA)|2026|RGB, NIR|13K|8|Strictly|
-|[Tri-Modal Dataset](https://github.com/radlab-sketch/trimodal-uav-det.git)|2026|RGB, LWIR, Event|10K|1|Partially|
-|[DRTV30K](https://github.com/Vehicle-AHU/DRTV30K)|2026|RGB, LWIR|30K|9|Partially|
+| Dataset | Year | Modalities | Images | Classes | Alignment |
+|---|---|---|---|---|---|
+| [DroneVehicle](https://github.com/VisDrone/DroneVehicle) | 2021 | RGB, LWIR | 56K | 5 | Partially |
+| [VEDAI](https://downloads.greyc.fr/vedai/) | 2014 | RGB, NIR | 1K | 9 | Strictly |
+| [NII-CU](https://www.nii-cu-multispectral.org/) | 2022 | RGB, LWIR | 5K | 1 | Strictly |
+| [DVTOD](https://github.com/VDT-2048/DVTOD) | 2024 | RGB, LWIR | 2K | 3 | Misaligned |
+| [VTSaR](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10833840) | 2024 | RGB, LWIR | 40K | 1 | Strictly |
+| [RGBT-Tiny](https://github.com/XinyiYing/RGBT-Tiny) | 2025 | RGB, LWIR | 93K | 7 | Partially |
+| [ATR-UMOD](https://github.com/supercpy/ATR-UMOD) | 2025 | RGB, LWIR | 13K | 11 | Partially |
+| [MODA](https://github.com/shuaihao-han/MODA) | 2026 | RGB, NIR | 13K | 8 | Strictly |
+| [Tri-Modal Dataset](https://github.com/radlab-sketch/trimodal-uav-det.git) | 2026 | RGB, LWIR, Event | 10K | 1 | Partially |
+| [DRTV30K](https://github.com/Vehicle-AHU/DRTV30K) | 2026 | RGB, LWIR | 30K | 9 | Partially |
 
 > Dataset statistics below are compiled from the datasets' official pages and the public list [Awesome-RGBT-Fusion](https://github.com/yuanmaoxun/Awesome-RGBT-Fusion) (accessed 2026-10-25); always confirm numbers on the official page before citing them.
 
 ## Surveys & Benchmarks
 
 1. UAV-CB: A Complex-Background RGB-T Dataset and Local Frequency Bridge Network for UAV Detection, CVPR 2026, Huang et al. [[Paper](https://arxiv.org/abs/2603.17492)] — *benchmark; aerial; frequency-domain*
-2. Fusion Meets Diverse Conditions: A High-diversity Benchmark and Baseline for UAV-based Multimodal Object Detection with Condition Cues, ICCV 2025, Chen et al. [[Paper](https://openaccess.thecvf.com/content/ICCV2025/papers/Chen_Fusion_Meets_Diverse_Conditions_A_High-diversity_Benchmark_and_Baseline_for_ICCV_2025_paper.pdf)] — *benchmark; aerial; degraded-modality*
-3. Infrared and Visible Image Fusion: From Data Compatibility to Task Adaption, IEEE TPAMI 2025, Liu, Wu, Liu, Wang, Jiang, Ma, Zhong, Fan, Liu [[Paper](https://arxiv.org/abs/2501.10761)] — *survey*
-4. Visible-Thermal Tiny Object Detection: A Benchmark Dataset and Baselines (RGBT-Tiny), IEEE TPAMI 2025, Ying et al. [[Paper](https://arxiv.org/abs/2406.14482)] [[Code](https://github.com/XinyiYing/RGBT-Tiny)] — *aerial*
-5. Misaligned Visible-Thermal Object Detection: A Drone-based Benchmark and Baseline (DVTOD), IEEE TIV 2024, Song et al. [[Paper](https://doi.org/10.1109/TIV.2024.3398429)] [[Code](https://github.com/VDT-2048/DVTOD)] — *benchmark; aerial; alignment*
-6. Optimizing Multispectral Object Detection: A Bag of Tricks and Comprehensive Benchmarks, arXiv 2024, Zhou, Cheng, Fang, Zhang, Yan, Jia, Xu, Wang, Cao [[Paper](https://arxiv.org/abs/2411.18288)] — *benchmark*
-7. When Pedestrian Detection Meets Multi-Modal Learning: Generalist Model and Benchmark Dataset (MMPedestron), ECCV 2024, Zhang et al. [[Paper](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/06487.pdf)] [[Code](https://github.com/BubblyYi/MMPedestron)] — *benchmark; pedestrian; foundation-model*
+2. WiSE-OD: Benchmarking Robustness in Infrared Object Detection, WACV 2026, Medeiros, Belal, Aminbeidokhti, Granger, Pedersoli [[Paper](https://arxiv.org/abs/2507.18925)] [[Code](https://github.com/heitorrapela/wiseod)] — *degraded-modality; benchmark; thermal-only-inference*
+3. Fusion Meets Diverse Conditions: A High-diversity Benchmark and Baseline for UAV-based Multimodal Object Detection with Condition Cues, ICCV 2025, Chen et al. [[Paper](https://openaccess.thecvf.com/content/ICCV2025/papers/Chen_Fusion_Meets_Diverse_Conditions_A_High-diversity_Benchmark_and_Baseline_for_ICCV_2025_paper.pdf)] — *benchmark; aerial; degraded-modality*
+4. Infrared and Visible Image Fusion: From Data Compatibility to Task Adaption, IEEE TPAMI 2025, Liu, Wu, Liu, Wang, Jiang, Ma, Zhong, Fan, Liu [[Paper](https://arxiv.org/abs/2501.10761)] — *survey*
+5. Visible-Thermal Tiny Object Detection: A Benchmark Dataset and Baselines (RGBT-Tiny), IEEE TPAMI 2025, Ying et al. [[Paper](https://arxiv.org/abs/2406.14482)] [[Code](https://github.com/XinyiYing/RGBT-Tiny)] — *aerial; benchmark*
+6. Misaligned Visible-Thermal Object Detection: A Drone-based Benchmark and Baseline (DVTOD), IEEE TIV 2024, Song et al. [[Paper](https://doi.org/10.1109/TIV.2024.3398429)] [[Code](https://github.com/VDT-2048/DVTOD)] — *benchmark; aerial; alignment*
+7. Optimizing Multispectral Object Detection: A Bag of Tricks and Comprehensive Benchmarks, arXiv 2024, Zhou, Cheng, Fang, Zhang, Yan, Jia, Xu, Wang, Cao [[Paper](https://arxiv.org/abs/2411.18288)] — *benchmark*
+8. When Pedestrian Detection Meets Multi-Modal Learning: Generalist Model and Benchmark Dataset (MMPedestron), ECCV 2024, Zhang et al. [[Paper](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/06487.pdf)] [[Code](https://github.com/BubblyYi/MMPedestron)] — *benchmark; pedestrian; foundation-model*
 
 ## Pixel-Level Fusion for Detection
 
@@ -89,42 +91,61 @@ Full tables with tools and robustness benchmarks are in [datasets.md](datasets.m
 
 ### Attention, Transformers & Foundation Models
 
-1. DyFCLT: Dynamic Frequency-Decoupled Cross-Modal Learning Transformer for Multimodal Tiny Object Detection, CVPR 2026, Li, Dai, Li, Yao, Jiang, Zheng [[Paper](https://openaccess.thecvf.com/content/CVPR2026/papers/Li_DyFCLT_Dynamic_Frequency-Decoupled_Cross-Modal_Learning_Transformer_for_Multimodal_Tiny_Object_CVPR_2026_paper.pdf)] — *transformer; frequency-domain; aerial*
-2. Modality-Decoupled RGB-Thermal Object Detector via Query Fusion, arXiv 2026, Tian et al. [[Paper](https://arxiv.org/abs/2601.08458)] — *detr; transformer; dual-stream*
-3. Thermal-Det: Language-Guided Cross-Modal Distillation for Open-Vocabulary Thermal Object Detection, CVPR 2026, Ranasinghe et al. [[Paper](https://arxiv.org/abs/2605.10130)] — *foundation-model; distillation; thermal-only-inference*
-4. M-SpecGene: Generalized Foundation Model for RGBT Multispectral Vision, ICCV 2025, Zhou et al. [[Paper](https://openaccess.thecvf.com/content/ICCV2025/html/Zhou_M-SpecGene_Generalized_Foundation_Model_for_RGBT_Multispectral_Vision_ICCV_2025_paper.html)] [[Code](https://github.com/CalayZhou/M-SpecGene)] — *foundation-model*
-5. SAM-Guided Semantic Knowledge Fusion for Visible-Infrared Object Detection, ACM MM 2025, Li et al. [[Paper](https://dl.acm.org/doi/10.1145/3746027.3755718)] [[Code](https://github.com/liting1018/SemFusion)] — *foundation-model*
-6. Towards a Generalizable Fusion Architecture for Multimodal Object Detection, ICCV Workshops 2025, Berjawi, Dupas, Cérin [[Paper](https://arxiv.org/abs/2510.17078)] [[Code](https://github.com/jadberjawi/FMCAF)] — *cross-attention; frequency-domain*
-7. UniRGB-IR: A Unified Framework for Visible-Infrared Semantic Tasks via Adapter Tuning, ACM MM 2025, Yuan, Cui, Zhao, Wang, Fu, Yang, Wei [[Paper](https://arxiv.org/abs/2404.17360)] — *foundation-model; adapter*
-8. C2Former: Calibrated and Complementary Transformer, IEEE TGRS 2024, Yuan & Wei [[Paper](https://arxiv.org/abs/2306.16175)] [[Code](https://github.com/yuanmaoxun/C2Former)] — *alignment; cross-attention; transformer*
-9. CF-Deformable DETR: An End-to-End Alignment-Free Model for Weakly Aligned Visible-Infrared Object Detection, IJCAI 2024, Fu et al. [[Paper](https://www.ijcai.org/proceedings/2024/0084.pdf)] [[Code](https://github.com/116508/CF-Deformable-DETR)] — *detr; alignment; transformer*
-10. DAMSDet: Dynamic Adaptive Multispectral Detection Transformer with Competitive Query Selection and Adaptive Feature Fusion, ECCV 2024, Guo, Gao, Liu, Meng, Gao [[Paper](https://eccv.ecva.net/virtual/2024/poster/801)] [[Code](https://github.com/gjj45/DAMSDet)] — *transformer; detr*
-11. GM-DETR, CVPR Workshops 2024, Xiao, Meng, Wu, Xu, He, Li [[Paper](https://openaccess.thecvf.com/content/CVPR2024W/JRDB/papers/Xiao_GM-DETR_Generalized_Muiltispectral_DEtection_TRansformer_with_Efficient_Fusion_Encoder_for_CVPRW_2024_paper.pdf)] — *transformer; detr; efficiency*
-12. ICAFusion: Iterative Cross-Attention Guided Feature Fusion for Multispectral Object Detection, Pattern Recognition 2024, Shen, Chen, Liu, Zuo, Fan, Yang [[Paper](https://doi.org/10.1016/j.patcog.2023.109913)] [[Code](https://github.com/chanchanchan97/ICAFusion)] — *cross-attention*
-13. Improving RGB-Infrared Object Detection with Cascade Alignment-Guided Transformer (CAGT), Information Fusion 2024, Yuan, Shi, Wang, Wang, Wei [[Paper](https://doi.org/10.1016/j.inffus.2024.102246)] — *alignment; aerial; transformer; cross-attention*
-14. Cross-Modality Fusion Transformer (CFT), arXiv 2021, Fang, Han, Wang [[Paper](https://arxiv.org/abs/2111.00273)] — *cross-attention; transformer*
-15. Guided Attentive Feature Fusion for Multispectral Pedestrian Detection (GAFF), WACV 2021, Zhang, Fromont, Lefèvre, Avignon [[Paper](https://openaccess.thecvf.com/content/WACV2021/html/Zhang_Guided_Attentive_Feature_Fusion_for_Multispectral_Pedestrian_Detection_WACV_2021_paper.html)] — *pedestrian; cross-attention; efficiency*
-16. Cross-Modality Interactive Attention Network for Multispectral Pedestrian Detection (CIAN), Information Fusion 2019, Zhang et al. [[Paper](https://doi.org/10.1016/j.inffus.2018.09.015)] — *pedestrian; cross-attention*
+1. Bridging Multimodal Fusion and Expert Routing via Spectral Reliability Descriptors for Robust Object Detection, arXiv 2026, Wu [[Paper](https://arxiv.org/abs/2606.01173)] — *quality-aware; expert-routing; degraded-modality; aerial*
+2. Distribution-Aligned Multimodal Fusion for Robust Object Detection, CVPR 2026, Hao, Pu, Wang, She [[Paper](https://openaccess.thecvf.com/content/CVPR2026/papers/Hao_Distribution-Aligned_Multimodal_Fusion_for_Robust_Object_Detection_CVPR_2026_paper.pdf)] — *degraded-modality; quality-aware*
+3. DyFCLT: Dynamic Frequency-Decoupled Cross-Modal Learning Transformer for Multimodal Tiny Object Detection, CVPR 2026, Li, Dai, Li, Yao, Jiang, Zheng [[Paper](https://openaccess.thecvf.com/content/CVPR2026/papers/Li_DyFCLT_Dynamic_Frequency-Decoupled_Cross-Modal_Learning_Transformer_for_Multimodal_Tiny_Object_CVPR_2026_paper.pdf)] — *transformer; frequency-domain; aerial*
+4. Modality-Decoupled RGB-Thermal Object Detector via Query Fusion, arXiv 2026, Tian et al. [[Paper](https://arxiv.org/abs/2601.08458)] — *detr; transformer; dual-stream*
+5. Thermal-Det: Language-Guided Cross-Modal Distillation for Open-Vocabulary Thermal Object Detection, CVPR 2026, Ranasinghe et al. [[Paper](https://arxiv.org/abs/2605.10130)] — *foundation-model; distillation; thermal-only-inference*
+6. M-SpecGene: Generalized Foundation Model for RGBT Multispectral Vision, ICCV 2025, Zhou et al. [[Paper](https://openaccess.thecvf.com/content/ICCV2025/html/Zhou_M-SpecGene_Generalized_Foundation_Model_for_RGBT_Multispectral_Vision_ICCV_2025_paper.html)] [[Code](https://github.com/CalayZhou/M-SpecGene)] — *foundation-model*
+7. Mixed Patch Visible-Infrared Modality Agnostic Object Detection (MiPa), WACV 2025, Medeiros et al. [[Paper](https://openaccess.thecvf.com/content/WACV2025/html/Medeiros_Mixed_Patch_Visible-Infrared_Modality_Agnostic_Object_Detection_WACV_2025_paper.html)] [[Code](https://github.com/heitorrapela/MiPa)] — *missing-modality; modality-imbalance; transformer*
+8. SAM-Guided Semantic Knowledge Fusion for Visible-Infrared Object Detection, ACM MM 2025, Li et al. [[Paper](https://dl.acm.org/doi/10.1145/3746027.3755718)] [[Code](https://github.com/liting1018/SemFusion)] — *foundation-model*
+9. Towards a Generalizable Fusion Architecture for Multimodal Object Detection, ICCV Workshops 2025, Berjawi, Dupas, Cérin [[Paper](https://arxiv.org/abs/2510.17078)] [[Code](https://github.com/jadberjawi/FMCAF)] — *cross-attention; frequency-domain*
+10. UniRGB-IR: A Unified Framework for Visible-Infrared Semantic Tasks via Adapter Tuning, ACM MM 2025, Yuan, Cui, Zhao, Wang, Fu, Yang, Wei [[Paper](https://arxiv.org/abs/2404.17360)] — *foundation-model; adapter*
+11. C2Former: Calibrated and Complementary Transformer, IEEE TGRS 2024, Yuan & Wei [[Paper](https://arxiv.org/abs/2306.16175)] [[Code](https://github.com/yuanmaoxun/C2Former)] — *alignment; cross-attention; transformer*
+12. CF-Deformable DETR: An End-to-End Alignment-Free Model for Weakly Aligned Visible-Infrared Object Detection, IJCAI 2024, Fu et al. [[Paper](https://www.ijcai.org/proceedings/2024/0084.pdf)] [[Code](https://github.com/116508/CF-Deformable-DETR)] — *detr; alignment; transformer*
+13. DAMSDet: Dynamic Adaptive Multispectral Detection Transformer with Competitive Query Selection and Adaptive Feature Fusion, ECCV 2024, Guo, Gao, Liu, Meng, Gao [[Paper](https://eccv.ecva.net/virtual/2024/poster/801)] [[Code](https://github.com/gjj45/DAMSDet)] — *transformer; detr*
+14. GM-DETR, CVPR Workshops 2024, Xiao, Meng, Wu, Xu, He, Li [[Paper](https://openaccess.thecvf.com/content/CVPR2024W/JRDB/papers/Xiao_GM-DETR_Generalized_Muiltispectral_DEtection_TRansformer_with_Efficient_Fusion_Encoder_for_CVPRW_2024_paper.pdf)] — *transformer; detr; efficiency*
+15. ICAFusion: Iterative Cross-Attention Guided Feature Fusion for Multispectral Object Detection, Pattern Recognition 2024, Shen, Chen, Liu, Zuo, Fan, Yang [[Paper](https://doi.org/10.1016/j.patcog.2023.109913)] [[Code](https://github.com/chanchanchan97/ICAFusion)] — *cross-attention*
+16. Improving RGB-Infrared Object Detection with Cascade Alignment-Guided Transformer (CAGT), Information Fusion 2024, Yuan, Shi, Wang, Wang, Wei [[Paper](https://doi.org/10.1016/j.inffus.2024.102246)] — *alignment; aerial; transformer; cross-attention*
+17. Cross-Modality Fusion Transformer (CFT), arXiv 2021, Fang, Han, Wang [[Paper](https://arxiv.org/abs/2111.00273)] — *cross-attention; transformer*
+18. Guided Attentive Feature Fusion for Multispectral Pedestrian Detection (GAFF), WACV 2021, Zhang, Fromont, Lefèvre, Avignon [[Paper](https://openaccess.thecvf.com/content/WACV2021/html/Zhang_Guided_Attentive_Feature_Fusion_for_Multispectral_Pedestrian_Detection_WACV_2021_paper.html)] — *pedestrian; cross-attention; efficiency*
+19. Cross-Modality Interactive Attention Network for Multispectral Pedestrian Detection (CIAN), Information Fusion 2019, Zhang et al. [[Paper](https://doi.org/10.1016/j.inffus.2018.09.015)] — *pedestrian; cross-attention*
 
 ### Dual-Stream CNN & YOLO-Based Detectors
 
 1. Bridging Severe Cross-Modal Misalignment: End-to-End Visible-Infrared Object Detection via Explicit Feature-Domain Affine Registration, arXiv 2026, Ming et al. [[Paper](https://arxiv.org/abs/2608.10680)] — *alignment; aerial*
 2. Efficient RGB-T Object Detection via Sparse Cross-Modality Fusion, arXiv 2026, Tian et al. [[Paper](https://arxiv.org/abs/2606.30215)] — *efficiency*
 3. IRDFusion: Iterative Relation-map Difference Guided Feature Fusion for Multispectral Object Detection, Pattern Recognition 2026, Shen et al. [[Paper](https://doi.org/10.1016/j.patcog.2026.113189)] — *dual-stream*
-4. LER-YOLO: Reliability-Aware Expert Routing for Misaligned RGB-Infrared UAV Detection, arXiv 2026, Hou et al. [[Paper](https://arxiv.org/abs/2605.20667)] — *alignment; expert-routing; aerial; yolo*
-5. TFDet: Target-Aware Fusion for RGB-T Pedestrian Detection, IEEE TNNLS 2025, Zhang et al. [[Paper](https://arxiv.org/abs/2305.16580)] — *pedestrian; task-coupled*
-6. Weakly Aligned Feature Fusion for Multimodal Object Detection, IEEE TNNLS 2025, Zhang et al. [[Paper](https://doi.org/10.1109/TNNLS.2021.3105143)] — *alignment; dual-stream*
-7. YOLOv11-RGBT: Towards a Comprehensive Single-Stage Multispectral Object Detection Framework, arXiv 2025, Wan, Lu, Fang, Lang, Shu, Chen, Shen, Xu, Ye [[Paper](https://arxiv.org/abs/2506.14696)] [[Code](https://github.com/wandahangFY/YOLOv11-RGBT)] — *yolo; efficiency*
-8. DEYOLO: Dual-Feature-Enhancement YOLO for Cross-Modality Object Detection, ICPR 2024, Chen, Wang, Guo, Zhu, He, Liu, Yuan [[Paper](https://arxiv.org/abs/2412.04931)] — *yolo; dual-stream*
-9. LRAF-Net: Long-Range Attention Fusion Network for Visible–Infrared Object Detection, IEEE TNNLS 2024, Fu, Wang, Duan, Xiao, Dian, Li, Li [[Paper](https://doi.org/10.1109/TNNLS.2023.3266452)] — *dual-stream; modality-imbalance*
-10. Weakly Misalignment-free Adaptive Feature Alignment for UAVs-based Multimodal Object Detection (OAFA), CVPR 2024, Chen et al. [[Paper](https://openaccess.thecvf.com/content/CVPR2024/papers/Chen_Weakly_Misalignment-free_Adaptive_Feature_Alignment_for_UAVs-based_Multimodal_Object_Detection_CVPR_2024_paper.pdf)] — *alignment; aerial*
-11. BAANet: Learning Bi-Directional Adaptive Attention Gates for Multispectral Pedestrian Detection, ICRA 2022, Yang, Qian, Zhu, Wang, Yang [[Paper](https://arxiv.org/abs/2112.02277)] — *pedestrian; quality-aware*
-12. Learning a Dynamic Cross-Modal Network for Multispectral Pedestrian Detection (DCMNet), ACM MM 2022, Xie et al. [[Paper](https://doi.org/10.1145/3503161.3547895)] — *pedestrian; dynamic-fusion*
-13. Translation, Scale and Rotation: Cross-Modal Alignment Meets RGB-Infrared Vehicle Detection (TSFADet), ECCV 2022, Yuan, Wang, Wei [[Paper](https://arxiv.org/abs/2209.13801)] — *alignment; aerial*
-14. MLPD: Multi-Label Pedestrian Detector in Multispectral Domain, IEEE RA-L 2021, Kim et al. [[Paper](https://doi.org/10.1109/LRA.2021.3099870)] — *pedestrian; alignment*
-15. Weakly Aligned Cross-Modal Learning for Multispectral Pedestrian Detection (AR-CNN), ICCV 2019, Zhang et al. [[Paper](https://arxiv.org/abs/1901.02645)] [[Code](https://github.com/luzhang16/AR-CNN)] — *alignment; pedestrian*
-16. Multispectral Pedestrian Detection via Simultaneous Detection and Segmentation (MSDS-RCNN), BMVC 2018, Li, Song, Tong, Tang [[Paper](https://arxiv.org/abs/1808.04818)] — *pedestrian; dual-stream*
-17. Multispectral Deep Neural Networks for Pedestrian Detection (Halfway Fusion), BMVC 2016, Liu, Zhang, Wang, Metaxas [[Paper](https://arxiv.org/abs/1611.02644)] — *pedestrian; dual-stream*
+4. InfraNet: Quality-Aware RGB Guidance for Infrared Object Detection, ECCV 2026, Feng, Zhu, Yang, Xu, Ren, Yang, Liu, Zhang, Wang, Yang, Zhang [[Paper](https://eccv.ecva.net/virtual/2026/poster/3873)] — *quality-aware; missing-modality*
+5. LER-YOLO: Reliability-Aware Expert Routing for Misaligned RGB-Infrared UAV Detection, arXiv 2026, Hou et al. [[Paper](https://arxiv.org/abs/2605.20667)] — *alignment; expert-routing; aerial; yolo; quality-aware*
+6. EI²Det: Edge-Guided Illumination-Aware Interactive Learning for Visible-Infrared Object Detection, IEEE TCSVT 2025, Hu et al. [[Paper](https://doi.org/10.1109/TCSVT.2025.3539625)] [[Code](https://github.com/hukefy/EI2Det)] — *quality-aware*
+7. Efficient Multispectral Object Detection with Attentive Feature Aggregation Leveraging Zero-Shot Implicit Illumination Guidance, Information Fusion 2025, Xiong et al. [[Paper](https://doi.org/10.1016/j.inffus.2025.102939)] — *efficiency; quality-aware*
+8. Learning a Robust RGB-Thermal Detector for Extreme Modality Imbalance, Pattern Recognition Letters 2025, Tian, Yang, Zhu, Wang, He [[Paper](https://arxiv.org/abs/2505.22154)] — *degraded-modality; quality-aware; modality-imbalance*
+9. Removal and Selection: Improving RGB-Infrared Object Detection via Coarse-to-Fine Fusion, IEEE TITS 2025, Zhao, Yuan, Jiang, Wang, Wei [[Paper](https://arxiv.org/abs/2401.10731)] — *conflict-aware; quality-aware*
+10. Representation Space Constrained Learning with Modality Decoupling for Multimodal Object Detection, arXiv 2025, Shao, Shi [[Paper](https://arxiv.org/abs/2511.15433)] [[Code](https://github.com/yikangshao/RSC-MD)] — *negative-fusion; modality-imbalance*
+11. Rethinking Multi-modal Object Detection from the Perspective of Mono-Modality Feature Learning (M2D-LIF), ICCV 2025, Zhao et al. [[Paper](https://arxiv.org/abs/2503.11780)] [[Code](https://github.com/Zhao-Tian-yi/M2D-LIF)] — *modality-imbalance; distillation*
+12. TFDet: Target-Aware Fusion for RGB-T Pedestrian Detection, IEEE TNNLS 2025, Zhang et al. [[Paper](https://arxiv.org/abs/2305.16580)] — *pedestrian; task-coupled*
+13. Weakly Aligned Feature Fusion for Multimodal Object Detection, IEEE TNNLS 2025, Zhang et al. [[Paper](https://doi.org/10.1109/TNNLS.2021.3105143)] — *alignment; dual-stream*
+14. YOLOv11-RGBT: Towards a Comprehensive Single-Stage Multispectral Object Detection Framework, arXiv 2025, Wan, Lu, Fang, Lang, Shu, Chen, Shen, Xu, Ye [[Paper](https://arxiv.org/abs/2506.14696)] [[Code](https://github.com/wandahangFY/YOLOv11-RGBT)] — *yolo; efficiency*
+15. Causal Mode Multiplexer: A Novel Framework for Unbiased Multispectral Pedestrian Detection, CVPR 2024, Kim et al. [[Paper](https://arxiv.org/abs/2403.01300)] [[Code](https://github.com/ssbin0914/Causal-Mode-Multiplexer)] — *pedestrian; modality-imbalance*
+16. DEYOLO: Dual-Feature-Enhancement YOLO for Cross-Modality Object Detection, ICPR 2024, Chen, Wang, Guo, Zhu, He, Liu, Yuan [[Paper](https://arxiv.org/abs/2412.04931)] — *yolo; dual-stream*
+17. LRAF-Net: Long-Range Attention Fusion Network for Visible–Infrared Object Detection, IEEE TNNLS 2024, Fu, Wang, Duan, Xiao, Dian, Li, Li [[Paper](https://doi.org/10.1109/TNNLS.2023.3266452)] — *dual-stream; modality-imbalance*
+18. Multiscale Cross-modal Homogeneity Enhancement and Confidence-aware Fusion for Multispectral Pedestrian Detection, IEEE TMM 2024, Li et al. [[Paper](https://doi.org/10.1109/TMM.2023.3272471)] [[Code](https://github.com/RimXidian/MCHE-CF-for-Multispectral-Pedestrian-Detection)] — *pedestrian; quality-aware*
+19. Stabilizing Multispectral Pedestrian Detection with Evidential Hybrid Fusion, IEEE TCSVT 2024, Li, Zhang, Hu, Zhu, Fu, Chen [[Paper](https://doi.org/10.1109/TCSVT.2023.3306870)] — *evidential; pedestrian*
+20. Weakly Misalignment-free Adaptive Feature Alignment for UAVs-based Multimodal Object Detection (OAFA), CVPR 2024, Chen et al. [[Paper](https://openaccess.thecvf.com/content/CVPR2024/papers/Chen_Weakly_Misalignment-free_Adaptive_Feature_Alignment_for_UAVs-based_Multimodal_Object_Detection_CVPR_2024_paper.pdf)] — *alignment; aerial*
+21. CALNet (Cross-Modal Conflict-Aware Learning), ACM MM 2023, He, Tang, Zou, Zhang [[Paper](https://doi.org/10.1145/3581783.3612651)] [[Code](https://github.com/hexiao0275/CALNet-Dronevehicle)] — *conflict-aware; aerial*
+22. Confidence-Aware Fusion via Dempster–Shafer (CMPD), IEEE TMM 2023, Li, Zhang, Hu, Fu, Zhu [[Paper](https://ieeexplore.ieee.org/document/9739079)] — *evidential; pedestrian*
+23. BAANet: Learning Bi-Directional Adaptive Attention Gates for Multispectral Pedestrian Detection, ICRA 2022, Yang, Qian, Zhu, Wang, Yang [[Paper](https://arxiv.org/abs/2112.02277)] — *pedestrian; quality-aware*
+24. Drone-Based RGB-Infrared Cross-Modality Vehicle Detection via Uncertainty-Aware Learning (UA-CMDet), IEEE TCSVT 2022, Sun, Cao, Zhu, Hu [[Paper](https://doi.org/10.1109/TCSVT.2022.3168279)] [[Code](https://github.com/VisDrone/DroneVehicle)] — *aerial; quality-aware*
+25. Learning a Dynamic Cross-Modal Network for Multispectral Pedestrian Detection (DCMNet), ACM MM 2022, Xie et al. [[Paper](https://doi.org/10.1145/3503161.3547895)] — *pedestrian; dynamic-fusion*
+26. Translation, Scale and Rotation: Cross-Modal Alignment Meets RGB-Infrared Vehicle Detection (TSFADet), ECCV 2022, Yuan, Wang, Wei [[Paper](https://arxiv.org/abs/2209.13801)] — *alignment; aerial*
+27. MLPD: Multi-Label Pedestrian Detector in Multispectral Domain, IEEE RA-L 2021, Kim et al. [[Paper](https://doi.org/10.1109/LRA.2021.3099870)] — *pedestrian; alignment*
+28. Improving Multispectral Pedestrian Detection by Addressing Modality Imbalance Problems (MBNet), ECCV 2020, Zhou, Chen, Cao [[Paper](https://arxiv.org/abs/2008.03043)] [[Code](https://github.com/CalayZhou/MBNet)] — *modality-imbalance; pedestrian; alignment*
+29. Fusion of Multispectral Data Through Illumination-Aware Deep Neural Networks for Pedestrian Detection (IATDNN), Information Fusion 2019, Guan et al. [[Paper](https://arxiv.org/abs/1802.09972)] — *pedestrian; quality-aware*
+30. Illumination-Aware Faster R-CNN for Robust Multispectral Pedestrian Detection, Pattern Recognition 2019, Li, Song, Tong, Tang [[Paper](https://doi.org/10.1016/j.patcog.2018.08.005)] — *pedestrian; quality-aware*
+31. Weakly Aligned Cross-Modal Learning for Multispectral Pedestrian Detection (AR-CNN), ICCV 2019, Zhang et al. [[Paper](https://arxiv.org/abs/1901.02645)] [[Code](https://github.com/luzhang16/AR-CNN)] — *alignment; pedestrian*
+32. Multispectral Pedestrian Detection via Simultaneous Detection and Segmentation (MSDS-RCNN), BMVC 2018, Li, Song, Tong, Tang [[Paper](https://arxiv.org/abs/1808.04818)] — *pedestrian; dual-stream*
+33. Multispectral Deep Neural Networks for Pedestrian Detection (Halfway Fusion), BMVC 2016, Liu, Zhang, Wang, Metaxas [[Paper](https://arxiv.org/abs/1611.02644)] — *pedestrian; dual-stream*
 
 ### State-Space Models (Mamba)
 
@@ -135,65 +156,45 @@ Full tables with tools and robustness benchmarks are in [datasets.md](datasets.m
 5. WaveMamba: Wavelet-Driven Mamba Fusion for RGB-Infrared Object Detection, ICCV 2025, Zhu, Dong, Yang, Li, Yang, Ren, Zhu, Feng, Li, Lin, Wang, Luo, Zhang [[Paper](https://arxiv.org/abs/2507.18173)] [[Code](https://github.com/EhanDong/WaveMamba)] — *mamba; frequency-domain*
 6. Mask-Guided Mamba Fusion for Drone-based Visible-Infrared Vehicle Detection, IEEE TGRS 2024, Wang et al. [[Paper](https://doi.org/10.1109/TGRS.2024.3452550)] — *mamba; aerial*
 
-### Quality- & Conflict-Aware Fusion
+## Decision-Level Fusion
 
-1. Bridging Multimodal Fusion and Expert Routing via Spectral Reliability Descriptors for Robust Object Detection, arXiv 2026, Wu [[Paper](https://arxiv.org/abs/2606.01173)] — *quality-aware; expert-routing; degraded-modality; aerial*
-2. Distribution-Aligned Multimodal Fusion for Robust Object Detection, CVPR 2026, Hao, Pu, Wang, She [[Paper](https://openaccess.thecvf.com/content/CVPR2026/papers/Hao_Distribution-Aligned_Multimodal_Fusion_for_Robust_Object_Detection_CVPR_2026_paper.pdf)] — *degraded-modality; quality-aware*
-3. InfraNet: Quality-Aware RGB Guidance for Infrared Object Detection, ECCV 2026, Feng, Zhu, Yang, Xu, Ren, Yang, Liu, Zhang, Wang, Yang, Zhang [[Paper](https://eccv.ecva.net/virtual/2026/poster/3873)] — *quality-aware; missing-modality*
-4. WiSE-OD: Benchmarking Robustness in Infrared Object Detection, WACV 2026, Medeiros, Belal, Aminbeidokhti, Granger, Pedersoli [[Paper](https://arxiv.org/abs/2507.18925)] [[Code](https://github.com/heitorrapela/wiseod)] — *degraded-modality; benchmark; thermal-only-inference*
-5. EI²Det: Edge-Guided Illumination-Aware Interactive Learning for Visible-Infrared Object Detection, IEEE TCSVT 2025, Hu et al. [[Paper](https://doi.org/10.1109/TCSVT.2025.3539625)] [[Code](https://github.com/hukefy/EI2Det)] — *quality-aware*
-6. Efficient Multispectral Object Detection with Attentive Feature Aggregation Leveraging Zero-Shot Implicit Illumination Guidance, Information Fusion 2025, Xiong et al. [[Paper](https://doi.org/10.1016/j.inffus.2025.102939)] — *efficiency; quality-aware*
-7. Learning a Robust RGB-Thermal Detector for Extreme Modality Imbalance, Pattern Recognition Letters 2025, Tian, Yang, Zhu, Wang, He [[Paper](https://arxiv.org/abs/2505.22154)] — *degraded-modality; quality-aware; modality-imbalance*
-8. Mixed Patch Visible-Infrared Modality Agnostic Object Detection (MiPa), WACV 2025, Medeiros et al. [[Paper](https://openaccess.thecvf.com/content/WACV2025/html/Medeiros_Mixed_Patch_Visible-Infrared_Modality_Agnostic_Object_Detection_WACV_2025_paper.html)] [[Code](https://github.com/heitorrapela/MiPa)] — *missing-modality; modality-imbalance; transformer*
-9. Removal and Selection: Improving RGB-Infrared Object Detection via Coarse-to-Fine Fusion, IEEE TITS 2025, Zhao, Yuan, Jiang, Wang, Wei [[Paper](https://arxiv.org/abs/2401.10731)] — *conflict-aware; quality-aware*
-10. Representation Space Constrained Learning with Modality Decoupling for Multimodal Object Detection, arXiv 2025, Shao, Shi [[Paper](https://arxiv.org/abs/2511.15433)] [[Code](https://github.com/yikangshao/RSC-MD)] — *negative-fusion; modality-imbalance*
-11. Rethinking Multi-modal Object Detection from the Perspective of Mono-Modality Feature Learning (M2D-LIF), ICCV 2025, Zhao et al. [[Paper](https://arxiv.org/abs/2503.11780)] [[Code](https://github.com/Zhao-Tian-yi/M2D-LIF)] — *modality-imbalance; distillation*
-12. Causal Mode Multiplexer: A Novel Framework for Unbiased Multispectral Pedestrian Detection, CVPR 2024, Kim et al. [[Paper](https://arxiv.org/abs/2403.01300)] [[Code](https://github.com/ssbin0914/Causal-Mode-Multiplexer)] — *pedestrian; modality-imbalance*
-13. CALNet (Cross-Modal Conflict-Aware Learning), ACM MM 2023, He, Tang, Zou, Zhang [[Paper](https://doi.org/10.1145/3581783.3612651)] [[Code](https://github.com/hexiao0275/CALNet-Dronevehicle)] — *conflict-aware; aerial*
-14. Drone-Based RGB-Infrared Cross-Modality Vehicle Detection via Uncertainty-Aware Learning (UA-CMDet), IEEE TCSVT 2022, Sun, Cao, Zhu, Hu [[Paper](https://doi.org/10.1109/TCSVT.2022.3168279)] [[Code](https://github.com/VisDrone/DroneVehicle)] — *aerial; quality-aware*
-15. Improving Multispectral Pedestrian Detection by Addressing Modality Imbalance Problems (MBNet), ECCV 2020, Zhou, Chen, Cao [[Paper](https://arxiv.org/abs/2008.03043)] [[Code](https://github.com/CalayZhou/MBNet)] — *modality-imbalance; pedestrian; alignment*
-16. Fusion of Multispectral Data Through Illumination-Aware Deep Neural Networks for Pedestrian Detection (IATDNN), Information Fusion 2019, Guan et al. [[Paper](https://arxiv.org/abs/1802.09972)] — *pedestrian; quality-aware*
-
-## Decision-Level & Evidential Fusion
-
-1. Multiscale Cross-modal Homogeneity Enhancement and Confidence-aware Fusion for Multispectral Pedestrian Detection, IEEE TMM 2024, Li et al. [[Paper](https://doi.org/10.1109/TMM.2023.3272471)] [[Code](https://github.com/RimXidian/MCHE-CF-for-Multispectral-Pedestrian-Detection)] — *decision-level; pedestrian*
-2. Stabilizing Multispectral Pedestrian Detection with Evidential Hybrid Fusion, IEEE TCSVT 2024, Li, Zhang, Hu, Zhu, Fu, Chen [[Paper](https://doi.org/10.1109/TCSVT.2023.3306870)] — *evidential; pedestrian*
-3. Confidence-Aware Fusion via Dempster–Shafer (CMPD), IEEE TMM 2023, Li, Zhang, Hu, Fu, Zhu [[Paper](https://ieeexplore.ieee.org/document/9739079)] — *evidential; decision-level; pedestrian*
-4. Multimodal Object Detection via Probabilistic Ensembling, ECCV 2022, Chen, Shi, Ye, Mertz, Ramanan, Kong [[Paper](https://arxiv.org/abs/2104.02904)] — *missing-modality; decision-level; ensemble; pedestrian*
-5. Illumination-Aware Faster R-CNN for Robust Multispectral Pedestrian Detection, Pattern Recognition 2019, Li, Song, Tong, Tang [[Paper](https://doi.org/10.1016/j.patcog.2018.08.005)] — *pedestrian; quality-aware*
+1. Multimodal Object Detection via Probabilistic Ensembling, ECCV 2022, Chen, Shi, Ye, Mertz, Ramanan, Kong [[Paper](https://arxiv.org/abs/2104.02904)] — *missing-modality; ensemble; pedestrian*
 
 ## Appendix — Related Work Beyond RGBT Detection
 
 Not RGBT detection papers. They are collected because their methods or protocols transfer directly (quality-aware fusion, imbalance and missing-modality learning, corruption benchmarks, test-time intervention). They are deliberately kept out of the main list above.
 
-### Robust & Dynamic Fusion (General Multimodal)
+### Surveys (General Multimodal)
+
+1. Deep Multimodal Learning with Missing Modality: A Survey, TMLR 2026, Wu, Wang, Chen, Carneiro [[Paper](https://arxiv.org/abs/2409.07825)] — *survey; missing-modality*
+2. Multimodal Fusion on Low-quality Data: A Comprehensive Survey, arXiv 2024, Zhang, Wei, Han, Fu, Peng, Deng, Hu, Xu, Wen, Hu, Zhang [[Paper](https://arxiv.org/abs/2404.18947)] — *survey; degraded-modality; missing-modality*
+
+### Benchmarks & Evaluation Studies
 
 1. MODA: The First Challenging Benchmark for Multispectral Object Detection in Aerial Images, AAAI 2026, Han et al. [[Paper](https://arxiv.org/abs/2512.09489)] [[Code](https://github.com/shuaihao-han/MODA)] — *benchmark; aerial*
-2. SM3Det: A Unified Model for Multi-Modal Remote Sensing Object Detection, AAAI 2026, Li et al. [[Paper](https://arxiv.org/abs/2412.20665)] [[Code](https://github.com/zcablii/SM3Det)] — *aerial; expert-routing*
-3. Resilient Sensor Fusion Under Adverse Sensor Failures via Multi-Modal Expert Fusion, CVPR 2025, Park, Kim, Kim, Choi [[Paper](https://arxiv.org/abs/2503.19776)] — *expert-routing; degraded-modality; lidar-camera*
-4. Multimodal Fusion on Low-quality Data: A Comprehensive Survey, arXiv 2024, Zhang, Wei, Han, Fu, Peng, Deng, Hu, Xu, Wen, Hu, Zhang [[Paper](https://arxiv.org/abs/2404.18947)] — *survey; degraded-modality; missing-modality*
-5. Robust Multimodal 3D Object Detection via Modality-Agnostic Decoding and Proximity-based Modality Ensemble, arXiv 2024, Cha, Joo, Park, Lee, Kim, Kim [[Paper](https://arxiv.org/abs/2407.19156)] — *negative-fusion; degraded-modality*
-6. Dynamic Multimodal Fusion, CVPR Workshops 2023, Xue & Marculescu [[Paper](https://arxiv.org/abs/2204.00102)] — *dynamic-fusion; efficiency*
-7. Provable Dynamic Fusion for Low-Quality Multimodal Data (QMF), ICML 2023, Zhang, Wu, Zhang, Hu, Fu, Zhou, Peng [[Paper](https://arxiv.org/abs/2306.02050)] — *quality-aware; degraded-modality*
-8. Trusted Multi-View Classification (TMC), ICLR 2021, Han, Zhang, Fu, Zhou [[Paper](https://arxiv.org/abs/2102.02051)] — *evidential*
-
-### Corruption Robustness Benchmarks (Driving / 3D)
-
-1. Physical Adversarial Clothing Evades Visible-Thermal Detectors via Non-Overlapping RGB-T Pattern, CVPR 2026, Zhu, Zeng, Hu, Zhu, Hu [[Paper](https://openaccess.thecvf.com/content/CVPR2026/papers/Zhu_Physical_Adversarial_Clothing_Evades_Visible-Thermal_Detectors_via_Non-Overlapping_RGB-T_Pattern_CVPR_2026_paper.pdf)] [[Code](https://github.com/zxp555/RGBT-Clothing)] — *corruption*
-2. SB-BEVFusion: Enhancing the Robustness against Sensor Malfunction and Corruptions, arXiv (ICIP 2026) 2026, Essl, Moscati, Noman, Zaheer, Naseem, Nawaz, Schedl [[Paper](https://arxiv.org/abs/2605.11799)] — *degraded-modality; lidar-camera*
+2. Physical Adversarial Clothing Evades Visible-Thermal Detectors via Non-Overlapping RGB-T Pattern, CVPR 2026, Zhu, Zeng, Hu, Zhu, Hu [[Paper](https://openaccess.thecvf.com/content/CVPR2026/papers/Zhu_Physical_Adversarial_Clothing_Evades_Visible-Thermal_Detectors_via_Non-Overlapping_RGB-T_Pattern_CVPR_2026_paper.pdf)] [[Code](https://github.com/zxp555/RGBT-Clothing)] — *corruption*
 3. MultiCorrupt: A Multi-Modal Robustness Dataset and Benchmark of LiDAR-Camera Fusion for 3D Object Detection, IEEE IV 2024, Beemelmanns, Zhang, Geller, Eckstein [[Paper](https://arxiv.org/abs/2402.11677)] — *benchmark; corruption*
 4. Benchmarking Robustness of 3D Object Detection to Common Corruptions, CVPR 2023, Dong, Kang, Zhang, Zhu, Wang, Yang, Su, Wei, Zhu [[Paper](https://arxiv.org/abs/2303.11040)] — *benchmark; corruption*
 
+### Robust & Dynamic Fusion (General Multimodal)
+
+1. SB-BEVFusion: Enhancing the Robustness against Sensor Malfunction and Corruptions, arXiv (ICIP 2026) 2026, Essl, Moscati, Noman, Zaheer, Naseem, Nawaz, Schedl [[Paper](https://arxiv.org/abs/2605.11799)] — *degraded-modality; lidar-camera*
+2. SM3Det: A Unified Model for Multi-Modal Remote Sensing Object Detection, AAAI 2026, Li et al. [[Paper](https://arxiv.org/abs/2412.20665)] [[Code](https://github.com/zcablii/SM3Det)] — *aerial; expert-routing*
+3. Resilient Sensor Fusion Under Adverse Sensor Failures via Multi-Modal Expert Fusion, CVPR 2025, Park, Kim, Kim, Choi [[Paper](https://arxiv.org/abs/2503.19776)] — *expert-routing; degraded-modality; lidar-camera*
+4. Robust Multimodal 3D Object Detection via Modality-Agnostic Decoding and Proximity-based Modality Ensemble, arXiv 2024, Cha, Joo, Park, Lee, Kim, Kim [[Paper](https://arxiv.org/abs/2407.19156)] — *negative-fusion; degraded-modality*
+5. Dynamic Multimodal Fusion, CVPR Workshops 2023, Xue & Marculescu [[Paper](https://arxiv.org/abs/2204.00102)] — *dynamic-fusion; efficiency*
+6. Provable Dynamic Fusion for Low-Quality Multimodal Data (QMF), ICML 2023, Zhang, Wu, Zhang, Hu, Fu, Zhou, Peng [[Paper](https://arxiv.org/abs/2306.02050)] — *quality-aware; degraded-modality*
+7. Trusted Multi-View Classification (TMC), ICLR 2021, Han, Zhang, Fu, Zhou [[Paper](https://arxiv.org/abs/2102.02051)] — *evidential*
+
 ### Modality Imbalance & Missing-Modality Learning (General)
 
-1. Deep Multimodal Learning with Missing Modality: A Survey, TMLR 2026, Wu, Wang, Chen, Carneiro [[Paper](https://arxiv.org/abs/2409.07825)] — *survey; missing-modality*
-2. Contrastive Knowledge Distillation for Robust Multimodal Sentiment Analysis, arXiv 2024, Sang, Funakoshi, Okumura [[Paper](https://arxiv.org/abs/2410.08692)] — *missing-modality; distillation*
-3. MMPareto: Boosting Multimodal Learning with Innocent Unimodal Assistance, ICML 2024, Wei & Hu [[Paper](https://arxiv.org/abs/2405.17730)] — *modality-imbalance*
-4. ReconBoost: Boosting Can Achieve Modality Reconcilement, ICML 2024, Hua, Xu, Bao, Yang, Huang [[Paper](https://proceedings.mlr.press/v235/hua24a.html)] — *modality-imbalance*
-5. Multi-modal Learning with Missing Modality via Shared-Specific Feature Modelling, CVPR 2023, Wang, Chen, Ma, Avery, Hull, Carneiro [[Paper](https://arxiv.org/abs/2307.14126)] — *missing-modality*
-6. PMR: Prototypical Modal Rebalance, CVPR 2023, Fan, Xu, Wang, Wang, Guo [[Paper](https://doi.org/10.1109/CVPR52729.2023.01918)] — *modality-imbalance*
-7. Balanced Multimodal Learning via On-the-fly Gradient Modulation, CVPR (Oral) 2022, Peng, Wei, Deng, Wang, Hu [[Paper](https://arxiv.org/abs/2203.15332)] — *modality-imbalance*
-8. SMIL: Multimodal Learning with Severely Missing Modality, AAAI 2021, Ma, Ren, Zhao, Tulyakov, Wu, Peng [[Paper](https://arxiv.org/abs/2103.05677)] — *missing-modality*
+1. Contrastive Knowledge Distillation for Robust Multimodal Sentiment Analysis, arXiv 2024, Sang, Funakoshi, Okumura [[Paper](https://arxiv.org/abs/2410.08692)] — *missing-modality; distillation*
+2. MMPareto: Boosting Multimodal Learning with Innocent Unimodal Assistance, ICML 2024, Wei & Hu [[Paper](https://arxiv.org/abs/2405.17730)] — *modality-imbalance*
+3. ReconBoost: Boosting Can Achieve Modality Reconcilement, ICML 2024, Hua, Xu, Bao, Yang, Huang [[Paper](https://proceedings.mlr.press/v235/hua24a.html)] — *modality-imbalance*
+4. Multi-modal Learning with Missing Modality via Shared-Specific Feature Modelling, CVPR 2023, Wang, Chen, Ma, Avery, Hull, Carneiro [[Paper](https://arxiv.org/abs/2307.14126)] — *missing-modality*
+5. PMR: Prototypical Modal Rebalance, CVPR 2023, Fan, Xu, Wang, Wang, Guo [[Paper](https://doi.org/10.1109/CVPR52729.2023.01918)] — *modality-imbalance*
+6. Balanced Multimodal Learning via On-the-fly Gradient Modulation, CVPR (Oral) 2022, Peng, Wei, Deng, Wang, Hu [[Paper](https://arxiv.org/abs/2203.15332)] — *modality-imbalance*
+7. SMIL: Multimodal Learning with Severely Missing Modality, AAAI 2021, Ma, Ren, Zhao, Tulyakov, Wu, Peng [[Paper](https://arxiv.org/abs/2103.05677)] — *missing-modality*
 
 ### Test-Time Adaptation, Intervention & Amortized Optimization
 
@@ -209,7 +210,10 @@ Not RGBT detection papers. They are collected because their methods or protocols
 ## Repository Files
 
 - [papers.csv](papers.csv) — **the single source of truth**: section, subsection, tags, links, DOI, contribution, notes
-- [datasets.md](datasets.md) — dataset tables, KAIST tools, and robustness benchmarks (hand-maintained)
+- [CLASSIFICATION.md](CLASSIFICATION.md) — the classification rules: one axis (fusion stage, then architecture family), mechanisms as tags, appendix grouped by contribution type
+- [datasets.md](datasets.md) — dataset tables (generated from datasets.csv), KAIST tools, and robustness benchmarks
+- [datasets.csv](datasets.csv) — the structured dataset source (REQ-06): modalities, pair counts, splits, metrics, protocols per dataset
+- [protocols.csv](protocols.csv) — robustness evaluation protocols: degradation types, severities, single- vs dual-modality scope, metrics
 - [bibliography.md](bibliography.md) — generated detailed table (contribution and notes), same classification as this README
 - [references.bib](references.bib) — generated BibTeX for all entries
 - [learning-roadmap.md](learning-roadmap.md) — a staged reading path through this list (stages 0–6); a reading order, separate from the classification above

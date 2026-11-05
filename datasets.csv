@@ -1,0 +1,25 @@
+dataset,url,section,year,modalities,images_as_listed,count_unit,image_pairs,splits,classes,alignment,metrics,protocol,source
+KAIST,https://soonminhwang.github.io/rgbt-ped-detection/,general,2015,"RGB, LWIR",95K,pairs,95328,,1,,"LAMR (log-average miss rate over FPPI [1e-2, 1])",Community standard: Liu et al. improved test annotations; cleaned/improved training annotations by Li et al. and Zhang et al. (see KAIST Tools in datasets.md).,https://soonminhwang.github.io/rgbt-ped-detection/
+CVC-14,http://adas.cvc.uab.es/elektra/enigma-portfolio/cvc-14-visible-fir-day-night-pedestrian-sequence-dataset/,general,2016,"RGB, LWIR",8K,,,,1,,,,http://adas.cvc.uab.es/elektra/enigma-portfolio/cvc-14-visible-fir-day-night-pedestrian-sequence-dataset/
+FLIR,https://www.flir.cn/oem/adas/adas-dataset-form/,general,2018,"RGB, LWIR",20K,,,,5,,mAP50,Original FLIR pairs are not strictly aligned; detection work commonly evaluates on the cleaned aligned version (FLIR-aligned row).,https://www.flir.cn/oem/adas/adas-dataset-form/
+FLIR-aligned,https://github.com/zonaqiu/FLIR-align,general,2020,"RGB, LWIR",5K,pairs,5142,train 4129 pairs / test 1013 pairs,3,,mAP50; mAP@[.5:.95],Zhang et al. cleaned/aligned version of FLIR; detection usage typically 3 classes (person / car / bicycle).,https://github.com/zonaqiu/FLIR-align
+Utokyo,https://www.mi.t.u-tokyo.ac.jp/static/projects/mil_multispectral/,general,2017,"RGB, NIR, MIR, FIR",7K,,,,5,,,,https://www.mi.t.u-tokyo.ac.jp/static/projects/mil_multispectral/
+LLVIP,https://bupt-ai-cz.github.io/LLVIP/,general,2021,"RGB, LWIR",15K,pairs,15488,train 12025 pairs / test 3463 pairs,1,,mAP50; mAP@[.5:.95],"Official split; strictly aligned pairs, low-light pedestrian scenes (1280x1024).",https://bupt-ai-cz.github.io/LLVIP/
+M<sup>3</sup>FD,https://github.com/dlut-dimt/TarDAL,general,2022,"RGB, LWIR",4K,pairs,4200,,6,,mAP50; mAP@[.5:.95],Released with TarDAL; scene subsets Daytime / Overcast / Night / Challenge support natural-condition evaluation. Split as per the official TarDAL repository.,https://github.com/dlut-dimt/TarDAL
+Multi-Spectral Stereo,https://github.com/UkcheolShin/MS2-MultiSpectralStereoDataset,general,2023,"RGB, NIR, LWIR",195K,,,,4,,,,https://github.com/UkcheolShin/MS2-MultiSpectralStereoDataset
+SMOD,https://www.kaggle.com/datasets/zizhaochen6/sjtu-multispectral-object-detection-smod-dataset,general,2024,"RGB, LWIR",8K,,,,4,,,,https://www.kaggle.com/datasets/zizhaochen6/sjtu-multispectral-object-detection-smod-dataset
+MMPD,https://github.com/jin-s13/MMPD-Dataset,general,2024,"RGB, LWIR",260K,,,,1,,,,https://github.com/jin-s13/MMPD-Dataset
+InfraParis,https://ensta-u2is-ai.github.io/infraParis/,general,2024,"RGB, LWIR, Depth",7K,,,,19,,,,https://ensta-u2is-ai.github.io/infraParis/
+MFAD,https://github.com/hukefy/EI2Det,general,2025,"RGB, LWIR",12K,,,,6,,,,https://github.com/hukefy/EI2Det
+MMVIP,https://github.com/yyppptjr/MMVIP,general,2026,"RGB, LWIR",128K,,,,2,,,,https://github.com/yyppptjr/MMVIP
+RGBT-Ground,https://github.com/crazyxiaoxi/RGBTVG,general,2026,"RGB, LWIR",40K,,,,5,,,,https://github.com/crazyxiaoxi/RGBTVG
+DroneVehicle,https://github.com/VisDrone/DroneVehicle,aerial,2021,"RGB, LWIR",56K,pairs,28439,train 17990 pairs / val 1469 pairs / test 8980 pairs,5,Partially,"mAP50 (rotated boxes, OBB)",Official split; RGB and IR annotation sets differ per modality (targets may be labelled in only one modality).,https://github.com/VisDrone/DroneVehicle
+VEDAI,https://downloads.greyc.fr/vedai/,aerial,2014,"RGB, NIR",1K,,,,9,Strictly,,,https://downloads.greyc.fr/vedai/
+NII-CU,https://www.nii-cu-multispectral.org/,aerial,2022,"RGB, LWIR",5K,,,,1,Strictly,,,https://www.nii-cu-multispectral.org/
+DVTOD,https://github.com/VDT-2048/DVTOD,aerial,2024,"RGB, LWIR",2K,,,,3,Misaligned,,,https://github.com/VDT-2048/DVTOD
+VTSaR,https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10833840,aerial,2024,"RGB, LWIR",40K,,,,1,Strictly,,,https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10833840
+RGBT-Tiny,https://github.com/XinyiYing/RGBT-Tiny,aerial,2025,"RGB, LWIR",93K,,,,7,Partially,,,https://github.com/XinyiYing/RGBT-Tiny
+ATR-UMOD,https://github.com/supercpy/ATR-UMOD,aerial,2025,"RGB, LWIR",13K,,,,11,Partially,,,https://github.com/supercpy/ATR-UMOD
+MODA,https://github.com/shuaihao-han/MODA,aerial,2026,"RGB, NIR",13K,,,,8,Strictly,,,https://github.com/shuaihao-han/MODA
+Tri-Modal Dataset,https://github.com/radlab-sketch/trimodal-uav-det.git,aerial,2026,"RGB, LWIR, Event",10K,,,,1,Partially,,,https://github.com/radlab-sketch/trimodal-uav-det.git
+DRTV30K,https://github.com/Vehicle-AHU/DRTV30K,aerial,2026,"RGB, LWIR",30K,,,,9,Partially,,,https://github.com/Vehicle-AHU/DRTV30K
