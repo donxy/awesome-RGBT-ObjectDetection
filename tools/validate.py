@@ -165,6 +165,29 @@ def main():
                 if not p.get(f, "").strip():
                     errors.append(f"protocols.csv row {j}: empty field '{f}'")
     print(f"datasets.csv: {len(dsets)} datasets; protocols.csv: {len(protos)} protocols")
+    # compare_fields.csv (REQ-04 extraction, 2026-11-05): validate rows present;
+    # completeness to 102 rows is enforced at extraction close-out, not here.
+    cpath = os.path.join(ROOT, "compare_fields.csv")
+    if os.path.exists(cpath):
+        with open(cpath, encoding="utf-8") as f:
+            crows = list(csv.DictReader(f))
+        pidset = {r["paper_id"] for r in rows if "paper_id" in r}
+        seen_pid = set()
+        for j, c in enumerate(crows, 2):
+            if c["paper_id"] not in pidset:
+                errors.append(f"compare_fields.csv row {j}: unknown paper_id '{c['paper_id']}'")
+            if c["paper_id"] in seen_pid:
+                errors.append(f"compare_fields.csv row {j}: duplicate paper_id '{c['paper_id']}'")
+            seen_pid.add(c["paper_id"])
+            for col in ("quality_estimation", "suppression", "compensation", "robustness_evaluation"):
+                if c[col] not in ("Yes", "No", "Unknown"):
+                    errors.append(f"compare_fields.csv row {j}: illegal {col} '{c[col]}'")
+            for col in ("qe_evidence", "suppression_evidence", "compensation_evidence", "robustness_evidence"):
+                if not c[col].strip():
+                    errors.append(f"compare_fields.csv row {j}: empty {col} (evidence pointer required)")
+            if c["basis"] not in ("full-text", "abstract"):
+                errors.append(f"compare_fields.csv row {j}: illegal basis '{c['basis']}'")
+        print(f"compare_fields.csv: {len(crows)} rows extracted so far")
     # generated files up to date?
     fresh = generate.build_all()
     for name, text in fresh.items():

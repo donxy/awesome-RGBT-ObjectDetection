@@ -101,6 +101,27 @@ tags — the tree remains the classification of record:
 title word, the references.bib key base) assigned once and never reused
 or reassigned, independent of row order.
 
+Facet rulings (2026-11-06, from the REQ-04 extraction cross-check):
+
+- **QMF** (zhang2023provable) and **ReconBoost** (hua2024reconboost):
+  `fusion_level` corrected from `feature` to `decision`. Both are
+  appendix papers, so under the rule above their facet is judged by the
+  level at which they combine modalities: QMF weights the modalities'
+  final prediction scores by an energy-based uncertainty, and ReconBoost
+  sums the modalities' output scores unweighted at inference — both are
+  decision-level late fusion.
+- **MDQF** (tian2026modalitydecoupled) stays in Feature-Level Fusion
+  with `fusion_level = feature`, by ruling. Its two detectors are fully
+  independent and their features never meet; the only coupling is an
+  exchange of query/proposal sets between decoder stages. That coupling
+  sits *inside* the decoding pipeline, at the level of intermediate
+  representations, and each branch's later decoding is conditioned on
+  the other branch's hypotheses — it is not a post-hoc combination of
+  final outputs of the ProbEn kind, which is what Decision-Level
+  collects. The compare table records its fusion strategy verbatim as
+  decision-style query coupling, so the distinction stays visible in
+  the data.
+
 ## Scope tiers (REQ-02, approved 2026-11-04)
 
 Independent of the list placement above, every paper carries a `scope`
