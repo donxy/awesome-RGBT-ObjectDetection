@@ -31,7 +31,9 @@
     "须同时持有零样本与微调（或线性探测）两个检查点，受限部署中未必可行；固定 λ=0.5 并非处处最优，而作者拒绝在目标数据上调参，等于放弃了分腐化增益；插值会继承父模型灾难性失效（5 级对比度：微调 0.00 时插值仅 10.57/14.30，远低于线性探测的 51.53），是“继承失败”而非“治愈失败”；极端腐化（大雪、重模糊、极低亮度、低对比度，FLIR-C 最严重）下仍退化；基准是单模态红外迁移，无配对融合退化、无缺失模态协议；自适应 λ 只列为未来工作；主表实际只覆盖三个检测器（YOLOv8 仅出现在 M3FD 表），与“四个检测器”的说法有出入。"
    ]
   ],
-  "slug": "wise-od"
+  "slug": "wise-od",
+  "take_en": "Weight-space ensembling for OOD RGB-T detection; introduces LLVIP-C / FLIR-C.",
+  "req04_detail_en": "14 ImageNet-C/COCO-C-style digital corruptions (excluding glass blur) applied to the infrared test set, with LLVIP-C at fixed severity 5 and FLIR-C at fixed severity 2, plus severity curves; applied to single-stream infrared images only (single-modality transfer robustness, not paired fusion degradation); fog/night/rain/indoor in M3FD are natural OOD conditions (noted here only under B-strict); no real thermal faults (stripes/NUC/dead pixels/thermal saturation) constructed."
  },
  "Infrared and Visible Image Fusion: From Data Compatibility to Task Adaption": {
   "ord": 1,
@@ -64,7 +66,9 @@
     "局限",
     "（前三条为据全文核查的结构性局限，关键词检索与 §VI 逐节细读双重确认。）（1）问题空间里没有“模态缺失”，也没有“模态损坏”：missing、corrupt、dropout 全文零出现；综述的输入模型只有“完整成对、可能未对齐、可能被对抗扰动”的图像，§III.C“数据兼容”这一整维只含未对齐与对抗攻击两类输入完整性问题，测试时某一路传感器失效/损坏在这套分类学里没有格子。（2）“退化”从未成为评测变量，只以碎片形式出现：全文 degrad* 仅 4 处——Text-IF 在表 I 被标为 “degradation-aware and interactive”（正文 §III.A 仅一句带过，无专门小节、无机制展开）；§V.C 定性讨论中 fog/rain/strong light 是所选测试场景的固有属性（“the scene suffers from degradation”），非可控注入的腐化变量；§VI.A 把 “distortions and degradation” 括在物理对抗攻击的括号里（与数字攻击的参数扰动并列），即退化被构想为安全/攻击问题，不是传感器可靠性问题。§V 全部评测在干净基准图对上完成，无任何注噪/注模糊/降质协议。（3）从不与单模态比：表 V 的统一检测评测 40 行全是融合方法，没有 IR-only / VIS-only 对照行，“融合图检测是否优于直接拿较好的单模态训练检测器”在其协议内无法被回答；§V.B 的未对齐评测同样只比融合方法之间。（4）§VI 开放问题清单已逐节核完——A 未对齐/攻击数据的处理、B 基准建设（配准基准、更多高层任务、更多挑战场景）、C 更好的评价指标、D 轻量化设计、E 与更多任务结合——五条里没有一条是“融合相对单模态的下限/保证”，也没有一条涉及模态失效下的系统行为。（5）覆盖与口径：以 2018 年后学习式方法为限，传统方法只作背景；§V 融合质量用官方预训练模型 + 随机子集、检测/分割用重训，口径不一；表 V 存在上述 CoCoNet/IGNet 转录瑕疵；未对齐评测只用“轻微形变”且不用配准指标，强度与真实跨传感器错位的关系未讨论。"
    ]
-  ]
+  ],
+  "take_en": "Comprehensive IVIF survey organized around task adaptation.",
+  "req04_detail_en": "Only one controlled perturbation in its own evaluation: slight deformation applied on RoadScene/M3FD (magnitude not quantified, no registration metric, fusion image quality only); no noise injection / blur injection / degradation corruption protocol, no modality dropping; adversarial attacks covered only in the survey part (PAIFusion, one paper), not in its own experiments; fog/rain etc. are inherent attributes of the selected test scenes (noted here only under B-strict). (Merged ruling 2026-11-05: §7(c) requires quantified offsets; this evaluation's deformation was not quantified and assessed fusion image quality only, so not counted as Yes.)"
  },
  "Optimizing Multispectral Object Detection: A Bag of Tricks and Comprehensive Benchmarks": {
   "ord": 2,
@@ -97,7 +101,9 @@
     "局限",
     "（1）评测面窄：主基准只有三个数据集、单一检测任务；无分割/跟踪，无训一测一的跨数据集泛化；食谱是逐数据集事后挑选的，存在在测试集分布上选组合的嫌疑，迁移检验只部分回应（且 LLVIP 增益很小）。（2）无退化/缺失维度（全文核查）：没有任何损坏注入的测试协议，没有模态丢弃、置零或缺失测试，没有任何热成像传感器故障模型（条纹噪声、NUC 漂移、坏点、热饱和均未出现）；像素增广中的噪声注入/模糊/遮挡是训练期增广，不是测试腐化；低光实验是挑 500 张天然低光图做增广策略探针，传感器全程健康。其“鲁棒性”话语全部落在训练期分布覆盖上，与“测试时一路模态被损坏”的设定正交。（3）内部不一致（引用时须留意）：其一，重复次数正文称 20 次、表 II 与图 1 题注称 100 次，两处必有一误；其二，表 I 给的是逐模型各不相同的“最优超参”（总轮数 80–300），正文却又称统一配置（lr 0.01 / wd 1e-4 / dropout 0.5、最多 200 epoch）被“严格遵循”，何者实际执行未澄清；其三，图 1 热图的行标签 B+I(R+T) 出现两次且数值不同，未作任何区分说明。（4）对比口径留白：表 IV–VI 未注明既有框架数字的来源（统一复现抑或转引）；KAIST 标注版本未注明——以 IAF R-CNN 为例，其原文在改进标注口径下自报 All MR 15.73，此表作 15.55，两数接近但不等，口径无从核对；这组数字只宜作量级参考，不宜逐点引用。（5）公式包装与实现脱节：§III 用大段形式化公式铺陈像素级与决策级融合（含传感器噪声的高斯项、置信加权与分层融合的通用式），但实验中实际运行的实现是否即这些公式、公式中的可学习量如何训练，全文没有交代——公式更像综述式陈列，不能据以复现，也不构成任何理论保证。（6）成本与统计报告不对称：对自家对照给了标准差，对头条对比表 IV–VI 却只给单值；且全文无任何效率数字，一套号称“高效、易部署”的方案，读者无法判断它的算力代价。"
    ]
-  ]
+  ],
+  "take_en": "Standardized re-implementation/benchmark of 20+ RGB-T detectors.",
+  "req04_detail_en": "Includes a natural-condition probe: 500 natural low-light images selected for an augmentation strategy probe; also same-modality duplicated inputs (R+R / T+T) as controls; no corruption injection, modality dropping / zeroing, controlled misalignment or severity grading, no real sensor faults"
  },
  "Visible-Thermal Tiny Object Detection: A Benchmark Dataset and Baselines (RGBT-Tiny)": {
   "ord": 3,
@@ -130,7 +136,9 @@
     "局限",
     "（1）无退化/缺失评测（已核查全文与补充）：没有模态损坏、模态缺失、传感器故障的受控子集或协议；所谓极端条件是自然低光/不可见光照、遮挡与背景杂波，全部是场景级协变量，传感器始终健康，也没有干净–损坏配对可言。（2）采集不涉及真实传感器故障形态：条纹噪声、非均匀性（NUC）漂移、坏点、热饱和等热像仪故障在全文无建模、无评测；补充材料讨论失败案例时仅把「设备噪声（device noise）」列为复杂背景杂波的来源之一，没有协议、没有分档、没有数字。（3）对齐质量未量化：宣称精细对齐，但单应变换的固定景深限制使深度方向残差视差必然存在，全文未给任何像素级残差统计，弱对齐程度无法复现地报告；把本基准当「已对齐」引用时须带这一保留。（4）平台与视角单一：全部数据出自同一型无人机（DJI Mavic 2）的同一类双镜头模组、60–100 m 高度，视角以俯视/斜俯视航拍为主；跨平台、跨传感器、地面视角的泛化均未评测。场景多样性是真的，但那是内容多样性，不是设备多样性。（5）口径事故高发：SAFit 与 IoU 两套数字 × 可见光/热红外两套标注共四格并行存在，数值差距可达一倍以上（如 QFDet 31.8 vs 13.6），跨论文引用若不注明口径与标注集必然拼错表；算法总数在文内还有 23 / 30 / 32 三种说法。（6）划分与时序：只有 train/test 两分、无验证集，调参易直接碰测试集；标注带跟踪 ID 且官方另有跟踪扩展，但本基准评测是逐帧检测，时序信息只在标注补框（短时遮挡插值）里用过。（7）类别不均衡：bus、cyclist 等类别实例少，作者自陈其性能受训练偏置拖累；分档 AP 的小样本波动未给置信区间。"
    ]
-  ]
+  ],
+  "take_en": "RGBT-Tiny benchmark: 115 paired sequences, 93K frames, 1.2M annotations in 7 categories (over 81% of objects under 16x16 px), plus the SAFit evaluation measure and extensive baseline evaluations.",
+  "req04_detail_en": "No controlled subset or protocol for modality damage, missing or sensor faults; four illumination levels, occlusion and density are all natural scene covariates (natural conditions not counted), sensors remained healthy throughout collection; the duplicated-input control (VV / TT) set up is an input-substitution control to isolate fusion gain, not a degradation experiment; real faults such as stripe noise, NUC drift, dead pixels and thermal saturation are neither modeled nor evaluated."
  },
  "Fusion Meets Diverse Conditions: A High-diversity Benchmark and Baseline for UAV-based Multimodal Object Detection with Condition Cues": {
   "ord": 4,
@@ -163,7 +171,9 @@
     "局限",
     "作者自陈：(1) Foggy 档不是最优（32.6 < YOLOrs 33.2），作者归因于雾浓度和能见度不一致，提出未来需更细的雾分级；(2) 条件过多导致单档样本量不足、易过拟合，表 3 被迫合并条件；(3) 数据长尾（car 主导）。据原文事实指出（非作者原话）：（1）条件 ≠ 模态损伤。ATR-UMOD 的条件是采集时自然发生的环境变化：天气、光照、时间同时改变场景内容与两路成像，传感器本身始终正常工作。它没有对任何一路做受控干预（无同场景“干净 vs 损坏”配对），没有热成像故障模型（条纹噪声、NUC 漂移、坏点、热饱和皆无），也没有合成腐化。因此它能支撑“真实环境条件多样性”的评测，支撑不了“模态受损时融合是否安全”的评测。（2）损坏与缺失模态：两者都没有评测。全文无模态丢弃、无单路腐化、无缺失输入实验；PCDF 的结构也假设两路特征恒在（权重 softmax 恒正）。（3）无“融合不劣于更强单模态”的保证，且表 3 无法检验：逐条件表只列多模态方法，无单模态逐条件行，“在某条件下融合是否不如丢掉一路”从其表格无法回答；总表里五个融合方法低于最强 IR 单模态行只是跨架构旁证。（4）门控粒度是全图通道级、先验驱动：权重对整幅图空间共享，无法做区域级抑制；且权重来自“条件语义→可靠性”的统计关联（训练时由条件标注蒸馏），本质是场景先验而非对当前输入实际质量的测量——若某一路在“正常”条件标签下发生传感器故障，条件引导不会察觉。权重 softmax 恒在 (0,1)，结构上不存在把一路完全关断的通路。（5）条件标注是训练前提：SCPL 需要逐对 6 属性标注，迁移到无条件标注的数据集时只能用 PCD 的解耦近似，引导质量受解耦保真度上限约束；本文未做跨数据集评测，PCDF 的数字只在本数据集成立。（6）证据完整性：表 3 的合并规则、提示模板、τ 依据都在未随开放版提供的补充材料里；数据集构建用了单应+裁剪对齐但未量化残余失准，而该文又是“弱对齐”敏感的任务设定。"
    ]
-  ]
+  ],
+  "take_en": "Introduces ATR-UMOD, a UAV RGB-IR dataset with 11 categories and six per-pair condition attributes, plus the prompt-guided condition-aware dynamic fusion baseline PCDF.",
+  "req04_detail_en": "No controlled degradation experiments; Table 3 reports evaluation stratified by six real-captured natural-condition attributes (natural subsets, not counted); no sensor fault simulation, no real sensor faults."
  },
  "Misaligned Visible-Thermal Object Detection: A Drone-based Benchmark and Baseline (DVTOD)": {
   "ord": 5,
@@ -196,7 +206,9 @@
     "局限",
     "（1）失准未量化、未分级（已核查全文）：唯一的失准表征是“中间小、两侧大”一句定性描述，没有偏移统计、没有严重度分档、没有受控注入协议。与 AR-CNN 在 KAIST 上合成 [−6,6]² 像素偏移并量测退化曲线、TSFADet 至少给出 DroneVehicle 自然偏差统计（>20% 真值框偏移 >3 px / >3°）相比，DVTOD 作为“失准基准”反而是三者中对失准刻画最弱的一个：它提供了失准的数据，却没提供失准的量尺，后来者无法按失准程度分层比较，也无法复现其失准强度。（2）无退化/缺失/故障评测（已核查全文）：没有模态丢弃、没有内容腐化注入、没有干净–损坏配对、没有热像仪故障模型（条纹/NUC/坏点/饱和均未出现）；16 个挑战属性是场景级协变量且从未被用于分层评测——连现成的过曝（热红外物理性失效）与玻璃遮挡子集都没有单独数字，属性体系实际上只服务于划分均匀性。（3）标注规则系统性排除最难样本：只标双模态共有目标，使“只在一个模态可见”的目标（视场差异 + 边缘大畸变的典型受害者）不进评测；标注坐标系又随场景在热红外/可见光之间切换，协议细节未展开——基准测的是“共有目标在失准下的检测”，比真实失准部署问题窄一圈。（4）规模与多样性有限：2,179 对、6,142 个目标、3 类，量级比 DroneVehicle（56,878 图）与 RGBT-Tiny（93K 帧）小一到两个数量级；单一机型单平台采集；人工挑选图像对的标准未量化。（5）基线方法的形式化弱点：全局仿射（4 参数）对“中心小、边缘大”的空间非均匀畸变在表达上先天不足，文中未讨论；对齐无几何监督、无对齐误差报告；BFCFM 的校正是只能放大不能抑制的残差增益，融合末端仍是无条件相加。（6）数字口径参差：DVTOD/CVC14 为作者复现、LLVIP 为转引且用未更新版数据；表 2 的 mAP 未注 IoU 阈值；表 1 把 DVTOD 分辨率印作 1090×1080，与正文 §III 采集参数 1920×1080 不一致（应为笔误，本笔记以 §III 为准）。"
    ]
-  ]
+  ],
+  "take_en": "Drone-based benchmark of deliberately misaligned visible-thermal pairs with a baseline detector, quantifying misalignment sensitivity.",
+  "req04_detail_en": "No controlled misalignment or degradation evaluation; the benchmark has only one natural misalignment distribution and the misalignment amount is not quantified, with no severity grading or offset-performance curve; the 16 challenge attributes are scene-level covariates and were never used for stratified evaluation; no modality dropping, corruption, or real sensor fault experiments"
  },
  "When Pedestrian Detection Meets Multi-Modal Learning: Generalist Model and Benchmark Dataset (MMPedestron)": {
   "ord": 6,
@@ -229,7 +241,9 @@
     "局限",
     "(1) 没有 KAIST：RGB-T 行人检测最经典的基准缺席，RGB-T 证据只有 LLVIP + FLIR aligned 两处。(2) 缺失处理是二值的整模态有/无（填空 + w=0 硬掩码），且只在训练时以 dropout 模拟、评测时以单模态设定代偿；损坏但仍在场的模态完全不在其问题框架内——全文 corrupt / noise / degrad 零命中，无任何退化、噪声、错位评测，MAF 置信度在模态被污染时是否还会给出高权重从未检验（它只在干净/缺失两种模式上训练过）。(3) “通才”的代价：所有模态压平成 2D 图像，LiDAR 的几何结构与事件流的时间分辨率被丢弃；任务仍限行人/通用检测单域。(4) 训练成本极端（RGB 阶段约 2.8 万 GPU 小时），62M + Co-DINO 的体量与边缘部署无关。(5) 表 3 与表 5 的 LLVIP 数字不一致（72.6 vs 68.9）且正文无说明。(6) MMPD 以拼凑既有数据集为主，EventPed 为自采数据，基准的独立性有限。"
    ]
-  ]
+  ],
+  "take_en": "A generalist pedestrian detector handling dynamic combinations of RGB, IR, depth, LiDAR and event inputs, plus the MMPD benchmark.",
+  "req04_detail_en": "Whole-modality missing is evaluated in the form of single-modality inputs (the LLVIP ablation includes three AP columns for fusion / RGB-only / IR-only, plus per-dataset single-modality evaluation settings); no missing-rate sweep, no corruption, noise, or misalignment experiments; corrupted but still present modalities are not evaluated"
  },
  "UAV-CB: A Complex-Background RGB-T Dataset and Local Frequency Bridge Network for UAV Detection": {
   "ord": 7,
@@ -262,7 +276,9 @@
     "局限",
     "（作者自陈极少：全文无独立局限节，§6 仅把跨天气/光照/场景泛化与开放环境基准列为未来工作。以下主要为核查所得。）（1）退化/缺失/故障评测为零（已核查全文）：鲁棒性主张只覆盖背景杂波一种场景属性；模态健康维度——条纹噪声、NUC 漂移、坏点、热饱和、丢帧——完全不在其问题表述、属性标注与评测协议之内；连背景类别这一已有标签都没进入结果表。（2）频域机制对传感器故障的结构暴露（结构推断，作者未实验）：幅度对齐先归一化再凸混合，故障谱能量会被归一化后按系数压进对齐谱；LFGM 的能量占比与相干量直接由两路谱能量算出，条纹（周期高频）、NUC（低频漂移）、饱和（能量塌缩）的频域签名会一对一地改写指导图与偏移场——对齐机器没有健康概念：损坏模态会被照常对齐、照常以全权重进入无权相加的融合出口。与 DyFCLT（逐带处理中高频）、WaveMamba（高频取最大幅值）同属频域路线对故障频域签名的结构性敏感，此点引用时须标注为推断。（3）数据集外推性：策展困难子集（只收强干扰帧）使 AP 不可与自然分布数据集合比；仅两种 UAV 机型、单一采集平台、3,442 对规模偏小；UAV-CB 上的头条对比出自作者自家基准且表 2 划分未注明（与消融验证集数字巧合相同），跨论文引用须谨慎；DroneVehicle 的迁移结果（表 3）部分缓解了自家基准的疑虑，但该表口径（转引/复现未逐行说明）同样含糊。（4）相位先验的单点依赖：相位对齐写死热相位为几何基准，当热一路自身低质（弱热对比、饱和）时，几何锚点恰来自受损模态，而 RGB 相位只能以插值系数修正，机制内没有锚点切换或健康校验。"
    ]
-  ]
+  ],
+  "take_en": "Complex-background RGB-T UAV detection dataset (3,442 pairs, five background types, including camouflage scenes) with the LFBNet baseline aligning and fusing the two modalities in the local frequency domain.",
+  "req04_detail_en": "No controlled degradation experiments; the dataset intentionally has no pixel-level registration (natural parallax misalignment, no offset measurement), and model inputs are additionally coarsely registered by cropping; no modality dropping / zeroing, no noise / corruption injection, no sensor fault evaluation"
  },
  "Physical Adversarial Clothing Evades Visible-Thermal Detectors via Non-Overlapping RGB-T Pattern": {
   "ord": 8,
@@ -295,7 +311,9 @@
     "局限",
     "（1）作者自陈的局限（补充材料）：以牺牲服装感知自然性（naturalness）为代价换取攻击效果，与早期单模态工作取舍一致；未来工作是在保持多模态攻击效果的同时提升图案自然度。正文没有独立的局限节，伦理声明在补充材料（技术双刃、应谨慎使用）。（2）白盒目标实质上是“一家三架构”：早/中/晚融合全部来自 ProbEn 同一工作的三个变体，独立检测器是同一 YOLOv11 的两路，“跨融合架构”的证据强度受此限制；黑盒面更宽（RPN 系、AR-CNN、D-DETR，补充材料又补了 D-DETR、E2E-MFD、DAMSDET），但全部实验只在一个数据集（FLIR-aligned）的背景与行人设定上，任务是单类行人逃逸，未触及 LLVIP / M3FD / KAIST 等其他 RGB-T 基准或车辆等其他类别。（3）表 4 的服装归属未交代（引用雷区）：正文与补充材料都没有写明物理主表（表 4）中“Ours”一行的成绩出自哪件（些）衣服——是逐检测器白盒优化的五件分别测，还是集成优化的一件通测，无从确认；且表 4 与补充材料表 S2 的白盒对角元数值不一致（如 Prob-L：79.2 vs 78.4；YOLOv11(RGB)：61.2 vs 表 S2 的双模态平均 66.9，口径亦不同），两表的采集批次关系原文未说明——表 4 不能严格读作“同一件衣服”的跨检测器成绩。（4）物理基线不干净：表 4 中 Clean 普通衣的 ASR 已有 9.4–19.6%，即实拍条件下检测器对正常穿着者本就漏检一至两成；71.0% 的物理平均里含这部分非攻击贡献，攻击的真实增量应以与 Clean 的差值读（约 +45~+64 个百分点，因列而异）；物理对照还缺 MAP / MIC（材料原因未复现），物理世界实际只与 UAP 做了强弱对比。（5）防御评测多在纹理/仿真层施加（补充材料）：Adversarial Training 是往 FLIR-aligned 里加 200 张渲染对抗图微调检测器 10 个 epoch；Pixel Mask 是在衣物纹理上随机挖 80×80 区域、同时移除两路图案；Bit Squeezing 是把纹理从 8 bit 降到 7 bit；TVM / JPEG 作用于纹理；PAD / NAPGuard / Jedi 的开源代码作用于“模拟人”——因此表 S3 的降幅是这一协议下的数字，不是真实穿着场景中部署防御后的实测 ASR，正文“防御后 ≥70%”引用时应连带这一限定。（6）数字到物理的落差未分解：数字平均 99.6% → 物理主表 71.0% → 物理迁移（表 S2）白盒对角 66.9–87.8、黑盒低至 27.4–75.1；落差来自材料实测常数的误差、渲染-实拍差距还是拍摄条件，原文没有做归因分解。（7）一处小口径出入：补充材料表 S1 中 10×10 行的独立检测器两列为 98.4 / 98.2，与正文表 1 的 98.8 / 99.4 不一致（融合三列一致），原文未说明原因；引用独立检测器数字时以表 1 为准并注明此出入。"
    ]
-  ]
+  ],
+  "take_en": "Physical adversarial clothing whose visible and thermal patterns do not overlap (NORP), jointly optimised on a 3D RGB-T human model, with fusion-stage ensembling improving transfer to unseen detectors.",
+  "req04_detail_en": "This paper evaluates adversarial evasion (ASR): the corruption is a target-local adversarial construction jointly optimized by gradients across both modalities, explicitly distinguished from natural sensor degradation, and does not belong to the controlled modality degradation protocol of §7; it includes evaluation in both digital and physical worlds and evaluation of 8 defenses; no noise / dropping / misalignment-type degradation protocols; no real sensor faults (the sensor is healthy, the corruption is on the target clothing)"
  },
  "CDDFuse: Correlation-Driven Dual-Branch Feature Decomposition for Multi-Modality Image Fusion": {
   "ord": 9,
@@ -329,7 +347,9 @@
     "零鲁棒性设定（全文核查确认）：没有任何退化、损坏、噪声注入、模态缺失或错位输入的实验；RoadScene/TNO 只是干净分布外测试集。文中唯一的 robustness 指消融中去掉两阶段训练的训练稳定性，与输入鲁棒性无关；方法在某一路输入损坏时的行为完全未知。像素级融合的固有边界：输出是单张融合图，检测器内部没有模态通路；融合目标（与逐像素最大值、最大梯度的 L1 + 相关性分解）纯粹定义在干净图对上，不含任何模态质量估计或折扣项，两模态永远全量、全角色进入。下游证据的协议单一：检测只做了 M3FD 一个数据集、一种划分（8:1:1）、一个检测器（YOLOv5）、一个指标（mAP@0.5），且未按 M3FD 的昼/夜/挑战子集拆分报告；融合方法的检测增益是在「每个方法重训一个检测器」的协议下测的，融合表征本身的稳健性没有单独度量。指标口径：表 1 的 SSIM 为求和式变体（可 ≥1），MI/SD 等无参考指标与下游检测收益的一致性本文未做检验（也无法从其数据得出）。主文未报告参数量与推理速度；消融结论全部建立在融合质量指标上，未验证到检测端。依据说明：本笔记依据 arXiv HTML v2 主文通读；该版本不含补充材料（Restormer 块的具体结构与下游任务定性图在补充材料中），主文亦未见参数量/速度表。"
    ]
   ],
-  "slug": "cddfuse"
+  "slug": "cddfuse",
+  "take_en": "Correlation-driven dual-branch decomposition fusion, incl. downstream detection.",
+  "req04_detail_en": "No controlled degradation experiments; RoadScene / TNO are only clean out-of-distribution test sets; no real sensor faults"
  },
  "MetaFusion: Infrared and Visible Image Fusion via Meta-Feature Embedding from Object Detection": {
   "ord": 10,
@@ -363,7 +383,9 @@
     "零鲁棒性设定（已全文核验）：无模态退化/损坏/缺失评测，无噪声注入，无昼夜拆分（M3FD 本含夜间场景，但本文未单独报告），检测表连单模态基线行都没有；方法对一路输入损坏时的行为完全未知。模态质量/冲突不建模：元特征解决的是「融合任务 vs 检测任务」的特征鸿沟，与「红外 vs 可见光谁更可信」无关；F 对两模态对称融合，架构中不存在质量估计、冲突处理的位置。像素级融合的老问题：产物仍是一张融合图；融合指标 EN/MI/VIF 均为无参考指标，其与检测友好度的一致性在 TarDAL 的消融里已被自证存疑，本文未做任何指标–检测相关性分析。训练复杂度与消融缺口：二阶梯度元学习 + 内外交替 + 两轮互相促进，管线很长；论文未报告总训练时长/显存，未做 λg、交替周期、内更新步数的敏感性消融，复现成本不低。检测增益幅度本身也小（+0.8 点）且只来自单一重训协议、单一检测器（YOLOv5s）。"
    ]
   ],
-  "slug": "metafusion"
+  "slug": "metafusion",
+  "take_en": "Detection-guided meta-feature embedding mutually promoting fusion and detection.",
+  "req04_detail_en": "No controlled degradation experiments; M3FD contains night scenes but no separate reporting, no natural subset split; no real sensor faults"
  },
  "TarDAL: Target-aware Dual Adversarial Learning and a Multi-scenario Multi-Modality Benchmark to Fuse Infrared and Visible for Object Detection": {
   "ord": 11,
@@ -396,7 +418,9 @@
     "局限",
     "零鲁棒性设定：全文无模态退化、损坏、缺失评测，无噪声注入、无单模态失效实验；表 2 的红外、可见光单模态行只是干净输入下的单传感器基线，不是退化臂，方法对一路输入损坏时的行为完全未知——生成器只在干净对上训练过。融合是像素级（先生成一张融合图再检测），融合质量指标（MI / EN / SD）与检测收益并不一致，检测导向主要靠协同训练的梯度耦合实现，而非融合目标本身。原文数字不一致：M3FD 规模在引言（4,177 对 / 23,635 标注）与 §4、表 1（4,200 对 / 33,603 标注）两处不同，本笔记以 §4 与表 1 为准，引用数据集规模时须注明出处；正文所称相对次优方法的提升幅度与表 2 数值也不能完全对齐。检测器只用 YOLOv5 一家，结论建立在融合图加重训检测器的协议上，未与特征级融合方法比较。掩码依赖额外的预训练显著性网络，是管线外的单点依赖。M3FD 的 Challenge 是自然场景难度（伪装、烟雾等），不是受控退化，场景划分也不能替代合成腐化协议。"
    ]
-  ]
+  ],
+  "take_en": "Target-aware dual adversarial learning that fuses infrared and visible images for detection; introduced the M3FD benchmark.",
+  "req04_detail_en": "No controlled degradation experiments; Night / Challenge in M3FD are natural scene subsets, not controlled degradation; the single-modality rows in Table 2 are clean-input baselines, not degradation arms; no real sensor faults"
  },
  "SuperYOLO: Super Resolution Assisted Object Detection in Multimodal Remote Sensing Imagery": {
   "ord": 12,
@@ -429,12 +453,16 @@
     "局限",
     "（1）零鲁棒性评测（已核查全文）：没有模态退化、噪声注入、损坏、缺失模态、传感器故障、恶劣天气划分等任何实验；所有结论建立在双模态齐备、配准、干净的输入上。表 VII 的 Multi ≥ 单模态只在干净条件下成立，本文对「某一路变坏时融合是否还优于丢弃该模态」不提供任何证据。（2）结构上不可退化运行：融合在输入端一步完成且不可逆，骨干只有一条；网络内没有任何表示「哪一路更可信」的量，也没有单模态旁路。表 VII 的 IR/RGB 行是另外单独训练的单模态模型，不是同一模型在缺模态时的表现——部署中一路传感器失效时该架构无任何应对路径。（3）SR 的「修复」范围极窄：它逆转的是作者自己施加的、形式完全已知的双线性 2× 下采样，且只以训练期辅助损失的形式起作用；测试时输入若发生真实传感器退化（噪声、模糊、饱和、条纹等），推理路径中没有任何模块会响应。把本文引作「退化修复」先例时必须限定为训练期、合成退化、分辨率单一维度。（4）数据与协议局限：VEDAI 仅 1,246 张图、8 类，10 折平均掩盖了折间方差（文中未报方差）；消融单折，个别结论（如融合形式排序）的稳定性未验证；VEDAI 是正射航拍 NIR 而非热红外，结论向地面 RGB-T 场景的迁移性未经检验。（5）文本小瑕疵（引用时留意）：图 2 图注称 SR 分支以 MSE 损失优化，与正文明确采用的 L1 损失矛盾，以正文为准；式 (2) 的文字说明与公式下标的模态对应相反；一处 SR 特征抽头位置的图号指代有误。均不影响主要结论。"
    ]
-  ]
+  ],
+  "take_en": "Pixel-level multimodal fusion inside a YOLOv5-style detector plus a super-resolution auxiliary branch (removed at inference) to recover small-object detail.",
+  "req04_detail_en": "No controlled degradation experiments; degradation in the full text refers only to resolution loss caused by Focus and downsampling, the SR reverses a formally known bilinear 2× downsampling and is used only as a training-time auxiliary loss; no real sensor fault evaluation."
  },
  "DetFusion: A Detection-driven Infrared and Visible Image Fusion Network": {
   "ord": 13,
   "take": "Modality-specific detectors supply object attention maps that bias the fusion decoder toward object regions.",
-  "note": "全文不可得（ACM 付费墙、无预印本），机制层据官方代码全量与官方框架图一手核实，数字为 TPAMI IVIF 综述统一重评协议的转引、与原文自报严格隔离。「detection-driven」的确切含义：级联两个模态专属 Faster R-CNN，融合图回喂冻结的检测器，取两支 bbox 头的分类+回归损失回传更新融合网络——优化的是「融合图对检测器友好」。其对象感知内容损失的掩码来自标注框而非检测器输出（框内融合像素拉向两源逐像素 max、框外拉向 mean），不构成自指，但该先验只存在于训练期、推理期无对象先验可用。共享注意力由检测支路自身特征生成、取两模态逐元素 max 后在解码器 4 处做 (1+Att) 残差调制——只能增强、不能抑制，任一模态的伪高响应（热噪声、强反光）会被 max 全额放大，无关闭/折扣一路的表达位置，与接管方向恰好相反。发布代码的测试路径是两支各自在源模态特征上检测，融合图只是并行产物、最终检测根本不发生在融合图上。综述重评下其 M3FD 检测 mAP 0.580（表 V，该表无单模态对照行）、FMB 分割 mIoU 56.5、83.07M 参数为全表最重一档。退化/缺失/故障评测为零。"
+  "note": "全文不可得（ACM 付费墙、无预印本），机制层据官方代码全量与官方框架图一手核实，数字为 TPAMI IVIF 综述统一重评协议的转引、与原文自报严格隔离。「detection-driven」的确切含义：级联两个模态专属 Faster R-CNN，融合图回喂冻结的检测器，取两支 bbox 头的分类+回归损失回传更新融合网络——优化的是「融合图对检测器友好」。其对象感知内容损失的掩码来自标注框而非检测器输出（框内融合像素拉向两源逐像素 max、框外拉向 mean），不构成自指，但该先验只存在于训练期、推理期无对象先验可用。共享注意力由检测支路自身特征生成、取两模态逐元素 max 后在解码器 4 处做 (1+Att) 残差调制——只能增强、不能抑制，任一模态的伪高响应（热噪声、强反光）会被 max 全额放大，无关闭/折扣一路的表达位置，与接管方向恰好相反。发布代码的测试路径是两支各自在源模态特征上检测，融合图只是并行产物、最终检测根本不发生在融合图上。综述重评下其 M3FD 检测 mAP 0.580（表 V，该表无单模态对照行）、FMB 分割 mIoU 56.5、83.07M 参数为全表最重一档。退化/缺失/故障评测为零。",
+  "take_en": "Modality-specific detectors supply object attention maps that bias the fusion decoder toward object regions.",
+  "req04_detail_en": "The abstract does not mention controlled degradation experiments; accessible materials (abstract, released code configurations) show only fusion and detection evaluation on clean paired inputs"
  },
  "E2E-MFD: Towards End-to-End Synchronous Multimodal Fusion Detection": {
   "ord": 14,
@@ -467,12 +495,16 @@
     "局限",
     "作者自陈（附录 A.7）仅在可见光/红外两种模态上验证，受数据集稀缺所限，未在更多模态组合上验证，无技术性自陈局限。退化/缺失评测为零：全文无任何受控退化、模态缺失或传感器故障协议；同步/端到端解决的是训练流程效率与任务梯度冲突，完全不触及输入侧可靠性，贡献陈述中的鲁棒性无实验对应物。结构上无模态级防御通路（结构推断，作者未实验）：两模态特征在共享骨干逐层直接相加，之后一切模块（区域掩码、扩散头条件、融合损失的 max 规则）都作用于已汇合的表示；任一模态被损坏时，错误证据经相加直接进入共享骨干，同时影响融合图与检测条件，全文没有任何衰减、门控、重加权或弃权机制可以拦截。关键超参数缺报：任务权重与融合损失三项权重的取值、ORPPT 各支路的区域提示数全文均未给数值，复现须查代码。头条行与对照行的训练制度不对称（见实验设置）：本体行用预训练检测器初始化 + batch 1 联合微调，YOLOv5s 对照行从零训练 300 epochs，表 2/3 的跨行差距混杂了初始化与训练制度差异，不能整额归因于同步联合范式。效率著录不完整：无参数量、无 FLOPs，所报测试时间不含扩散检测头的迭代去噪推理，端到端检测时延未知——而扩散头的迭代成本恰是该范式部署时的主要代价项。"
    ]
-  ]
+  ],
+  "take_en": "Single-phase end-to-end joint optimization of image fusion and detection with a gradient-matrix strategy for shared parameters.",
+  "req04_detail_en": "No controlled degradation experiments; no real sensor faults."
  },
  "DDFD: Diffusion-Based Denoising Fusion for Object Detection in Infrared-Visible Images": {
   "ord": 15,
   "take": "Treats image fusion as a diffusion denoising process with an image-adaptive visible-enhancement module, jointly optimized with the detector.",
-  "note": "全文不可得（ACM 付费墙、无预印本与官方代码），本注记据官方摘要与参考文献表。其「denoising」是扩散模型自身的标准语义——把融合重述为从噪声反向采样生成融合图像，生成目标是融合图本身而非某幅受损源图的干净版，要「去」的另一对象是摘要明言的目标无关冗余信息；没有证据表明它在修复受损模态的物理噪声。唯一的噪声相关模块 INE（image-aware noise estimator）由输入自身导出以条件化扩散去噪网络，摘要未给任何噪声模型（如高斯 σ）或水平标定，与自指质量信号同族；它不是逐模态可靠性权重，管线中不存在把任一模态压到零的机制位置，输出是双模态条件生成的单幅混合图像。管线唯一冲着输入质量去的模块只增强可见光一路（默认可见光易坏、红外可靠的非对称先验），对热红外自身损坏（条纹/NUC/饱和）没有对应物。实验只有 M3FD / DroneVehicle / VEDAI 三个干净基准，摘要结尾的恶劣天气指数据集原生场景属性，不是注入已知噪声的量测协议。官方摘要通篇零定量数字，采样步数、时延与全部 mAP 均未读到。"
+  "note": "全文不可得（ACM 付费墙、无预印本与官方代码），本注记据官方摘要与参考文献表。其「denoising」是扩散模型自身的标准语义——把融合重述为从噪声反向采样生成融合图像，生成目标是融合图本身而非某幅受损源图的干净版，要「去」的另一对象是摘要明言的目标无关冗余信息；没有证据表明它在修复受损模态的物理噪声。唯一的噪声相关模块 INE（image-aware noise estimator）由输入自身导出以条件化扩散去噪网络，摘要未给任何噪声模型（如高斯 σ）或水平标定，与自指质量信号同族；它不是逐模态可靠性权重，管线中不存在把任一模态压到零的机制位置，输出是双模态条件生成的单幅混合图像。管线唯一冲着输入质量去的模块只增强可见光一路（默认可见光易坏、红外可靠的非对称先验），对热红外自身损坏（条纹/NUC/饱和）没有对应物。实验只有 M3FD / DroneVehicle / VEDAI 三个干净基准，摘要结尾的恶劣天气指数据集原生场景属性，不是注入已知噪声的量测协议。官方摘要通篇零定量数字，采样步数、时延与全部 mAP 均未读到。",
+  "take_en": "Treats image fusion as a diffusion denoising process with an image-adaptive visible-enhancement module, jointly optimized with the detector.",
+  "req04_detail_en": "The abstract does not mention controlled degradation types; challenging weather is a native scene attribute of datasets such as M3FD (recorded here only under B-strict), with no noise-level sweep, no modality dropping, and no construction of real sensor faults (at the abstract level)"
  },
  "UniRGB-IR: A Unified Framework for Visible-Infrared Semantic Tasks via Adapter Tuning": {
   "ord": 16,
@@ -506,7 +538,9 @@
     "零鲁棒性设定：无模态退化/损坏/缺失评测，无噪声注入，无一路输入失效的实验；正文对负融合的讨论（融合不如 IR 单模态）只停留在跨方法的表格对比层面，没有受控的退化实验，也无任何「融合不劣于单模态」的保证或机制性补救——SFI 的门控是对干净特征的常规加权，不是质量/健康门控。架构上锁死 RGB 主位：ViT 主干只处理 RGB，IR 只能经旁路补充注入；RGB 一旦损坏，坏的是基础模型本体的输入，适配器无从补位，该结构在原理上与缺失/损坏模态问题正交。「统一」的含金量需看清：统一的是冻结主干 + 适配器结构 + 微调范式；每个任务/数据集仍单独训练、单独存适配器权重，没有联合训练、没有跨数据集泛化测试、没有零样本迁移；标题中的 Unified 是框架通用性，不是权重通用性。检测结论建立在 Cascade R-CNN + ViT-Base 的重型协议上（与 YOLO 系单阶段协议不同构），FLIR/LLVIP 数字不能与单阶段检测器的同名表格直接并列；FLIR 只用对齐子集（4,129/1,013），与未对齐版 FLIR 的口径不同，引用时须注明。消融只在 FLIR 与 PST900 上做；SFI 在 stage 4 掉点、注意力选型敏感（Pale 仅 31.6）等现象只给数字未给解释，框架对注入细节的脆弱性其实不低。"
    ]
   ],
-  "slug": "unirgb-ir"
+  "slug": "unirgb-ir",
+  "take_en": "Adapter injection of RGB-IR fusion into a frozen ViT foundation model.",
+  "req04_detail_en": "No controlled degradation experiments; includes natural subset reporting (KAIST Day / Night); discussion of negative fusion in the main text is only cross-method table comparison; no real sensor faults"
  },
  "C2Former: Calibrated and Complementary Transformer": {
   "ord": 17,
@@ -539,7 +573,9 @@
     "局限",
     "鲁棒性/退化评测为零（已逐项核查全文）：没有任何噪声注入、腐化套件、受控退化或缺失模态实验。KAIST 的 Day/Night 拆分与 DroneVehicle 的昼夜场景都是自然分布，不是受控退化协议；表 IV 的单模态行是独立训练的单模态检测器，不是「融合模型去掉一路输入」的缺失模态测试。全文的 robust 全部是定性修辞。「校准」的适用范围从未被量测：它处理的是 DroneVehicle/KAIST 数据分布内自带的弱失准；全文没有合成已知偏移量（如平移若干像素）的受控实验，因此能吸收多大的失准幅度无从得知。且 ICA 实际在 AFS 降采样后的网格上运行（步长最优为 3），小于采样步长的细偏移对注意力不可见。注意力无质量概念、且不能弃权：softmax 在另一模态全部位置上归一化为 1——无论对方模态多不可靠，总要选出「最相关」的位置并据此重组本模态特征；全机制没有任何置信度、可靠性或门控。若一模态退化（非移位而是内容损坏），其 query 会给出无意义的相似度分布去重组另一模态的 value，或其自身被污染的 value 被对方 query 正常加权取用，两条污染路径都通。成本仍高：挂载后总参数 100.8M（Oriented R-CNN 版）至 132.5M（S²A-Net 版），且无 AFS 时 ICA 单模块就让 FLOPs 约 +43%；与轻量单阶段检测器（如 YOLO 系）的部署取向不合。数字口径易混：74.2（S²A-Net）/ 73.8（Oriented R-CNN 公平对比与 ICA-only 消融）两个「本文成绩」并存，引用时必须注明基检测器。"
    ]
-  ]
+  ],
+  "take_en": "Cross-attention calibration + adaptive sampling for misaligned RGB-T pairs.",
+  "req04_detail_en": "No controlled degradation experiments, and no controlled misalignment experiments with synthetic known offsets; calibration magnitude never measured; KAIST Day/Night and DroneVehicle day/night scenes are natural distribution subsets; no real sensor faults"
  },
  "DAMSDet: Dynamic Adaptive Multispectral Detection Transformer with Competitive Query Selection and Adaptive Feature Fusion": {
   "ord": 18,
@@ -573,7 +609,9 @@
     "作者自陈（§4.5，仅一条）：极端错位处理不了——目标超出 4D 参考框范围时，该模态的目标特征直接丢失（采样被约束在锚框内是 MDCA 的结构代价）。据原文事实指出（非作者原话）：损坏与缺失模态，两者都没有评测——全文没有任何腐化、退化协议（无噪声、模糊、过曝、条纹等注入），没有模态缺失或整路丢弃实验，没有测试时干预；其问题动机里的干扰信息（如图 1(a) 烟雾中消失的行人）指的是自然场景下一路信息天然贫乏，与传感器模态被损坏是两回事，证据也只到采样可视化为止；FLIR / LLVIP 的昼夜、低光是数据集固有内容，不是退化评测。无任何融合不劣于更强单模态的保证或专门分析：干净条件下全模型高于自身单臂（M3FD 80.2 vs 75.7 / 62.2），但无定理、无受压条件对照；且单臂数字来自消融表的自身分支，与主表跨方法单模态基线不可直接混用。无测试时适应：MCQS 与 MDCA 均为训练学得、测试冻结的前向计算。无真实热成像故障模型：条纹噪声、非均匀性漂移、坏点、热饱和均未出现；错位也未做量级受控扫描，MDCA 对错位的鲁棒性只有定性图证。可比性注意：M3FD 用作者按场景自划的验证集，与用官方或其它划分的工作不可直接同表比较；主表对照多为已发表数字而非同协议复现。VEDAI 上 mAP 输给 CNN 方法（55.3 vs 59.1），说明其优势集中在大目标、中高 IoU 区间，小目标框精度是短板。效率：双 ResNet50 + 6 层解码，M3FD 推理 0.117 s 每对（表 1），比 YOLO 系融合方法（CFT 0.050 s、ICAFusion 0.033 s）慢一个量级，属精度优先的 DETR 路线。"
    ]
   ],
-  "slug": "damsdet"
+  "slug": "damsdet",
+  "take_en": "Competitive query selection + deformable cross-attention in a DETR RGB-T detector.",
+  "req04_detail_en": "No controlled degradation experiments; misalignment handled only qualitatively via natural dataset misalignment and sampling visualizations, with no controlled misalignment magnitude sweep; day/night and low light in FLIR-aligned / LLVIP are inherent dataset content; no real sensor faults"
  },
  "GM-DETR": {
   "ord": 19,
@@ -607,7 +645,9 @@
     "局限",
     "作者自陈很少（结论仅展望引入更多孤立数据集与半监督学习），以下据原文事实指出。损坏模态零评测（定向核查）：全文没有任何对一路模态施加噪声、模糊、曝光异常、低光合成等部分退化的实验；引言中的 robust 只是修辞。模态层面的评测只有整路丢失一种形态，且丢失的实现是「复制存活模态」，不是置零、掩码或真实传感器失效——它测的是「模型见没见过这种输入形态」，不是「模型对损坏输入的承受力」。缺失评测的不对称值得注意：IR 丢失几乎无损（80.6 ≈ IR 基线 80.5），但 RGB 丢失时 64.3 仍低于一个纯 RGB 检测器（69.7）——在只有 RGB 可用的场景里，用 GM-DETR 反而不如直接部署单模态模型；作者只报「比融合单阶段版本少掉多少」，没有与「丢弃融合」作正面对照，更没有任何「融合不劣于更强单模态」的保证或结论。「Generalized」的实际覆盖面窄：(a) 训练可用孤立数据——但实验中的孤立数据是对齐数据拆分自造的，引入真正外部孤立数据的收益未验证；(b) 推理可吃复制输入。无跨数据集迁移实验、无未对齐输入评测（FLIR 用的仍是对齐版）、无 JRDB 实验（尽管发表于 JRDB workshop）。MSFI 名实与机制定位：跨模态交互不在 MSFI 发生（纯模态内自注意力，且只在最高层一层）；融合实质是 CMSF 的拼接 + 卷积金字塔；归类时应记为「编码器内特征级融合（卷积式）+ 顶层模态内自注意力」，而不是跨模态注意力融合。表格口径的审计性：表 3 括号差值的基准原文未说明（需反推为相对单模态基线）；表 4 的「基线」是逐层相加的自建版本，与表 2 的 RT-DETR 行不是同一个东西，跨表相减会得出错误结论；表 2 中 ICAFusion 的 LLVIP 数字缺失未作说明。实验规模：仅 FLIR、LLVIP 两个数据集；两阶段在融合指标上的净增益只有 +0.5 mAP（FLIR）/+0.6 AP（LLVIP）量级；单卡单次运行，无种子与显著性。"
    ]
-  ]
+  ],
+  "take_en": "Lightweight DETR-style RGB-T detector.",
+  "req04_detail_en": "Only whole-modality loss: loss simulated by duplicating the surviving modality (IR+IR / RGB+RGB, not zeroing or masking), reporting mAP50 on FLIR-aligned; no partial degradation corruptions such as noise/blur, no controlled misalignment or severity grading; no real sensor faults"
  },
  "ICAFusion: Iterative Cross-Attention Guided Feature Fusion for Multispectral Object Detection": {
   "ord": 20,
@@ -640,7 +680,9 @@
     "局限",
     "损坏模态评测为零（已逐项核查全文）：没有任何噪声注入、模糊、曝光、条纹、坏点等退化实验，图像质量差只是贡献条目与方法一节中的一句断言，无对应实验支撑。所谓缺失模态实验名不副实：复制输入实验用的是复制存活模态图像（R+R / T+T），不是传感器失效（置零、无信号），更不是损坏；且该实验恰恰显示其默认的融合输出模式在单模态输入下崩塌（MR +23 至 +30），只有绕开融合、改用单路增强输出时才退化温和——论文正文对此只强调后者，属于选择性叙述。交叉注意力的引导信号只有特征相关性本身：query 来自辅助模态，若辅助模态被污染，其 query 会主动去检索并放大错误对应；全文没有任何质量估计、置信度或门控，一路不可靠时无任何抑制通路。与 CFT 一样，注意力机制对两模态的信任不受任务或质量约束。作者自设的局限一节只谈失败案例（交通标志与树木误检为人、遮挡漏检、屋顶设备误检为车），不涉及鲁棒性。KAIST 夜间子集并非最佳（见关键数字），其全天候叙事下优势主要在白天；VEDAI 严格 mAP 不敌更简单的输入级与中级融合基线。引用口径需注意两处：其对比表转引 CFT 的 FLIR mAP50 为 78.3（CFT 原文为 78.7）；正文 VEDAI 的 mAP +1.96 实为 mAP50 增益。"
    ]
-  ]
+  ],
+  "take_en": "Iterative cross-attention guided feature fusion for multispectral object detection.",
+  "req04_detail_en": "No controlled degradation experiments; the only duplicated-input experiment related to missing modalities is input substitution, not corruption, whole-stream zeroing or controlled misalignment; 'poor image quality' was never operationalized as an experimental condition, no real sensor fault evaluation."
  },
  "Cross-Modality Fusion Transformer (CFT)": {
   "ord": 21,
@@ -673,12 +715,16 @@
     "局限",
     "鲁棒性评测为零（已逐项核查全文）：没有任何模态退化、噪声注入、腐化或缺失模态实验；摘要中的 robustly 只是对注意力机制的定性描述。单模态对照行是独立训练的单模态检测器，并非融合模型去掉一路输入的缺失模态测试；FLIR 的昼、夜与 LLVIP 的低光都是自然场景分布，表格亦未按昼夜拆分报告。跨模态注意力被全局池化压到 8×8 网格：交互是全局语义级的，无法在原分辨率上表达局部空间对应；对未对齐数据无任何处理（实验直接使用 FLIR 对齐版并丢弃未对齐对）。注意力对两模态一视同仁：联合序列中每个 token 地位对称，没有任何质量感知、置信度或门控机制——某一模态整体不可靠时，其 token 仍以同等权重参与注意力并污染另一模态的输出。参数量膨胀严重（206M），与轻量部署取向相反；且增益的相当一部分来自 8 层 Transformer 堆叠的容量增加，文中未做等参数量对照。基线与增益口径需注意：其双流基线是作者自搭的朴素拼接，FLIR 上弱于热红外单模态，CFT 的相对增益部分来自基线偏弱。"
    ]
-  ]
+  ],
+  "take_en": "YOLOv5-based transformer cross-modal fusion for RGB-T detection.",
+  "req04_detail_en": "No controlled degradation experiments; FLIR day/night and LLVIP low light are natural scene distributions (natural conditions not counted), and tables are not reported split by day/night; no real sensor fault evaluation."
  },
  "Cross-Modality Interactive Attention Network for Multispectral Pedestrian Detection (CIAN)": {
   "ord": 22,
   "take": "Interactive attention module encoding inter-modality correlations to recalibrate channel responses of halfway features before fusion.",
-  "note": "Early, heavily cited cross-modal attention design that predates and motivates the transformer fusion line."
+  "note": "Early, heavily cited cross-modal attention design that predates and motivates the transformer fusion line.",
+  "take_en": "Interactive attention module encoding inter-modality correlations to recalibrate channel responses of halfway features before fusion.",
+  "req04_detail_en": "No controlled degradation experiments mentioned in the abstract; only clean benchmark evaluation on KAIST is seen (day/night are natural subset splits, not controlled degradation)"
  },
  "Guided Attentive Feature Fusion for Multispectral Pedestrian Detection (GAFF)": {
   "ord": 23,
@@ -711,12 +757,16 @@
     "局限",
     "（1）鲁棒性评测为零（已逐项核查全文）：无任何模态退化、噪声、腐化、缺失模态实验，全文检索不到 noise/corrupt/degrad 类表述；Day/Night 拆分是自然分布拆分。结论段注意到数据集中存在轻微未对齐对，并把“基于注意力掩码的特征校准模块”列为未来工作——GAFF 本身假设输入对齐。（2）“质量”只是代理而非估计：inter 掩码的训练信号是“哪一路的行人掩码预测更接近真值”，度量的是干净训练数据上的相对任务表现，不是传感器质量或可靠性；推理时无真值，掩码只是由拼接特征预测出的相对偏好。softmax 双权重恒和为 1，两路同时不可靠时仍被迫分出赢家，无绝对质量尺度、无不确定性、无校准验证。文中“select the most reliable modality”“higher quality”一类措辞强于其机制实质。（3）结构上不能折扣：(1 + m) 残差增强 + 最终直接平均意味着一路模态即使完全被污染，也至少以原始强度进入融合特征；该机制能放大偏好，不能抑制任何一路。（4）intra 的监督掩码本身是粗糙近似：真值掩码由检测框填充椭圆生成，并非真实行人分割，掩码语义先天带噪。（5）FLIR 上增益（约 +1 mAP）远小于 KAIST；且 sanitized 标注下所有方法的数字都大幅变好，跨标注版本引用 GAFF 的 6.48 时必须注明口径。其 KAIST 头条在两种口径下都次于 CFR，“SOTA”表述需带成本语境理解。"
    ]
-  ]
+  ],
+  "take_en": "Inter- and intra-modality attention modules dynamically weigh and fuse multispectral features at low computational cost.",
+  "req04_detail_en": "No controlled degradation experiments; only the Day/Night natural distribution split on KAIST; no real sensor fault evaluation"
  },
  "Improving RGB-Infrared Object Detection with Cascade Alignment-Guided Transformer (CAGT)": {
   "ord": 24,
   "take": "Cascades region alignment (TSRA-style) with a complementary fusion transformer inside an RoI detection head; evaluated on DroneVehicle and KAIST.",
-  "note": "全文不可得（Elsevier 付费墙、无预印本与官方代码），本注记据官方摘要与同行文献转述。RoI 检测头内的级联对齐+融合：TSRA 先对区域提议池化的两模态区域特征做平移/尺度/旋转对齐，其内部的 CFT（Complementary Fusion Transformer，与 Fang et al. 的 CFT 只是缩写相同、并非同一方法）再做互补融合，沿级联 RoI 头逐级重复。与同组 TSFADet、C2Former 属同一对齐纲领，作用位置移到检测头内。仅 DroneVehicle + KAIST 采样两个干净基准；转引（UniRGB-IR 表 II，全集口径）KAIST MR⁻² All 28.96，反略逊于姊妹作 C2Former 的 28.39。无退化/缺失/受控失准评测；对齐机器无模态健康概念，损坏模态的区域特征会被照常对齐、照常融合。"
+  "note": "全文不可得（Elsevier 付费墙、无预印本与官方代码），本注记据官方摘要与同行文献转述。RoI 检测头内的级联对齐+融合：TSRA 先对区域提议池化的两模态区域特征做平移/尺度/旋转对齐，其内部的 CFT（Complementary Fusion Transformer，与 Fang et al. 的 CFT 只是缩写相同、并非同一方法）再做互补融合，沿级联 RoI 头逐级重复。与同组 TSFADet、C2Former 属同一对齐纲领，作用位置移到检测头内。仅 DroneVehicle + KAIST 采样两个干净基准；转引（UniRGB-IR 表 II，全集口径）KAIST MR⁻² All 28.96，反略逊于姊妹作 C2Former 的 28.39。无退化/缺失/受控失准评测；对齐机器无模态健康概念，损坏模态的区域特征会被照常对齐、照常融合。",
+  "take_en": "Cascades region alignment (TSRA-style) with a complementary fusion transformer inside an RoI detection head; evaluated on DroneVehicle and KAIST.",
+  "req04_detail_en": "No controlled misalignment experiments with given offsets mentioned in the abstract; the handled object is weak misalignment inherent in the dataset, no corruption/dropping experiments (at abstract level)"
  },
  "M-SpecGene: Generalized Foundation Model for RGBT Multispectral Vision": {
   "ord": 25,
@@ -749,7 +799,9 @@
     "局限",
     "零鲁棒性设定（定向核查）：无模态损坏、退化、缺失评测，无噪声注入，无一路失效实验，无测试时适应。不仅如此，其预训练数据管线用 SSIM 小于 0.80 主动剔除低质量配对——基础模型路线在数据层就把低质量输入排除在外，与测试时损坏模态的问题设定正交。下游无跨模态交互：微调与推理时两模态被同一个编码器并行独立编码、最后只做通道拼接；预训练期的交叉注意力并不带到下游。一路模态损坏时，其特征未经任何质量折扣直接进入拼接特征——结构上不存在抑制坏模态的通路，下游跨模态交互只剩末端拼接。通用的含金量：通用在表示层——每个下游任务与数据集仍是全参数微调出一份独立权重（不同于 UniRGB-IR 约 10% 参数的适配器微调）；十一个数据集全部是同集内微调评测，没有任何跨数据集零样本或少样本迁移实验，其泛化能力未被跨分布检验。预训练并非纯 RGBT 自监督：编码器与解码器先经 ImageNet 与单模态热像数据初始化，再在 RGBT550K 上预训练；且其效果依赖作者自建的 RGBT550K 清洗管线（配额、去冗、SSIM 过滤的细节在附录），复现成本与数据可得性是隐含前提。检测增益幅度有限且口径重：对 UniRGB-IR 的检测优势集中在 KAIST 夜间与 LLVIP，FLIR 上 mAP 仅 +0.6 且 mAP75 略低；全部数字建立在 ViTDet 加 ViT-B 全量微调协议上，与单阶段检测器不可同表。模态不变只有可视化与下游涨点两类间接证据（t-SNE、Wasserstein 距离），没有受控的不变性测度（如同目标跨模态检索精度随条件变化的曲线）；CMSS 本身只是 patch 级统计代理，其与真实语义信息密度的对应关系未被验证。"
    ]
-  ]
+  ],
+  "take_en": "Self-supervised RGBT foundation model using a Cross-Modality Structural Sparsity metric and GMM-based progressive masking to pretrain modality-invariant representations.",
+  "req04_detail_en": "No controlled degradation experiments; the pretraining data pipeline actively removes low-quality paired samples with SSIM less than 0.80"
  },
  "CF-Deformable DETR: An End-to-End Alignment-Free Model for Weakly Aligned Visible-Infrared Object Detection": {
   "ord": 26,
@@ -782,12 +834,16 @@
     "局限",
     "评测边界为零外扩：除几何偏移外，退化、缺失、传感器故障评测全部为零——无损坏模态、无缺失/复制输入对照、无条纹/非均匀性/坏点/饱和等热成像故障模型；「鲁棒」仅指对合成平移的鲁棒。失准全是合成的：训练与测试的弱对齐均来自对「严格对齐」原图的人工平移（仅平移红外、仅刚性平移，无旋转/尺度/视差场/非刚性形变）；真实采集链路的天然失准分布未测、未统计，方法对真实弱对齐的泛化由构造保证而非由证据保证。偏移上限也只探到 50 px 且已明显退化。无单模态对照、无下限概念：三张主表没有任何单模态检测器行，无法判断偏移或（假想的）损坏条件下融合是否仍优于丢弃一模态；双头 V / IR 输出容易被误读为单模结果，引用时须注明其均为融合特征。偏移无监督、无约束：采样偏移由线性层直接输出，无幅值钳制、无真值监督、无收敛/正确性验证手段；映射错了只能从检测指标间接发现。PFC 损失式按刊印形式仅有正样本项，与其所引对比学习框架的对应关系含混。公式层面的含混：按融合公式字面推导，两路融合特征为同一张量，表中 V / IR 两行的微小差异只能来自两个独立参数化的检测头；正文未澄清两路融合特征的区别。另外融合模块双名并存、个别符号一符两用，均为 IJCAI 短文的粗糙处。KAIST 口径：表 5 对照数字全部引自原文而非同环境复现，且 CF 的 MR⁻²（约 7.1）与表 6/7 的 mAP 口径不可互换；KAISTw 的每方向偏移幅度沿用 AR-CNN 设定、正文未重述具体像素数。"
    ]
-  ]
+  ],
+  "take_en": "Alignment-free DETR whose cross-modal deformable attention maps points between modalities directly.",
+  "req04_detail_en": "Controlled misalignment: synthetic translation applied only to the infrared stream, including a sweep over six fixed-offset levels, with metrics mAP@50 and MR; no modality corruption / dropping experiments, natural misalignment not tested, no real sensor faults."
  },
  "SAM-Guided Semantic Knowledge Fusion for Visible-Infrared Object Detection": {
   "ord": 27,
   "take": "Injects SAM-derived semantic knowledge into visible-infrared feature fusion to guide object-level complementarity.",
-  "note": "全文不可得（ACM 付费墙、无预印本；摘要宣称的代码仓库为空仓、承诺未兑现），本注记据官方摘要与两处同行转述。SAM 的「引导」分两路且载体可确指：阶段一 FGRA 用 SAM 生成的掩码建立目标级跨模态对应、以可变形卷积对齐 RGB 特征；阶段二 SKD 蒸馏的「semantic knowledge」被摘要明确枚举为 SAM 特征、偏移场、掩码三样——对齐偏移本身被当作知识迁移，是它区别于一般特征蒸馏之处。存在一种对应型自指（结构推断）：FGRA 以 RGB 为中心、SAM 为可见光模型，若掩码源自可见光，则可见光退化时先坏的是掩码、而掩码驱动的是对齐偏移——坏先验会把特征主动对错位置，属几何误差、比权重型自指的增益误差更难纠正。全篇无任何质量/可靠性/不确定性量，掩码是语义信号而非可信度信号，无压低、无弃权；推理期是否还运行 SAM 摘要未交代，两种读法对鲁棒性都不利。评测仅 DroneVehicle / VEDAI / LLVIP 三个干净基准；官方摘要不含任何数值、同行也未转引其表格——引用时只能引方法、不能引数字。"
+  "note": "全文不可得（ACM 付费墙、无预印本；摘要宣称的代码仓库为空仓、承诺未兑现），本注记据官方摘要与两处同行转述。SAM 的「引导」分两路且载体可确指：阶段一 FGRA 用 SAM 生成的掩码建立目标级跨模态对应、以可变形卷积对齐 RGB 特征；阶段二 SKD 蒸馏的「semantic knowledge」被摘要明确枚举为 SAM 特征、偏移场、掩码三样——对齐偏移本身被当作知识迁移，是它区别于一般特征蒸馏之处。存在一种对应型自指（结构推断）：FGRA 以 RGB 为中心、SAM 为可见光模型，若掩码源自可见光，则可见光退化时先坏的是掩码、而掩码驱动的是对齐偏移——坏先验会把特征主动对错位置，属几何误差、比权重型自指的增益误差更难纠正。全篇无任何质量/可靠性/不确定性量，掩码是语义信号而非可信度信号，无压低、无弃权；推理期是否还运行 SAM 摘要未交代，两种读法对鲁棒性都不利。评测仅 DroneVehicle / VEDAI / LLVIP 三个干净基准；官方摘要不含任何数值、同行也未转引其表格——引用时只能引方法、不能引数字。",
+  "take_en": "Injects SAM-derived semantic knowledge into visible-infrared feature fusion to guide object-level complementarity.",
+  "req04_detail_en": "The abstract does not mention controlled degradation experiments; LLVIP nighttime and DroneVehicle/VEDAI day/night samples are native dataset conditions, not degradation protocols"
  },
  "Modality-Decoupled RGB-Thermal Object Detector via Query Fusion": {
   "ord": 28,
@@ -820,7 +876,9 @@
     "局限",
     "退化评测只有一个二值端点：对比度降零等价于整模态失效，没有分级损坏；尤其没有评测模态仍在场、内容受损但仍产出高置信错误提议的情形，而在该情形下，以自身置信度为唯一选择信号的 top-k 机制完全可能把受污染的查询选进融合集并经适配器注入另一分支。保持率并非本文机制独有：同一协议下朴素框级融合的相对保持更好，说明全损下的平稳退化主要来自决策级独立性这一结构属性，查询融合的净贡献主要体现在峰值性能一侧。峰值性能不具压倒性：FLIR mAP50 低于 IGT，M3FD mAP 明显低于 FusionMamba；代价是两个完整检测器（96M 参数），且全文未报告计算量与推理时延。第二阶段联合训练仍需配对且对齐的数据。文本疏漏两处：M3FD 上 DINO 两条单模态行数字完全相同，疑为笔误；实现细节所称骨干与图表所标骨干不一致。随机划分也削弱了与采用官方划分文献的可比性。"
    ]
-  ]
+  ],
+  "take_en": "Independent DETR-style branches for RGB and thermal exchange selected high-quality queries (Query Fusion) between refinement stages, balancing complementarity against modality separation.",
+  "req04_detail_en": "Only one type of degradation: reducing the contrast of one modality stream to zero (equivalent to whole-modality failure), with a single total-loss level and no graded severity, and no partial-corruption conditions such as noise or blur; mAP50 and relative drops are reported on FLIR and M3FD"
  },
  "Towards a Generalizable Fusion Architecture for Multimodal Object Detection": {
   "ord": 29,
@@ -853,7 +911,9 @@
     "局限",
     "其一，泛化的证据标准弱：只有同架构在两个数据集上分别训练的同分布结果，无跨数据集留出、无零样本、无新传感器或新模态组合，且超参数仍逐数据集调整，保持不变的只有结构，标题口径大于实验证据。其二，退化、缺失与故障评测为零：没有缺失模态测试、没有模态丢弃、没有注噪或损坏扫描、没有传感器故障条件，低光与遮挡、杂波都是数据集自带的自然条件，连低光行人集的昼夜分开报告都没有。其三，低光行人集上融合低于最佳单模态这一自家表内的事实未被讨论，增益声明全部相对拼接基线而言。其四，数字一致性问题：航拍集结果在不同表格间对不上且无说明，主表中个别数值的星号标记无图例，两种已发表方法的对照行分辨率与条件不同、原文自承不受控。其五，结构写死为对齐的双模态输入，未对齐、弱标定与多于两路都被列为未来工作；频域掩码由输入自身的幅度谱导出、只在干净训练数据上学过，对结构性传感器伪影是保留还是抑制从未验证。其六，只有 mAP@50 一个指标，20 帧每秒未达实时，嵌入式部署被列为未完成的未来工作。"
    ]
-  ]
+  ],
+  "take_en": "FMCAF suppresses redundant spectral features with a frequency-domain Freq-Filter, then fuses with multimodal cross-attention, aiming at generalisation without dataset-specific tuning.",
+  "req04_detail_en": "No controlled degradation evaluation; low light, occlusion, and clutter are all natural conditions inherent to the dataset, with no modality dropping, noise-injection sweep, or real sensor fault experiments, and not even separate day/night reporting for the low-light pedestrian set"
  },
  "Thermal-Det: Language-Guided Cross-Modal Distillation for Open-Vocabulary Thermal Object Detection": {
   "ord": 30,
@@ -886,7 +946,9 @@
     "局限",
     "其一，退化/传感器故障评测为零：全文没有任何损坏条件实验——无注噪、无模糊/条纹/非均匀性/坏点/饱和等热传感器故障模型，无输入质量扫描；7 个评测基准全部是干净真实热图。其鲁棒性话语止于「域间隙」与「低对比度、弱纹理」等分布层面的困难，不涉及在役传感器退化。其二，作者自陈（补充材料 S7）：合成热数据不能完全复现传感器特性，如发射率变化、温度梯度与噪声模式，合成与真实热图间留有残余域间隙；蒸馏依赖 RGB 教师的精度，教师的错误会被学生继承并限制零样本上限；合成数据的区域级短语远多于图像级描述，语言侧监督不平衡，caption 易偏短。其三，绝对水平：FLIR-V2 上全场最优也只有 0.096 AP，零样本热检测离实用尚远；头条增益的参照系是同为零样本迁移的 RGB 开放词汇检测器，而不是在这些基准上训练过的闭集热检测/RGB-T 融合方法——后者完全不在对照组内。其四，数字口径：表 1 与表 2–表 4 的同名数据集数字不一致且未澄清（见关键数字末条），摘要「2–4% AP 一致增益」与 MFAD 实测（0.100 vs LLMDet 0.102）不符。其五，开放词汇性的验证方式：无 base/novel 划分，未见类别的检测能力只由基准原生类间接体现；TTAH 属性库规模、所用 LLM 的具体型号等关键配置正文未给出，复现信息不全。其六，训练成本与前提：150K 迭代、8× A6000、100 万合成图 + 约 250K 配对图，且整条管线以「存在大规模配对 RGB–热数据 + 可用的 RGB→热翻译模型（F-ViTA）」为前提——部署端省下的标注成本，部分转移到了训练端的数据与翻译管线建设上。"
    ]
-  ]
+  ],
+  "take_en": "First LLM-supervised open-vocabulary thermal detector: over a million synthetic thermal-aligned samples built from GroundingCap-1M, plus distillation from a frozen RGB teacher on unlabelled paired RGB-T data; thermal-only at inference.",
+  "req04_detail_en": "No controlled degradation experiments; zero-shot cross-domain transfer is generalization evaluation rather than controlled degradation; no real sensor faults."
  },
  "DyFCLT: Dynamic Frequency-Decoupled Cross-Modal Learning Transformer for Multimodal Tiny Object Detection": {
   "ord": 31,
@@ -919,7 +981,9 @@
     "局限",
     "作者自陈：全文无独立局限章节，仅在消融讨论中承认两点——只分解 Q 会因频率泄漏掉点、4 带过细划分掉点。据原文事实指出（非作者原话）：损坏与缺失模态，两者都没有评测。全文无模态丢弃、无单路腐化、无热成像故障模型（条纹噪声、非均匀性漂移、坏点、热饱和皆无）；其噪声抑制处理的是健康模态内的背景杂波。架构上两模态恒被对称全量消费，无质量估计、无折扣、无关断或回退通路——受损模态的错误频率成分会被 DFCA 当作互补频率信息正常交互。无任何融合不劣于单模态的保证或检验：其表 1 里即有融合失败的常态样本——UA-CMDet 20.0、ProbEn-early 17.0、CMA-Det 18.4 等多模态方法远低于单模态红外检测器（DQ-DETR 43.6、RT-DETR 42.7）；FLIR 表上 DyFCLT 自己的 AP 增益相对最强单模态也只有 +0.2（均为跨架构比较，仅作旁证）。对照表证据强度不一：表 1、2、3 均未逐行声明复现或转引；表 2 的领先幅度（+15.5 AP50）与表 1（+9.5 AP）、表 3（+1.2 AP50）量级悬殊，且多行是作者改造的双流版本，DronePerson 数字引用时必须带协议说明；M2D-LIF 的 38.7 同属此列（见关键数字）。频率前提的适用范围未验证：微小目标在两模态都富含中高频只在 RGBT-Tiny 一个数据集上统计（图 1a）；频带边界是全数据集共享的可学参数，当成像条件整体漂移时带划分是否仍然匹配，无任何实验——其动态性是训练期拟合的静态划分，不是对输入的逐样本响应。体量与效率：85.5M 参数、RT-DETR 级解码器，与轻量单阶段路线不同量级；全文无速度报告。"
    ]
-  ]
+  ],
+  "take_en": "Frequency-decoupled cross-modal attention for RGBT tiny object detection.",
+  "req04_detail_en": "No controlled degradation evaluation; all experiments use clean, aligned, paired inputs, with no dropping, zeroing, noise addition, corruption, or real sensor fault simulation for any stream"
  },
  "YOLOv11-RGBT: Towards a Comprehensive Single-Stage Multispectral Object Detection Framework": {
   "ord": 32,
@@ -953,7 +1017,9 @@
     "损坏与缺失模态：零评测、零机制。全部实验在干净配对数据上进行；无任何腐化、退化协议，无模态丢弃或整路缺失实验（全文无 missing modality 表述），训练配方中也无模态 dropout 或退化增广。其所称 robustness 仅指 MCF 的训练稳定性与跨数据集泛化，不是 corrupted-modality robustness，不可转引为损坏鲁棒性证据。无融合不劣于强单模态的保证，且其负融合证据是聚合口径的：融合低于强单模态的现象只在数据集整体 AP 上呈现，没有逐样本、逐区域的条件分析，更没有测试时模态质量变化的情形；该现象还随数据集翻转（M3FD 上融合普遍占优），作者的处理是换配方（P3 / MCF），不是给出下限保证。无测试时适应：全部机制（融合模式、P3、MCF）都在训练期定型，推理为冻结前向；MCF 的可控指训练时的注入幅度可控，不是测试时可调。MCF 的结构性上限：冻结主分支 + 零初始化注入，实质是把弱模态当增量信息，受主分支选择的硬约束；在 M3FD 上 MCF 输给普通全网 Midfusion，作者自己也只把它定位为迁移学习不佳时的备选。报告质量问题（引用时须知）：正文转述与表格多处对不上（§4.5、§4.6 的多处数字在表内无对应行或张冠李戴），引用本文数字一律直接查表，不要引正文转述。证据范围：外部方法数字多转引自二手文献；定量实验只覆盖所列 5 个数据集中的 3 个；框架本身无新融合算子、无理论分析，属工程框架 + 配方研究。"
    ]
   ],
-  "slug": "yolov11-rgbt"
+  "slug": "yolov11-rgbt",
+  "take_en": "Six-fusion-mode study over YOLO/RT-DETR with P3 mid-fusion + controllable fine-tuning (MCF).",
+  "req04_detail_en": "No controlled degradation experiments; its claimed robustness refers only to MCF training stability and cross-dataset generalization, not counted under B-strict; the training recipe also has no modality dropout or degradation augmentation, no real sensor fault evaluation."
  },
  "DEYOLO: Dual-Feature-Enhancement YOLO for Cross-Modality Object Detection": {
   "ord": 33,
@@ -987,13 +1053,17 @@
     "作者自陈：结论部分基本只复述贡献；明言 DECA / DEPA 作为即插即用模块推广到其他模型是未来工作（未验证）；KAIST 上未达 SOTA 由作者自己点明（并以热成像与红外成像质量差异大解释为扩展验证）。据原文事实指出（非作者原话）：损坏与缺失模态，两者都没有评测。全文唯一与退化沾边的是问题动机中的弱光（数据集天然属性）与 KAIST 昼夜自然划分；没有对任何一路施加受控腐化，没有模态丢弃或整路缺失实验，没有测试时适应，也没有任何保证式主张。其处理的相互干扰与冲突是干净对齐对上的特征级统计干扰，与一路被损坏、持续输出错误证据的情形是同词不同问题。机制上无单路抑制的可能：双增强是双向对称的互相再加权——一路的特征被另一路的权重调制（交叉施加），且最终融合是无门控的逐元素相加；若一路被腐化，其错误特征不仅照常进入相加，还会经交叉权重通道注入健康一路；机制里不存在质量估计、折扣或关断。缺同族基线：全文没有同骨干双流加简单拼接或相加这一最自然的中期融合对照；消融基线（80.8）与可见光-only 的 YOLOv8n 数字相同，+5.8 的增益是相对单模态而非相对朴素融合量取的——DECA / DEPA 相对拼接或相加融合究竟值多少，本文没有回答。口径不可移植：M3FD / LLVIP 为作者自划 3:1:1 划分且报验证集数字；DEYOLO-l 在 LLVIP 缺席（只报 -n）；800 epoch、8 卡训练而效率指标（参数、FLOPs、速度）全缺。证据范围：两个主数据集加一个自承非 SOTA 的 KAIST 扩展；消融仅 M3FD 单数据集，且表 2 的核尺寸差异在 0.2 量级。"
    ]
   ],
-  "slug": "deyolo"
+  "slug": "deyolo",
+  "take_en": "Dual semantic/spatial enhancement modules on YOLOv8 dual streams.",
+  "req04_detail_en": "No controlled degradation experiments; low light is a natural attribute of the dataset, KAIST day/night is a natural split (natural conditions not counted); no real sensor fault evaluation."
  },
  "LRAF-Net: Long-Range Attention Fusion Network for Visible–Infrared Object Detection": {
   "ord": 34,
   "take": "Long-range attention fusion + complementary-mask augmentation vs single-modality bias.",
   "note": "长程注意力融合 + 互补掩码增广，缓解单模态偏置；含 FLIR / LLVIP 结果。",
-  "slug": "lraf-net"
+  "slug": "lraf-net",
+  "take_en": "Long-range attention fusion + complementary-mask augmentation vs single-modality bias.",
+  "req04_detail_en": "No controlled degradation type mentioned in the abstract; only clean benchmark evaluation on VEDAI/FLIR/LLVIP is seen, low light and day/night in FLIR/LLVIP are inherent dataset content, not controlled degradation; no real sensor fault construction (at abstract level)"
  },
  "Multispectral Deep Neural Networks for Pedestrian Detection (Halfway Fusion)": {
   "ord": 35,
@@ -1026,7 +1096,9 @@
     "局限",
     "（1）鲁棒性评测为零（已逐项核查全文）：没有任何模态退化、噪声、腐化或缺失模态实验；单模态行是独立训练的检测器，不是“融合模型去掉一路输入”的缺失测试；昼/夜拆分是自然分布而非受控退化，热红外真实故障形态（条纹、NUC 漂移、坏点、饱和）更无从谈起。（2）融合是无条件拼接 + 1×1 卷积：没有任何质量感知、置信度或门控——一路模态被污染时，其特征仍以固定地位进入拼接并向下游传播；Score Fusion 的权重是写死的 0.5，与输入内容无关。架构里不存在“折扣某一路模态”的机制位置。（3）对齐被硬件假设掉：KAIST 由分束器共轴采集，本文未处理任何跨模态失准；方法对未对齐数据无适用性讨论。（4）评测面窄：多光谱实验只有 KAIST 一个数据集、一个任务（行人）；基座是两阶段 Faster R-CNN + VGG-16，无融合模型的运行时间分析。（5）数字只以曲线图 + 图例给出、无表格，且基于原始 KAIST 标注；Halfway 相对其他融合架构的 3.5 个百分点优势没有显著性或多次运行方差支撑。"
    ]
-  ]
+  ],
+  "take_en": "Systematically compared early / late / halfway fusion in a two-branch Faster R-CNN and showed mid-level (halfway) fusion works best on KAIST.",
+  "req04_detail_en": "No controlled degradation experiments; only the KAIST day/night natural distribution split (reasonable day/night), no real sensor fault evaluation"
  },
  "Multispectral Pedestrian Detection via Simultaneous Detection and Segmentation (MSDS-RCNN)": {
   "ord": 36,
@@ -1059,7 +1131,9 @@
     "局限",
     "（1）模态权重完全缺席：特征层是拼接 + NIN，决策层是四源 logit 等权求和；求和形式下任一源的高置信错误 logit 都可无界地主导最终分数，全文没有置信度、质量或可靠性估计的任何位置。作者自己把光照感知加权列为“未采用、加了可更好”的留白。（2）鲁棒性评测为零（已逐项核查全文）：无模态退化、噪声、腐化或缺失实验。单流分数与单模态行都是分数源消融或单独重训的模型，不是“融合模型一路输入损坏/缺失”的测试；MCN 永远同时消费两模态裁剪区域。（3）分割监督是框充掩码的弱监督，掩码粗糙（整框即前景），且其收益在 MCN 阶段已明显衰减；该分支是训练期辅助任务，推理时分割输出不参与任何门控或加权——它不是显著图式的空间注意力。（4）两级级联、两对 VGG-16，模型笨重（228 ms/张）；只在 KAIST 单数据集、单一行人类别上验证。（5）数字口径对后世有坑：本文起 KAIST 出现“原始标注 vs 改进/净化标注”多套数字并行，All MR 7.49（净化训练 + 改进测试标注）与 11.63（原始训练 + 改进测试标注）常被后世混引，引用必须连标注版本一起写。"
    ]
-  ]
+  ],
+  "take_en": "Two-stage multispectral R-CNN jointly optimising detection and semantic segmentation, with a sanitised re-annotation of KAIST training data.",
+  "req04_detail_en": "No controlled degradation experiments; KAIST Day/Night is a natural collection split; the single-modality controls are separately retrained models with the same architecture, not a test of the fusion model with one input stream removed"
  },
  "Weakly Aligned Cross-Modal Learning for Multispectral Pedestrian Detection (AR-CNN)": {
   "ord": 37,
@@ -1092,12 +1166,16 @@
     "局限",
     "（1）鲁棒性只有几何轴（已逐项核查全文）：全文的失效模型有且只有位置偏移。没有任何模态内容退化（噪声/模糊/曝光）、热故障、损坏或缺失模态实验；unpaired objects 只在标注与分歧权重层面被处理，从未做“融合模型去掉一路输入”的评测。损坏 ≠ 缺失 ≠ 位移，本文只覆盖三者之外的第四种病理。（2）对齐监督成本高：RFA 依赖逐模态配对框监督，为此要重标整个数据集（59,812 个行人）；没有配对标注的数据集（如多数只有融合框的数据集）无法直接训练该模块。（3）置信权重是“果断度”而非“正确度”：W = |p_1 − p_0| 度量的是单模态分类头自身的分类间隔，自信地错与自信地对得到同样的高权重。原文图 8(c) 恰好暴露这一点：彩色分支以 0.98 的背景概率“自信地否认”一个只在热红外中存在的行人（W_s 仍高达 0.96），最终靠分歧权重 W_d = 0.13 才把 sensed 特征压下去——即该机制对“自信错误”的防护全部寄托在跨模态分歧这一项上，单模态内部无校验。（4）结构性非对称是写死的：参考模态恒为热红外，其特征从不被分歧权重惩罚、也从不被对齐移动；若热红外本身是出问题的一侧（本文设定之外），框架没有对应的处理通路。反向配置仅在未读到的补充材料中讨论。（5）对齐粒度有限：RFA 只回归每个 proposal 的中心平移并据此重池化，不保证 RoI 内部像素级特征对应；且只适用于两阶段检测器（依赖 RPN proposal 与 RoI 池化）。（6）协议与规模的老化：仅 KAIST / CVC-14 两个行人数据集、MR 口径、VGG-16 骨干、训练仅 3 epoch；偏移鲁棒性协议只平移彩色图（sensed 侧）、范围 ±10 像素，未测参考侧被平移或双侧独立扰动。"
    ]
-  ]
+  ],
+  "take_en": "Region Feature Alignment module predicting and correcting per-modality position shifts inside Faster R-CNN, with RoI jitter training on per-modality annotations.",
+  "req04_detail_en": "Controlled misalignment: synthetic translation applied only to the color stream (169 grid offsets + four-direction ±10 px sweep), metrics are MR/MRT; no modality corruption or dropping experiments, no real sensor faults."
  },
  "MLPD: Multi-Label Pedestrian Detector in Multispectral Domain": {
   "ord": 38,
   "take": "Multi-label learning with modality-specific (non-paired) box annotations, so RGB and thermal labels need not coincide — enables training on unpaired multispectral data.",
-  "note": "全文不可得（IEEE 闭源、无预印本），本注记据直接后继 HA-MLPD 的全文转述与四篇引用论文的结果表。「多标签」指逐实例的模态可见性状态（[1,0]/[0,1]/[1,1]），检测头在 SSD 定位之外并行预测该状态；双 VGG-16(BN) 支路多层拼接中间融合，无门控/注意力/质量估计，鲁棒性全押训练期（多标签监督 + 半配对增广）。KAIST MR⁻² All 7.58 / Day 7.95 / Night 6.95（四源一致；注意 SAMPD 的表把 Day/Night 互换）。原文设有整模态置零（blackout）评测：RGB 置零 All 16.34、热置零 23.95，属缺失端点；腐化（在场但被污染）评测为零，三态标签中也没有「在场但不可信」一态。"
+  "note": "全文不可得（IEEE 闭源、无预印本），本注记据直接后继 HA-MLPD 的全文转述与四篇引用论文的结果表。「多标签」指逐实例的模态可见性状态（[1,0]/[0,1]/[1,1]），检测头在 SSD 定位之外并行预测该状态；双 VGG-16(BN) 支路多层拼接中间融合，无门控/注意力/质量估计，鲁棒性全押训练期（多标签监督 + 半配对增广）。KAIST MR⁻² All 7.58 / Day 7.95 / Night 6.95（四源一致；注意 SAMPD 的表把 Day/Night 互换）。原文设有整模态置零（blackout）评测：RGB 置零 All 16.34、热置零 23.95，属缺失端点；腐化（在场但被污染）评测为零，三态标签中也没有「在场但不可信」一态。",
+  "take_en": "Multi-label learning with modality-specific (non-paired) box annotations, so RGB and thermal labels need not coincide — enables training on unpaired multispectral data.",
+  "req04_detail_en": "Whole-modality zeroing at inference (RGB blackout / thermal infrared blackout) and partial-overlap zeroing (side zeroing, periphery zeroing), all controlled degradation at the missing end; no present-signal corruption (noise/blur/stripes) evaluation, no real sensor fault construction"
  },
  "BAANet: Learning Bi-Directional Adaptive Attention Gates for Multispectral Pedestrian Detection": {
   "ord": 39,
@@ -1130,12 +1208,16 @@
     "局限",
     "（1）退化/缺失评测为零（逐项核查）：全文不存在 corrupt / degrad / missing 类设定；唯一的「噪声」是问题陈述中成像机理带来的自然表征噪声（图 1 定性示意），没有被操作化为任何可控实验变量；昼/夜拆分是自然分布，不是退化协议。因此本文对「一路被损坏时融合会怎样」不提供任何证据。（2）门控是内容注意力，不是质量估计：通道门来自两模态联合 GAP 统计过 MLP+sigmoid、空间门来自重校准特征拼接过 1×1 卷积，两者都只受检测损失监督，无质量真值、无校准验证；门值高低与该模态当下是否受损之间没有被测过的对应关系。且通道门的输入是两模态拼接后的联合统计——某一路被污染时，它自己的全局统计先被污染、再经 MLP 生成门值，且 GAP 把空间信息全压掉，局部损坏在通道描述子里会被平均稀释；空间门的输入是已经互相重校准过的特征，第一步注入若已带入污染，第二步的门就在污染后的特征上计算，多级（Stage 3–6 共四级）重复这一过程、无任何一级有外部锚点纠偏。（3）光照权重是粗粒度的零和全局标量：整图一对 (w_R, w_T)、w_T = 1 − w_R，索引的是昼/夜类别而非任一路的实际健康状态——白天发生的热相机故障、黄昏/人工照明等昼夜分类器本身失效的情形，机制上都无信号；其监督标签（采集时刻）是场景先验，不是样本级测量。（4）结构上不能弃权：跨模态注入是残差相加，本路特征恒原样通过，门控调的是「对方注入强度」，不存在把一路特征整体压零的通路；被污染的供体特征既会经通道门注入对方、也以重校准特征的形式继续在本流内传播，双向结构在此不是隔离机制，而是双向传播通道。（5）评测面窄：单一 KAIST 数据集、单一 MR⁻² 指标、仅 8 epoch 训练；对照数字为转引而非同协议重跑；正文称表 III 比较「五个版本」但表中只有四行，属原文小不一致，引用以表为准。"
    ]
-  ]
+  ],
+  "take_en": "Bi-directional adaptive attention gates progressively distil modality-specific noise and recalibrate both streams, with illumination-based weighting of interaction strength.",
+  "req04_detail_en": "No controlled degradation experiments; only natural day/night subset splits on KAIST; no evaluation of real sensor faults"
  },
  "Learning a Dynamic Cross-Modal Network for Multispectral Pedestrian Detection (DCMNet)": {
   "ord": 40,
   "take": "Dynamically aggregates local and non-local cross-modal context when fusing the streams, instead of a fixed fusion rule.",
-  "note": "全文不可得（ACM 闭源、无预印本与官方代码），本注记据官方摘要与 TFDet 对比表转引。其「dynamic」是算子层面的内容自适应：局部模块用输入条件生成的动态卷积核建立跨模态局部对应，非局部模块生成动态隐特征节点作全局聚合中介——与模态路由或可靠性加权无关。无任何模态贡献加权、置信估计或门控开关。仅 KAIST + LLVIP 干净基准，无退化/缺失评测。摘要只给相对增益（同骨干 Cascade R-CNN 之上 KAIST +1.74、LLVIP +1.90 个百分点，指标未注明，引用须原样标注）；转引（TFDet 表 III/IV）：KAIST MR⁻² All 5.84，但 Far 子集 69.70 显著差于同期；LLVIP AP 58.4 属中游。"
+  "note": "全文不可得（ACM 闭源、无预印本与官方代码），本注记据官方摘要与 TFDet 对比表转引。其「dynamic」是算子层面的内容自适应：局部模块用输入条件生成的动态卷积核建立跨模态局部对应，非局部模块生成动态隐特征节点作全局聚合中介——与模态路由或可靠性加权无关。无任何模态贡献加权、置信估计或门控开关。仅 KAIST + LLVIP 干净基准，无退化/缺失评测。摘要只给相对增益（同骨干 Cascade R-CNN 之上 KAIST +1.74、LLVIP +1.90 个百分点，指标未注明，引用须原样标注）；转引（TFDet 表 III/IV）：KAIST MR⁻² All 5.84，但 Far 子集 69.70 显著差于同期；LLVIP AP 58.4 属中游。",
+  "take_en": "Dynamically aggregates local and non-local cross-modal context when fusing the streams, instead of a fixed fusion rule.",
+  "req04_detail_en": "The abstract does not mention controlled degradation experiments; only clean benchmark evaluation on KAIST/LLVIP is reported (day/night are natural subset splits)"
  },
  "Translation, Scale and Rotation: Cross-Modal Alignment Meets RGB-Infrared Vehicle Detection (TSFADet)": {
   "ord": 41,
@@ -1168,7 +1250,9 @@
     "局限",
     "（1）无受控失准评测：全文对失准的量化只有数据集自然偏差的统计（图 8）。MJ 是在训练期对感知提议注入高斯几何抖动的增广手段，评测始终在自然（不可控、未分级）的验证集上进行；没有「测试时注入已知偏移量 → 量测性能退化曲线」这类协议。因此 TSRA 对多大的偏差会失效、偏差-性能曲线形状如何，本文没有答案。（2）退化/缺失评测为零（已核查）：无腐化注入、无整模态缺失、无传感器故障模型；且其标注清洗规则把「可见光极差光照」的目标从两模态标注中一并删除——最接近「一模态严重退化」的样本被从评测中系统性移除而非被评测。（3）对齐机器没有模态健康概念：MS 的分数度量的是标注框与二值化轮廓的贴合度（标注质量），不是任一模态的信号健康度；对齐与融合链路中没有任何质量/置信量。融合式是无条件相加：感知模态贡献恒以 100% 权重进入，不存在衰减或弃权通路。（4）监督依赖成对双模态真值框：偏差真值与 MS 打分都要求逐目标的双模态配对标注，这正是 DroneVehicle 这类数据集需要作者手工修标注（补框、排序、删框）的原因；换到只有单模态标注的数据集，TSRA 无法按原样训练。（5）推理期 MS 角色分配未明述：MS 打分以真值框与完整目标裁剪为输入，论文未说明测试时如何给 RPN 提议指定参考/感知模态——复现时这是必须自行决定的缺口。（6）协议口径：验证集 + 作者修改版标注，数字不可与原始标注/测试集口径混用；Cascade-TSFADet 的 73.90 是其自身在表 3 的数字。作者自陈局限基本为空——结论节只有推广性展望。"
    ]
-  ]
+  ],
+  "take_en": "TSRA module calibrating feature maps for translation, scale and rotation deviations between modalities, plus a modality-selection strategy, in a two-stream detector for DroneVehicle.",
+  "req04_detail_en": "No controlled misalignment or degradation evaluation; MJ is a training-time augmentation that injects Gaussian geometric jitter into perceptual proposals rather than an evaluation protocol, evaluation is performed only on a validation set with natural weak misalignment; no evaluation of real sensor faults"
  },
  "TFDet: Target-Aware Fusion for RGB-T Pedestrian Detection": {
   "ord": 42,
@@ -1201,7 +1285,9 @@
     "局限",
     "（1）退化/缺失评测为零（已核查全文）：无模态置零、无噪声注入、无损坏协议、无热成像故障模型（条纹/非均匀性/坏点/饱和均未出现）；「低光照优势」由 LLVIP 自然低光数据与 KAIST Night 自然子集支撑，是场景划分而非受控退化。表内单模态行不能替代同一模型的模态撤除实验。（2）门控无模态语义：s 是融合后特征的通道门，取值 (0,1)，且负相关损失明确把每个 s_i 推向 1——该门在设计上既不能关断任何通道到零，更没有模态维度的表达；s 不对应任何可解释的物理量（非模态可靠性、非通道质量分），其区分度由检测损失与分割损失间接塑造。（3）信号内生于融合特征：掩码 m 由融合特征 Fx 本人经 Seg 分支预测，门控 s 又由 m 与 Fx 的相关导出，整条「目标感知」链没有独立于融合结果的锚点；若一路模态被损坏，污染先混入 FFM 进入 Fx，再由受污染的 Fx 预测掩码、生成门控。（4）掩码监督粗糙：框级掩码把矩形框内背景一并标为前景，对比增强的监督信号本身带噪；多类扩展时所有类别共用一张二值掩码，不区分类别。t-SNE 可视化是定性证据，无定量分离度指标。（5）短板未讨论：Far 子集 55.50 明显落后于多个对比方法（最小/最远行人恰是 FP 抑制最难惠及的群体），作者未分析；通道相似性统计在 LLVIP 上弱（表 I）亦未讨论。（6）数字口径混排：KAIST/LLVIP/FLIR 表中自报与转引未逐行标注（仅 M2FNet 一行有复训说明、M3FD 全表为复现）；推理时间为跨硬件比较。"
    ]
-  ]
+  ],
+  "take_en": "Fusion-then-refinement with a segmentation branch and a correlation-maximum loss enhancing pedestrian/background feature contrast to suppress false positives.",
+  "req04_detail_en": "No controlled degradation; the KAIST Day/Night subsets and LLVIP low-light condition are natural acquisition splits; the single-modality rows in the table are independently trained single-modality detectors"
  },
  "Weakly Aligned Feature Fusion for Multimodal Object Detection": {
   "ord": 43,
@@ -1234,7 +1320,9 @@
     "局限",
     "其一，偏移监督被标注成本卡住：RFA 的 shift loss 需要逐目标双模配对标注，KAIST-Paired 是作者重标 KAIST 才得到的；没有这套标注的新数据集上机制无法原样构造。这正是其后继工作转向无监督偏移（隐式校准、无监督跨模寻址、掩码驱动对应）的直接动因——有监督对齐精度高，但监督本身不可扩展。其二，对齐非对称且参考写死：只有 sensed 被对齐到 reference；选谁作 reference 靠经验（热红外全天候成像稳定）。reference 本身若不可靠，框架内没有任何切换或降权机制——CAF 的分歧权重也只压 sensed。几何轴上的「参考」不是健康轴上的「可信」，两者在本文里被默认等同。其三，位移表达只有逐 RoI 平移：每 RoI 一个 (tx, ty)；旋转、尺度、视差型非刚性形变不在表达内（作者 §III-A 自承 RGB-D 侧还伴随 milder deformation and rotation，但 RFA 并不建模它们）；RoI 内部的逐像素错位同样不处理。其四，受控位移协议的口径边界：鲁棒性量测（表 III/IV）的位移上限由 Rd = 0.5 界定义，该界依参照模型（Halfway Fusion）而定、非固定像素数，与固定像素扫描（如 {0,5,10,20,30,50}px）不可直接横比；§III-B 的 169 模式网格只到 ±6 px。且合成位移全部是整图刚性平移，与作者自己指出的真实位移场（空间变化、近边缘大）不是同一分布——受控量测证明的是对合成平移的平坦度，天然位移（CVC-14、无人机、SL-RGBD）只报混合口径主结果、没有留出的天然位移分层读数。其五，CAF 权重自指：Wr/Ws 是各模分类头自己的分类间隔（果断度而非正确度）；一路模态可以既错且果断。分歧权重 Wd 用两模预测之差，方向对了，但只压 sensed 一侧。其六，无内容退化评测：噪声、模糊、过曝、热成像非均匀性等模态内容损坏一概没有；模态级缺失评测也没有。未配对目标处理的是视场差异造成的目标级单模缺席，与模态失效是两回事；Wd 是它唯一沾边的机制，且从未被单独量测（无未配对子集上的分开报告）。其七，规模与年代：VGG-16 两阶段框架、KAIST 训练仅 3 epoch；无人机集 831 对、SL-RGBD 214 对，「通用多模态检测」的结论建立在两个很小的自建集 + NYUv2 的平坦度优势上，原点精度在 NYUv2 上并不领先。"
    ]
-  ]
+  ],
+  "take_en": "Journal extension of the AR-CNN line: weakly aligned feature fusion generalised from pedestrian detection to multimodal object detection.",
+  "req04_detail_en": "Controlled misalignment: synthetic rigid translation (±6 px grid + multi-level shifts in four directions, metrics MR/MRC/MRT and mAP); natural-displacement datasets (CVC-14, self-collected UAV dataset) report only main results and are not counted; no content corruption / modality dropping, no real sensor faults."
  },
  "Weakly Misalignment-free Adaptive Feature Alignment for UAVs-based Multimodal Object Detection (OAFA)": {
   "ord": 44,
@@ -1267,7 +1355,9 @@
     "局限",
     "单数据集、单场景：全部结论只建立在 DroneVehicle（无人机车辆、预配准数据）上；无行人数据集（KAIST/LLVIP/FLIR）验证，「弱失准」的量级分布（0–15 px）是否迁移到其他平台未知。鲁棒性评测单一且不可量化引用：受控失准只有刚性平移一种（无尺度/旋转/局部形变，而同数据集上的 TSFADet 恰恰建模平移 + 尺度 + 旋转），且结果仅曲面图、无数值表、无误差棒，无法与他法做同口径曲线对比；训练集本身含天然弱失准，故这不是「训练未见失准」的泛化测试，只是同分布偏移放大测试。对齐正确性不可证伪：φ_c 无监督、无评测，论文从未报告任何对齐误差指标；「precise feature-level offsets」（摘要语）是修辞而非测量结论。参考模态被无条件信任：IR 既是几何参考、又是标注来源；IR 本身若失真/损坏，全框架没有任何察觉或回退机制。退化与缺失评测为零（与失准严格区分）：全文没有模态缺失、噪声/模糊/低照度等光度退化、传感器故障（条纹、坏点、非均匀性）任何一项评测；其「robustness」一词仅指几何位移鲁棒性。低照度等条件只作为 DroneVehicle 的场景多样性被提及，没有分条件结果表。训练成本：两阶段共 150 epoch 且阶段间需权重衔接，33.1 fps 也不及简单拼接基线（63.2 fps），部署友好度一般。"
    ]
-  ]
+  ],
+  "take_en": "Estimates cross-modal offsets in a modality-invariant common subspace and performs offset-guided deformable alignment.",
+  "req04_detail_en": "Controlled rigid translation: IR fixed, only RGB translated, Δx, Δy ∈ [−15, 15] in integer pixel steps (31×31 combinations), results shown only as a three-dimensional surface plot with no numerical table; no content degradation or modality-missing evaluation; no evaluation of real sensor faults"
  },
  "IRDFusion: Iterative Relation-map Difference Guided Feature Fusion for Multispectral Object Detection": {
   "ord": 45,
@@ -1300,7 +1390,9 @@
     "局限",
     "作者自承两点：小目标与重遮挡目标上失效，此时共享线索与差分线索同时变得不可分辨；迭代结构计算成本高，不利于实时与边缘部署。评测面：没有任何退化、缺失或传感器故障评测，主对比表也没有独立单模态对照行，融合结果与单模态检测器的系统比较在其评测体系内未被设置。机制面：差异被构造性地等同于互补信息，但差异同样可能来自某一路的失准或噪声，机制没有任何区分二者的成分，反馈回路会把差异内容以固定增益注入另一支路并逐轮处理；全部调节量都是与输入无关的全局标量，系统对单次输入中哪一路更可信没有表达。另有图面与正文小疵：框图上半两个差分反馈块的支路标注相同（上方一块应为可见光支路）；正文个别增益数字与消融表的归属不完全对齐，引用以表格为准。"
    ]
-  ]
+  ],
+  "take_en": "Iteratively refines cross-modal fusion using differences between relation maps of the two modalities.",
+  "req04_detail_en": "No controlled degradation evaluation; all experiments are performed on clean aligned inputs, with no corruption, modality dropping, or real sensor fault conditions"
  },
  "LER-YOLO: Reliability-Aware Expert Routing for Misaligned RGB-Infrared UAV Detection": {
   "ord": 46,
@@ -1333,7 +1425,9 @@
     "局限",
     "作者自陈：(1) k=3 下执行并未缩减为严格稀疏子集，稀疏激活的计算优势要等专家池扩增后才成立，当前实现还有路由开销、嵌入式部署需核级优化；(2) 合成移位只是受控压力测试，不能替代真实传感器标定变化；(3) 只在 MBU 单一协议上验证，跨平台（机载、地对空、无人机载）泛化未测。据原文事实指出：损坏与缺失模态两者都没有评测——全文唯一的受控扰动是几何错位（RGB 合成平移），没有对任何一路施加噪声 / 模糊 / 低光等光度腐化作为评测，也没有模态丢弃 / 整路清零实验；图 4 与表 7 涉及的暗光、逆光是 MBU 的自然场景类别而非受控退化，只作观察性路由分析。本文的“可靠性”是 对齐后对应的可信度，不是模态健康度——完全对齐的一对图像仍可有一路被腐化，那种情形不在本文的考察范围内。也没有任何“融合不劣于更强单模态”的保证或主张：无定理、无此类表述；单模态臂只在干净 / 对齐条件下报告（RGB 80.7、IR 81.2），在移位压力下连相对静态融合的 AP50 优势都归零，且未在压力条件下与单模态臂对照。退化类型仅合成平移一种（5–40 px、四方向平均），无任何真实热成像故障模型——无条纹噪声、无非均匀性（NUC）漂移、无坏点、无热饱和；也无光度腐化评测。无测试时适应：可靠性图与路由器均为训练时学得、测试时冻结的前向计算。可靠性图自指且未校验：R 由对齐后特征间的 L1 一致性自监督，若两路在同一位置同时出错、或错位发生在无纹理区，一致性高而对应仍可错；MBU 本有目标偏移标签可用于校验 R 与真实偏移误差的相关性，作者未做；R 约 0.33 的绝对水平也表明它未被校准。证据范围：单一数据集、单类别、320×320 输入、UAV 专用场景；补充材料表 S1–S3（种子级结果与训练日志、逐方向移位结果、路由权重 / 可靠性统计汇总）在正文中仅被列为“prepared for submission”，未随 arXiv 版本发布、未能读到，逐方向移位数字与路由日志细节无从核验；“sparse”的命名与 k=3 全激活的实际名实不符。"
    ]
-  ]
+  ],
+  "take_en": "Uncertainty-aware alignment resamples visible features onto the infrared reference, and a reliability-guided sparse mixture of experts routes between RGB-dominant, IR-dominant and interaction experts.",
+  "req04_detail_en": "The only controlled perturbation is synthetic translation misalignment: at test time only the RGB stream is translated by 5/10/20/40 px, averaged over four directions; no photometric corruption, no modality dropping or whole-stream zeroing; dark light and strong backlight are natural scene groups in MBU, used only for observational routing analysis (recorded here only under B-strict); no real sensor fault types."
  },
  "Bridging Severe Cross-Modal Misalignment: End-to-End Visible-Infrared Object Detection via Explicit Feature-Domain Affine Registration": {
   "ord": 47,
@@ -1366,7 +1460,9 @@
     "局限",
     "内容退化、模态缺失与传感器故障评测为零：全文唯一的病理是几何失准，没有噪声、模糊、过曝等内容退化，没有模态缺失或复制输入对照，没有任何热传感器故障条件；融合模块所称的不可靠可见光响应仅指低光照场景，判据是整图平均强度。失准评测的可引用性有限：与受控协议（测试时逐档注入已知偏移并给出曲线）相比，本文是训练与测试同分布的汇总评测，既无退化曲线也无零失准对照点，所证明的是在该扰动分布上端到端可学，而非失准增大时退化平缓。严重程度的横向比较须谨慎：其严重主要指旋转加各向异性缩放的复合变换，与纯平移口径、原生小偏移口径不在同一变换族与坐标系下，任何像素量级的直接横比都会误导。全局刚性假设方面：单一图像级仿射无法表达视差、纵深相关的局部偏移与非刚性形变，无人机高空近平面场景下近似可辩护，但原文未讨论适用边界，也未在非平面数据上验证，全文只有一个无人机基准。复现性缺口包括：代码与自建数据集在当前版本中仅为将发布承诺，对齐损失的具体构成未给出公式，平移分量采样范围未写明，数据量口径前后不一致，效率数字全缺。"
    ]
-  ]
+  ],
+  "take_en": "JFRDet performs explicit feature-domain affine registration with illumination-guided complementary fusion for severely misaligned visible-infrared pairs; introduces the DVMA severe geometric-misalignment benchmark.",
+  "req04_detail_en": "Misalignment is a task setting with the same distribution in training and testing: the self-built DVMA injects compound affine transforms (rotation ±15–30°, anisotropic scaling 0.90–1.10, translation), with offsets of tens to hundreds of pixels, but there is no per-level controlled offset evaluation, no degradation curve, and no zero-misalignment control; no content degradation or modality-missing evaluation; no evaluation of real sensor faults"
  },
  "Efficient RGB-T Object Detection via Sparse Cross-Modality Fusion": {
   "ord": 48,
@@ -1399,7 +1495,9 @@
     "局限",
     "其一，退化/缺失/传感器故障的测试端评测为零。全文与「损坏」相关的只有三处，均非受控退化评测：§4.5 的空间失准讨论（X/Y 方向像素平移使 SFEDet 与稠密基线 EI²Det 的 mAP 都下降，加 shift 增广训练可缓解；仅曲线图、无数值表，且属几何错位轴而非内容退化轴）；附录 B 的训练期随机单模态加噪增广（只有训练用途、无测试端损坏协议与之对应，加噪幅度与概率未给数值）；表 6 的 proposal 定位劣化实验（考验对差框的容忍，与模态健康无关）。热红外条纹、非均匀性漂移、坏点、饱和等传感器故障模型全文未出现。其二，单模态下限从未测量：立论前提「背景可由单模态轻量模型处理」只在召回意义上验证过（图 1(b)(c)），主表无 RGB-only / TIR-only 检测行；两个 RPN 本身就是现成的单模态检测器，其独立检测精度从未作为结果报告。其三，效率数字有条件性：FLOPs 随场景 proposal 数浮动（分位区间见表 5），稠密场景下成本向稠密融合回归，其成本优势在高分辨率稀疏行人场景最大、在 FLIR 已明显收窄；FPS 仅有相对曲线，无绝对时延数值。其四，召回即上限：两路 RPN 同时漏检的目标 FER 无从挽回，该风险只在 FLIR 上用 YOLOv8-S/L 曲线论证过，未在 M3FD/LLVIP 上单独报告 RPN 召回上限。其五，精度定位是「有竞争力」而非最优：FLIR mAP 低于 Fusion-Mamba（45.9）与 COFNet（44.6），LLVIP AP50 低于 EI²Det（98.0）；换来的是数分之一的参数量与数倍低的 FLOPs，引用标题的 efficient 时应连同精度差一并说明。其六，RoI 配对假设同框跨模态对齐，对未配准数据只有 §4.5 的增广对策，无机制层处理。"
    ]
-  ]
+  ],
+  "take_en": "Two-stage sparse fusion: lightweight single-modality detectors first propose high-recall RoIs, and only those sparse candidates receive fusion-driven re-checking and box refinement.",
+  "req04_detail_en": "No test-time controlled modality degradation evaluation; the spatial misalignment in §4.5 is shown only as a curve plot with unquantified offsets (not counted as Yes under the clarified criterion); random single-modality noise addition in the appendix is training-time only, with no corresponding test-time protocol; Table 6 tests proposal localization quality rather than modality health; extreme illumination and weather in M3FD are native dataset conditions"
  },
  "Fusion-Mamba for Cross-modality Object Detection": {
   "ord": 49,
@@ -1433,7 +1531,9 @@
     "作者自述：正文没有独立的 Limitations 一节；作者明确承认的只有一条——DSSF 堆叠过多（16 个）时互补特征漂移、性能下降（§4.3）。其余为笔记评注（非作者结论）：(1) 零鲁棒性评测：没有任何模态损坏、缺失、噪声协议；当某一路在推理时真的退化时，这套门控会如何表现，全文无证据；摘要与结论中的 robust 无实验对应物。(2) 门控无质量语义：门控是特征自身的线性投影，无监督、无校准，不对应任何可解释的模态质量或可靠性量；两路特征始终都被使用，构造上不存在丢弃一路或单模态回退的路径。(3) 复杂度卖点与实际体量有张力：Mamba 相对注意力的线性复杂度成立，但全模型在 FLIR-Aligned 上参数达 287.6M、时延 78 ms，明显重于同表单模态模型（76.7M、22 ms），省下的只是相对 Transformer 融合模块的时间。(4) 结构配置敏感：FMB 放置位置换错一组即骤降约 8.8 个 mAP 点，DSSF 堆叠数从 8 增到 16 即回落，增益对配置的依赖较强。(5) 依据限定：本笔记数字以 arXiv v1 为准，TMM 2025 期刊版未读，若期刊版有修订未覆盖。"
    ]
   ],
-  "slug": "fusion-mamba"
+  "slug": "fusion-mamba",
+  "take_en": "State-space (Mamba) cross-modal fusion for IR-VIS detection.",
+  "req04_detail_en": "No controlled degradation at all; supplementary material gives only qualitative visualization descriptions for natural challenges such as low light, adverse weather and occlusion, with no quantitative robustness results (not counted under B-strict)."
  },
  "WaveMamba: Wavelet-Driven Mamba Fusion for RGB-Infrared Object Detection": {
   "ord": 50,
@@ -1467,17 +1567,23 @@
     "鲁棒性零评测（全文核查）：无合成腐化、无噪声注入、无缺失模态、无未对齐实验；M3FD 自带的恶劣天气是自然采集的干净标注数据，不构成退化协议。HFE 的结构性脆弱点（机制层推断，非原文主张）：逐元素绝对值最大等于对高频幅值大的那一路赢家通吃，而常见损坏（如热条纹噪声、传感器噪声、锐化伪影）恰恰会抬高高频幅值——在退化条件下，该策略在结构上倾向于把受损模态的噪声当作细节选进融合结果；作者未做任何实验检验这一点。无质量感知：LMFB 的门控只按内容压冗余，通道交换更是无条件硬混合——一路模态整体变质时，没有任何机制能降低它的权重，两条流恒被完整消费。规模与协议口径：头条数字建立在 YOLOv8l 量级（69.1M）上，无 nano / small 变体，与轻量检测器不在同一部署区间；M3FD 用所引文献的划分，与用其他划分的工作同表比较时须注口径；KAIST 用 mAP 而非 MR，与行人文献不可直接比。增益构成需拆分引用：92.1 这个数字捆绑了骨干（YOLOv8l）、IDWT 头（单独 +1.1）与 WMFB 三者；表 7 的策略消融从弱基线（无 DWT 直接平均，83.2）起算，引用增益幅度时须注明参照系。"
    ]
   ],
-  "slug": "wavemamba"
+  "slug": "wavemamba",
+  "take_en": "Wavelet frequency-decomposed Mamba fusion with YOLOv8 head.",
+  "req04_detail_en": "No controlled degradation experiments; adverse weather included in M3FD is naturally collected clean annotated data (natural conditions not counted); no real sensor fault evaluation."
  },
  "Mask-Guided Mamba Fusion for Drone-based Visible-Infrared Vehicle Detection": {
   "ord": 51,
   "take": "Mask-guided state-space fusion for drone-based visible-infrared vehicle detection on DroneVehicle.",
-  "note": "全文不可得（闭源、无预印本与官方代码），本注记据官方摘要与四篇同行转引。其「mask」是车辆区域的空间聚焦、不是模态可靠性：以一路模态的候选区域覆盖另一路中间层特征的对应区域、再以正则约束提取跨模态引导，不决定用不用某一路（官方摘要自身存在模块缩写不一致，掩码由哪一路生成、如何监督在可核查范围内未核实）。融合 SSFM 把两路特征映射进共享隐状态交互（与 Fusion-Mamba 的 DSSF 同族），全管线无任何质量/可靠性量、无压低某一路的通道。掩码是结构性单点故障（结构推断）：引导信号来自同一对传感器，源模态损坏时掩码先错位/缺失、错误引导会被当作正常信息吸收，管线无第二道防线。退化/缺失/故障评测在核查范围内为零，单模态对照行同样不可核查。头条数字可交叉验证：DroneVehicle mAP@0.5 80.3（摘要 80.24%，两家独立转引表数值集合完全一致），规模约 122M 参数、6.1 FPS（转引），重型非实时。"
+  "note": "全文不可得（闭源、无预印本与官方代码），本注记据官方摘要与四篇同行转引。其「mask」是车辆区域的空间聚焦、不是模态可靠性：以一路模态的候选区域覆盖另一路中间层特征的对应区域、再以正则约束提取跨模态引导，不决定用不用某一路（官方摘要自身存在模块缩写不一致，掩码由哪一路生成、如何监督在可核查范围内未核实）。融合 SSFM 把两路特征映射进共享隐状态交互（与 Fusion-Mamba 的 DSSF 同族），全管线无任何质量/可靠性量、无压低某一路的通道。掩码是结构性单点故障（结构推断）：引导信号来自同一对传感器，源模态损坏时掩码先错位/缺失、错误引导会被当作正常信息吸收，管线无第二道防线。退化/缺失/故障评测在核查范围内为零，单模态对照行同样不可核查。头条数字可交叉验证：DroneVehicle mAP@0.5 80.3（摘要 80.24%，两家独立转引表数值集合完全一致），规模约 122M 参数、6.1 FPS（转引），重型非实时。",
+  "take_en": "Mask-guided state-space fusion for drone-based visible-infrared vehicle detection on DroneVehicle.",
+  "req04_detail_en": "The abstract does not mention controlled degradation experiments; only clean benchmark evaluation on DroneVehicle is reported (day/night is natural scene variation in the dataset, with no split reporting)"
  },
  "Contextually-Guided State Space Fusion for Misaligned Multi-Spectral Object Detection (CSSFDet)": {
   "ord": 52,
   "take": "Selective state-space fusion using global semantic context to compensate local features degraded by cross-modal misalignment.",
-  "note": "全文不可得（ACM 付费墙、无预印本与官方代码），本注记据官方摘要与同行转述。它处理的是「内容完好、位置错位」：无偏移估计/配准子网络，靠上下文引导的状态空间模块用全局语义上下文把错位处的特征隐式补回——与 AR-CNN、TSFADet 的显式几何对齐路线对照清晰。无任何模态质量/可靠性/不确定性量，Mamba 的「选择性」作用于特征序列而非模态证据，没有任何一路能被降权或关闭；上下文补偿在内容损坏下可能反成污染放大器（结构推断）。摘要称做过数据位移敏感性分析，但位移类型、幅度档位与曲线均不可核查，与 AR-CNN 公开可查的受控偏移协议在可核查性上不对等。退化/缺失/传感器故障评测在摘要层面为零。唯一可引数字：DroneVehicle mAP50 84.1（摘要称比基线 +20%，基线身份与相对/绝对口径未说明，不做推算）。"
+  "note": "全文不可得（ACM 付费墙、无预印本与官方代码），本注记据官方摘要与同行转述。它处理的是「内容完好、位置错位」：无偏移估计/配准子网络，靠上下文引导的状态空间模块用全局语义上下文把错位处的特征隐式补回——与 AR-CNN、TSFADet 的显式几何对齐路线对照清晰。无任何模态质量/可靠性/不确定性量，Mamba 的「选择性」作用于特征序列而非模态证据，没有任何一路能被降权或关闭；上下文补偿在内容损坏下可能反成污染放大器（结构推断）。摘要称做过数据位移敏感性分析，但位移类型、幅度档位与曲线均不可核查，与 AR-CNN 公开可查的受控偏移协议在可核查性上不对等。退化/缺失/传感器故障评测在摘要层面为零。唯一可引数字：DroneVehicle mAP50 84.1（摘要称比基线 +20%，基线身份与相对/绝对口径未说明，不做推算）。",
+  "take_en": "Selective state-space fusion using global semantic context to compensate local features degraded by cross-modal misalignment.",
+  "req04_detail_en": "The abstract states that a sensitivity analysis on data shifts was performed, but the shift types, magnitude levels, and performance curves are not given in the abstract, so it cannot be verified whether it meets the controlled misalignment criterion with given offsets; CVC-14 day/night is a natural dataset attribute, not a degradation protocol; the abstract does not mention evaluation of modality degradation / missing modalities / sensor faults"
  },
  "Multispectral State-Space Feature Fusion: Bridging Shared and Cross-Parametric Interactions for Object Detection": {
   "ord": 53,
@@ -1510,7 +1616,9 @@
     "局限",
     "作者自陈（§4.7）只有三类失败案例——远距离且热签名与背景接近的小目标、遮挡目标、与人体热特征相似物体的假阳性，无方法论层面的局限讨论。退化/缺失评测足迹为零：无注噪、无模糊、无过曝，无任何传感器故障模型（条纹噪声、非均匀性漂移、坏点、热饱和均未出现）；所有挑战条件都是数据集自带的自然低光/夜间/遮挡场景。缺失模态仅有 §4.5.6 一处且以复制输入模拟，训练全程为完整配对，没有损坏但仍在场这一档评测，也未把损坏与缺失分开评测。SP-SSM 声称提取对光照条件与环境干扰不变的共享特征，但全文没有受控退化实验支撑该不变性，只有低光场景的定性特征可视化（图 12）。另：VEDAI 的第四通道是 NIR，与其余数据集的热红外不同质，原文未作区分提示；YOLOv5 框架下全模型 130.2M 参数并不轻量，VEDAI 上其 YOLOv5 版亦非最优（80.2 < YOLOFusion 81.6）。"
    ]
-  ]
+  ],
+  "take_en": "State-space feature fusion that separately models shared and cross-parametric cross-modal interactions.",
+  "req04_detail_en": "Only one type of whole-stream missing simulated by duplicated input (V+V / T+T on FLIR, presented by the authors as evidence of missing-modality competitiveness); no corruption injection, no zeroing / dropping, no intensity grading, no real sensor faults; all other challenging conditions are natural low-light / nighttime / occlusion scenes inherent to the dataset"
  },
  "Pseudo Visible Feature Fine-Grained Fusion for Thermal Object Detection (PFGF)": {
   "ord": 54,
@@ -1543,7 +1651,9 @@
     "局限",
     "作者无独立局限节，结论只宣称最优性能；引言承认生成可见光图像不可靠、会引入噪声与遮挡问题，但全文未给出任何量化这一不可靠性的实验。结构性局限有四。其一，先验依赖且不可纠正：生成质量由冻结的 Pearl-GAN 先验决定，检测损失无法回头修正生成错误；先验的训练域直接影响结果——LLVIP 上须换用 LLVIP 训练的 Pearl-GAN 才得到最佳数字（67.3 vs 默认配置 66.8），跨域部署时先验失配的影响未评测。其二，单点故障结构：伪可见光图像与潜码 z 都是热红外输入的确定性函数，两路模态不是两份独立证据，伪可见光流不可能与热红外流分歧，也就无从交叉校验；热红外一旦退化，骨干拼接输入、生成潜码与伪可见光图像三处会同时受影响（此为结构推断，作者未做相关实验）。其三，污染从第一层进入：骨干输入是热红外与伪可见光的通道拼接，伪可见光的伪影在骨干入口即与热红外混合，后续模块处理的已是混合特征；管线中没有位置能把生成流整体关掉或降权——Inter-Mamba 的门控 r 与 CKI 的通道注意力都由检测损失在干净数据上学得，无可靠性语义、无输入相关的健康度估计。其四，评测面窄：三个干净基准、单次运行无方差、训练仅 8 epochs，无昼夜分组、无损坏/缺失压力测试；表 1–3 对比数字除 TIRDet* 外均为转引，各原文训练协议并不一致。可复现性缺口：GRU 更新细节与超参数敏感性在未随开放版发布的附录中，Pearl-GAN 的训练细节需回溯其原文。"
    ]
-  ]
+  ],
+  "take_en": "Fuses thermal features with pseudo-visible features via a graph-Mamba module; training uses paired data but testing is thermal-only.",
+  "req04_detail_en": "No controlled degradation evaluation; the ablation removing Pearl-GAN is performed on clean thermal infrared inputs and tests the presence or absence of the generation stream as a whole, not a degradation protocol; no day/night grouped numbers"
  },
  "Learning a Robust RGB-Thermal Detector for Extreme Modality Imbalance": {
   "ord": 55,
@@ -1576,12 +1686,16 @@
     "局限",
     "退化族单一（全局仿射，无模糊/压缩/局部退化）；其自身实验显示针对高斯噪声的专门训练在部分设置下优于通用退化族，说明退化形式需被预先知道；质量掩码由退化特征本身估计（自指），未验证掩码与真实退化程度的相关性；鲁棒性仅测单点强度，无严重程度曲线；72.18M 参数，作者自承不利于部署。"
    ]
-  ]
+  ],
+  "take_en": "Quality-mask interaction + pseudo-degradation + EMA base/auxiliary consistency for imbalanced RGB-T.",
+  "req04_detail_en": "Controlled degradation: Gaussian noise with σ=20 applied to a modality at test time, plus global affine (contrast/brightness) degradation evaluation (transfer experiments); mainly a single intensity point, no severity curve; single degradation family (global affine), degenerates to whole-stream missing as c→0 but corrupted and missing are not separated in the text; no blur/compression/local degradation, no real sensor faults."
  },
  "CALNet (Cross-Modal Conflict-Aware Learning)": {
   "ord": 56,
   "take": "Rectifies cross-modal feature conflict before selective fusion.",
-  "note": "先校正跨模态特征冲突，再做选择性融合；“冲突”视角对理解有害模态很有启发。"
+  "note": "先校正跨模态特征冲突，再做选择性融合；“冲突”视角对理解有害模态很有启发。",
+  "take_en": "Rectifies cross-modal feature conflict before selective fusion.",
+  "req04_detail_en": "No controlled degradation experiments mentioned in the abstract; only clean benchmark evaluation on DroneVehicle is seen"
  },
  "Fusion of Multispectral Data Through Illumination-Aware Deep Neural Networks for Pedestrian Detection (IATDNN)": {
   "ord": 57,
@@ -1614,7 +1728,9 @@
     "局限",
     "（1）光照是二值昼/夜潜变量，无中间态建模（黄昏、人工照明、隧道等过渡场景只能靠软权重插值）；且权重是整图全局标量，无空间粒度，一幅图内混合光照无法处理，softmax 软权重下双子网恒输出，不存在把任一模态（或任一子网）压到零的通路。（2）无任何退化 / 损坏 / 缺失模态评测：光照变化全部来自 KAIST 自然昼夜划分，没有合成退化、没有传感器故障、没有单模态缺失实验。其「光照」是场景条件，不是模态质量——RGB 夜间变弱在文中是被建模的分布差异，而非被检测的损伤。（3）光照信号读自双流融合特征 TSFM，且表 1 证明可见光单通道已提供 97%+ 的判别信息，即权重主要由夜间最先变弱的那一路驱动；IFCNN 估计的是场景光照，不是模态健康度——两者在干净昼夜数据上高度相关，但在输入被噪声、过曝污染时可能解耦：被污染的 RGB 会改变特征统计，可能被读成某种光照状态，使权重系统性错配，而全文没有任何实验检验这一点。（4）光照监督信号粗粒度（数据集昼夜元数据）；IFCNN 的高准确率部分因为昼夜在 KAIST 中本就近乎可分，不能外推到更细粒度或连续的质量估计。（5）框坐标直接加权平均：两套子网预测分歧大时，凸组合可能产生谁都不支持的折中框，文中未讨论。（6）仅 KAIST 单数据集、单一基座（TDNN/RPN 式两阶段）；原文无局限章节，作者自承的未来工作只有「最优分割融合策略」一项。"
    ]
-  ]
+  ],
+  "take_en": "Illumination-aware weighting mechanism modulating a two-stream CNN, trained multi-task with semantic segmentation.",
+  "req04_detail_en": "No controlled degradation experiments; all illumination variation comes from the natural day/night split of KAIST; no evaluation of real sensor faults"
  },
  "Improving Multispectral Pedestrian Detection by Addressing Modality Imbalance Problems (MBNet)": {
   "ord": 58,
@@ -1647,7 +1763,9 @@
     "局限",
     "（1）失衡定义只覆盖“光照索引的静态失衡”：哪一路强势被假定为光照的确定函数，并用昼/夜二值标签监督一个分类器来索引。它不处理同一光照条件下某一路因传感器故障、噪声、模糊、过曝饱和等原因在样本级突然损坏的情形——全文核查：无噪声/腐化注入、无模态缺失、无热相机故障形态（条纹、NUC 漂移、坏点等）的任何实验；CVC-14 的“鲁棒”仅指几何错位。（2）光照门是全局标量、无空间粒度：每张图只有一对 (w_r, w_t)，作用于整幅特征图；局部损坏（一角过曝、局部遮挡污染）在机制上无法被单独降权。且门控信号来自 RGB 本身——RGB 正是夜间/低光下先退化的一路，用被退化模态估计“现在该信谁”，存在自指脆弱性，原文未做光照分类器失效（如黄昏、强逆光、人工照明夜景）时的分析。（3）DMAF 对损坏模态没有隔离能力：差分 F_D = F_R − F_T 在一路被污染时会被污染主导，而 DMAF 恰恰把差分重标定后的对方特征加回本路——损坏会沿互补通道注入健康模态；权重 V_w 是通道级的“差异大不大”，不是“哪一路可信”，机制内没有任何把一路压到零的通路（tanh 权重可正可负、做的是补偿而非抑制）。（4）无单模态对照、无保证：没有同骨架单模态臂，无法判断其融合在任何条件下是否劣于丢弃一路；“balance”全靠昼夜 MR 拉平与总 MR 下降事后指认，没有逐样本或最坏情形的陈述。（5）评测面与口径：只有 KAIST 与 CVC-14 两个行人集、MR⁻² 一种指标、reasonable 子集为主；训练仅 7 epoch；表 1 与表 2 的 MSDS-RCNN 数字不一致（11.34 vs 11.63），且“最快速度”的宣称对应去掉 MA 的配置，与最佳精度配置不是同一个模型——引用其数字时须逐项注明配置与出处表。"
    ]
-  ]
+  ],
+  "take_en": "Differential Modality Aware Fusion plus an illumination-aware feature alignment module, explicitly framed around the modality-imbalance problem in two-stream optimisation.",
+  "req04_detail_en": "No controlled degradation experiments; only natural day/night subsets of KAIST/CVC-14 and natural misalignment conditions of CVC-14; no corruption injection, modality dropping, zeroing, or evaluation of real sensor faults"
  },
  "Drone-Based RGB-Infrared Cross-Modality Vehicle Detection via Uncertainty-Aware Learning (UA-CMDet)": {
   "ord": 59,
@@ -1680,7 +1798,9 @@
     "局限",
     "（1）不确定性是标注先验而非输入量：权重全部由真值框（跨模态 IoU、哪侧漏标）与图像级光照统计算出，依赖两模态分别标注的真值集合；推理期 UAM 整体移除，测试输入发生逐目标损坏时，系统没有任何量能感知到。（2）红外侧名义降权、实际不降：ω_inf = 1 使红外支路与融合支路的回归损失从不因「不确定」被压低，真正被降权的只有 RGB 侧补入目标（0.1）与未对齐目标；且分类损失全程不加权——被补入的框仍以全权重训练分类，只有其回归被折扣。（3）推理期适应只有一个全局标量：IA-NMS 只按整图光照值折扣 RGB 支路分数，不动红外与融合支路，不区分目标、不区分损坏类型；融合支路本身是固定拼接 + 1×1 卷积，无门控。（4）评测足迹窄：只有干净 DroneVehicle 测试集的总 mAP；文中「missing」始终指标注缺失，不是输入模态缺失。（5）ω_iv 的具体计算（灰度直方图如何映射为光照值）在预印本中无显式公式，复现需查代码。作者自陈的局限仅结论中提到数据集的长尾分布问题，留作未来工作。"
    ]
-  ]
+  ],
+  "take_en": "Introduces the DroneVehicle dataset (28,439 RGB-IR pairs) and weights cross-modal learning by per-object uncertainty from cross-modal IoU and illumination, with illumination-aware NMS.",
+  "req04_detail_en": "No controlled degradation experiments; Day/Night/Dark night are used only for data statistics, with no detection metrics reported for illumination-specific subsets"
  },
  "Removal and Selection: Improving RGB-Infrared Object Detection via Coarse-to-Fine Fusion": {
   "ord": 60,
@@ -1713,7 +1833,9 @@
     "局限",
     "（1）退化/缺失评测为零（已核查全文）：没有噪声注入、模态损坏、模态缺失或传感器故障的任何实验设定。两级判据都取自被处理模态自身（RSR 读模态自己的幅度谱、DFS 读特征自身的池化统计），全部只在干净配对数据上以检测损失训练，无可靠性真值、无损坏增广。以周期性条纹噪声为例（结构推断，作者未实验）：条纹在幅度谱上是高幅值高频分量，恰是滤波器预测网络读取的统计量本身——损坏会直接改写判据的输入分布，滤波器与门控都在分布外工作，无任何机制保证其输出仍指向「衰减损坏、保留完好」。（2）结构上不存在把任一模态总贡献压到零的通路：共享支路 C_sha 无门控直通检测器；RSR 的 topK 恒保留 320/400 个频谱 patch；DFS 的硬开关虽能逐尺度清零特异特征，但整路清零需 4 个尺度同时关闭，且阈值 t 的取值全文从未报告、门控实际触发频率无从得知，开关公式亦未定义两路权重都低于 t 的情形。（3）无测试时模态消融：表中的单模态行是单独训练的检测器，训练好的 RSDet 在测试时去掉或损坏一路输入的表现未测。（4）正文没有独立的局限一节，也未讨论上述任何一点。"
    ]
-  ]
+  ],
+  "take_en": "Coarse-to-fine fusion: first remove modality noise/redundancy from features, then select complementary cross-modal information.",
+  "req04_detail_en": "No controlled degradation experiments; KAIST day/night, scale, and occlusion are inherent dataset splits (natural subsets, not counted); no real sensor faults."
  },
  "Distribution-Aligned Multimodal Fusion for Robust Object Detection": {
   "ord": 61,
@@ -1746,7 +1868,9 @@
     "局限",
     "作者自承：依赖预训练检测器质量与 GMM 对特征分布的近似；所有模态同时严重退化时互补信息耗尽、方法无能为力；约 10% 特征仍属难以对齐的困难样本。复现缺口更实在：过曝/欠曝/模糊如何生成、强度参数、各退化子集样本量，正文均未报告，主实验训练集的退化构成也未交代——跨退化结论无法按原文精确复现。评测面：没有模态缺失实验，IR 被默认始终可用且完好，IR 自身退化/缺失时如何未涉及；退化全是光度类（雾只出现在动机文字、未进实验）；对齐只压在一个全局 [CLS] token 上，patch 级空间分布是否真对齐只有 t-SNE 等间接证据。两处小错位：模块名叫 token gating、给出的门控实际是通道维向量、对所有 token 共享；可训练参数分项相加 14.2M 与文中总述 13M 对不上，原文未解释。"
    ]
-  ]
+  ],
+  "take_en": "Freezes a pretrained detector and trains only a lightweight fusion module that aligns fused features to the pretrained (clean) feature distribution, generalizing to unseen degradation types.",
+  "req04_detail_en": "Controlled photometric degradation: overexposure, underexposure, blur (and nighttime conditions); the cross-degradation protocol trains only on overexposed samples and evaluates on seen overexposure and unseen underexposure / nighttime / blur, with degradation applied mainly to the RGB stream; the degradation generation method and intensity parameters are not reported in the original text; no modality-missing experiments, no real sensor faults"
  },
  "InfraNet: Quality-Aware RGB Guidance for Infrared Object Detection": {
   "ord": 62,
@@ -1779,7 +1903,9 @@
     "局限",
     "正文没有独立的 Limitations 章节；散见的自我限定有：q 不是感知图像质量指标、亮度扰动下其行为本就不打算对应直观质量；α(q) 中 1.5 这一常数不声称最优；M3FD 子集表只作诊断性对照、非完整 SOTA 排名；可靠性粒度、融合位置、放大范围等关键分析被放进 supplementary，正文未给。实在的缺口：受控退化只动 RGB、只有雾与亮度两类且等级无物理定义（无雾浓度/亮度公式，无法按原文复现）；IR 自身退化、双路同时退化、噪声/模糊/遮挡均未测；没有按缺失率变化的模态缺失曲线——InfraNet-IR 的“推理无 RGB”是架构设定而非缺失鲁棒性评测，反方向的 IR 缺失完全不在设定内（IR 是主路）。所有主表均为单值、无重复运行误差线，0.2–0.4 量级的小差距无法判断显著性。另注：M3FD 子集表中老融合基线与本文差距异常大（约 59–84 对 81–99.5），引用时必须连同协议口径一起说。"
    ]
-  ]
+  ],
+  "take_en": "IR-centric asymmetric detector whose QualGate module learns a task-oriented control signal to suppress unreliable RGB guidance during cross-modal training; supports RGB-IR or IR-only deployment.",
+  "req04_detail_en": "Only two degradation types, fog and brightness, applied only to the RGB stream (IR fixed), with intensity in five levels from 0.2 to 1.0 but no physical definition of the levels; no IR degradation, no simultaneous degradation of both streams, no modality-missing-rate curve; the M3FD Night subset and similar are evidence of natural conditions (recorded here only under B-strict); no real thermal fault types."
  },
  "Rethinking Multi-modal Object Detection from the Perspective of Mono-Modality Feature Learning (M2D-LIF)": {
   "ord": 63,
@@ -1812,7 +1938,9 @@
     "局限",
     "正文没有独立的 Limitations 一节；作者明确承认的只有一条——β 过大（>0.8）导致模态失衡与性能骤降。其余据原文事实指出：(1) 只有干净基准：没有任何损坏 / 缺失模态评测。Fusion Degradation 的“缓解”只用干净数据上的案例计数与总体 mAP 佐证；当某一模态在推理时真的被损坏（如过曝、噪声、热成像故障）时，M2D 与 LIF 是否还成立，全文无证据。且 Fusion Degradation 案例数并未归零（图 1），只是减少。(2) LIF 的质量感知过于单一：只看 RGB 亮度。IR 侧质量完全不感知；RGB 的模糊、噪声、遮挡等非光照退化也不在感知范围内。且权重下限 0.3 的构造意味着：RGB 彻底失效的区域，融合仍强制保留至少 30% 的 RGB 特征。(3) 复现缺口：蒸馏距离未指明，关键损失权重与阈值未报告，更多消融在未随 arXiv 正文发布的补充材料里，本笔记未覆盖补充材料；线性探针与退化统计的精确数值只在图表中。(4) 正文与表格数字不一致（原文如此，引用时需小心）：正文称基线 FLIR 为 44.4，表 2 为 43.5；正文称 DroneVehicle 验证集 mAP50 为 85.2，表 4 为 84.5；参数量表 4 写 37.1M、表 5 写 36.5M（口径可能分别为 OBB 与普通检测配置，但原文未说明）。(5) 训练成本口径：推理只多 0.06M 参数的说法成立，但训练前需先训好两个单模态教师检测器，这部分成本不在其“轻量”叙事内。另注：本文并未评测 RGBT-Tiny（全文无 “Tiny”），个别对比表中出现的 M2D-LIF 在 RGBT-Tiny 上的数字只能出自引用方的对比表，引用时须标引用方为出处，不能标本文。图 3 中蒸馏模块被标成 “MMD”（应为 M2D），属图中笔误。"
    ]
-  ]
+  ],
+  "take_en": "Identifies 'fusion degradation' from insufficient mono-modality learning in joint training; counters it with mono-modality distillation plus a local illumination-aware fusion module.",
+  "req04_detail_en": "No controlled degradation experiments; Fusion Degradation is only a case-count statistic on clean data (single-modality detections, fusion misses), not a corrupted-modality protocol; no evaluation of real sensor faults"
  },
  "Mixed Patch Visible-Infrared Modality Agnostic Object Detection (MiPa)": {
   "ord": 64,
@@ -1845,7 +1973,9 @@
     "局限",
     "评测面窄：只有 LLVIP + FLIR Aligned 两集、AP50 为主；没有任何损坏 / 退化模态评测（见实验设置），也没有缺失率变化曲线——其设定是全有或全无、由部署决定，不模拟“一路在使用中坏掉”；它根本不是“融合模型缺了一路”，而是单编码器、单模态部署协议，缺失由部署决定、不是故障。无保证：作者目标表述是经验性的“almost as good as 专门训练”，属经验主张；信息论部分只是关于训练输入信息含量的近似论证（且假设两传感器噪声相似、未做经验验证），不构成单模态性能的任何下界。逐路数字也显示 RGB 侧仍逊于专门模型（−1.77）。前提依赖对齐配对：块拼贴语义要求训练对严格像素对齐；未对齐配对下马赛克图会把两个场景错位拼合，原文未讨论。方法构造上只适用于 patch 化的 Transformer 检测器（CNN 检测器不在范围内）。MA 模块的性价比：在最强配置（LLVIP + DINO）上增益 +0.07 均值点，却引入分类器、模态图与 γ 调参；γ 需逐数据集挑。文内小不一致：正文 LLVIP AP50 作 98.8、表 5 作 98.2；表 5 与表 3 口径不同（采样配方不同）但正文未并置说明，引用表 5 数字时须连同“IR-only 推理 + 25/75 采样”口径一起说。原文未设局限章节；训练预算较小（12 epoch、batch 6），± 标准差的重复次数未注明。依据降级：补充材料未读——正文称 AP75/AP 的完整报告在补充材料中（表 5 已含竞品对照的 AP75/AP），逐类细分等补充细节未核。"
    ]
-  ]
+  ],
+  "take_en": "Trains a single shared transformer encoder on patch-mixed RGB/IR inputs so the detector needs only one modality at inference.",
+  "req04_detail_en": "No controlled degradation; the only evaluation variation is modality identity (the full RGB stream or the full IR stream), LLVIP day/night is only a qualitative illustration in Figure 3 (recorded here only under B-strict); no missing-rate variation curve."
  },
  "Causal Mode Multiplexer: A Novel Framework for Unbiased Multispectral Pedestrian Detection": {
   "ord": 65,
@@ -1878,17 +2008,23 @@
     "局限",
     "作者自陈：正文无独立局限章节；可归纳的自陈约束有二：(1) 刻意不改变训练先验、不与增广类方法比较，是问题设定的主动选择；(2) 无处理条件的实现细节不在正文，须查补充材料。据原文事实指出（非作者原话）：（1）损坏模态零评测——全文没有任何合成腐化协议（噪声、模糊、过曝、条纹、非均匀性漂移、坏点、热饱和均无），也没有传感器故障模型。ROTX 的“热不可见”来自玻璃/隔热材料对热辐射的物理阻挡：传感器工作正常，目标处是正常的背景热纹理——这是证据缺席，与“损坏模态注入错误证据”有本质区别；全文没有错误证据被注入的任何设定。（2）缺失模态也没有——无整路置零/丢弃实验；ROTX 只是同图中的部分目标在热红外里不可见，整幅热图与其它目标都还在，粒度是目标级而非模态级。（3）bias 的定义域是训练统计，不是测试时输入状态：TE/NDE/K_mode 全部由当前输入经三路头现算；若某一路在测试时被腐化，单模态头与融合头同时消费腐化输入，NDE 的反事实项同样由腐化输入算出，且 K_mode 的符号判别可被腐化翻转——框架对此既无防护也无讨论。（4）无任何“不劣于”保证：TIE 是最大化目标，不是性能下界；表 2 里 CMM 在 KAIST Night（5.93 vs 基座 5.05）、CVC-14 Day（27.81 vs CFT 18.81）上实际劣于对照，去偏在分布内子集上确有代价，只是被切换机制在总账上做平。（5）协议与复现注意：ROTX-MP 仅 1,000 对、自采自标，尚无第三方复现；指标口径混用（KAIST/CVC-14 用 MR、FLIR/ROTX-MP 用 AP）；方法为行人单类专用、Faster R-CNN 系基座，未在 LLVIP、M3FD 等多类/通用检测集上评测；无处理条件取值与温度参数缺正文记载，复现须查补充材料与代码。"
    ]
-  ]
+  ],
+  "take_en": "Causal-inference framework removing dataset statistical bias between modalities, with a new ROTX-MP evaluation set for modality bias.",
+  "req04_detail_en": "No controlled degradation experiments; ROTX-MP consists of natural physical occlusion scenes (glass / thermal insulation clothing blocking thermal signals, the sensor itself normal, target-level evidence absent), belonging to natural conditions and cross-dataset evaluation; no whole-stream modality-missing experiments; no evaluation of real sensor faults"
  },
  "EI²Det: Edge-Guided Illumination-Aware Interactive Learning for Visible-Infrared Object Detection": {
   "ord": 66,
   "take": "Edge-guided, illumination-aware interactive learning between the two streams, with the accompanying MFAD dataset.",
-  "note": "正文不可得（IEEE 付费墙、无预印本），机制层据官方代码全量逐行核查，框架图取自仓库。其光照门是光照门谱系的第四代、语义未变：IWM 只读原始 VIS 图像（缩至 64×64 的小分类器、交叉熵监督），输出每图一对全局标量 (w_v, w_t = 1 − w_v)——四代估计的都是场景亮度先验、从不是模态健康度；IR 从不被读，IR 故障时门完全无感，VIS 故障时门的输入本身即污染源。结构上不能弃权：w_v = 0.5 + 0.5·α·D(p)，α 为可学习标量、初值 0（训练起点为恒等权 0.5/0.5），双流恒拼接、无趋向零点的机制。「interactive」实为跨模态引导的自注意力（跨模态传递的只有注意力图、值不跨模态），污染通道比值交换型窄，但损坏流的 query 仍可任意扭曲健康流的空间注意力。另有两处实现问题：边缘模块图称 Sobel、代码实为拉普拉斯式高通核初始化的可学习卷积，且以固定 0.2 把仅源自 VIS 的边缘特征注入融合（夜间即噪声注入，比例不可学、不能关）；IWM 前向有按 batch 下标缩放 logits 的明显笔误，使光照权重依赖样本在批中的位置。退化/缺失/故障评测在可核查范围内为零；自建 MFAD 的雨雾与光照标注属场景级自然协变量、传感器始终健康。头条数字仅 MFAD 一组来自官方 README，其余为同行转引且 LLVIP 两源口径互斥、禁止混用；KAIST 与消融表在付费墙内未找到可核查来源、未填。"
+  "note": "正文不可得（IEEE 付费墙、无预印本），机制层据官方代码全量逐行核查，框架图取自仓库。其光照门是光照门谱系的第四代、语义未变：IWM 只读原始 VIS 图像（缩至 64×64 的小分类器、交叉熵监督），输出每图一对全局标量 (w_v, w_t = 1 − w_v)——四代估计的都是场景亮度先验、从不是模态健康度；IR 从不被读，IR 故障时门完全无感，VIS 故障时门的输入本身即污染源。结构上不能弃权：w_v = 0.5 + 0.5·α·D(p)，α 为可学习标量、初值 0（训练起点为恒等权 0.5/0.5），双流恒拼接、无趋向零点的机制。「interactive」实为跨模态引导的自注意力（跨模态传递的只有注意力图、值不跨模态），污染通道比值交换型窄，但损坏流的 query 仍可任意扭曲健康流的空间注意力。另有两处实现问题：边缘模块图称 Sobel、代码实为拉普拉斯式高通核初始化的可学习卷积，且以固定 0.2 把仅源自 VIS 的边缘特征注入融合（夜间即噪声注入，比例不可学、不能关）；IWM 前向有按 batch 下标缩放 logits 的明显笔误，使光照权重依赖样本在批中的位置。退化/缺失/故障评测在可核查范围内为零；自建 MFAD 的雨雾与光照标注属场景级自然协变量、传感器始终健康。头条数字仅 MFAD 一组来自官方 README，其余为同行转引且 LLVIP 两源口径互斥、禁止混用；KAIST 与消融表在付费墙内未找到可核查来源、未填。",
+  "take_en": "Edge-guided, illumination-aware interactive learning between the two streams, with the accompanying MFAD dataset.",
+  "req04_detail_en": "MFAD contains scene-level natural covariates such as rain / fog weather and fine-grained illumination levels (recorded here only under B-strict); the abstract does not mention evaluation of controlled degradation, missing modalities, or stripe / NUC / dead-pixel / saturation-type sensor faults"
  },
  "Efficient Multispectral Object Detection with Attentive Feature Aggregation Leveraging Zero-Shot Implicit Illumination Guidance": {
   "ord": 67,
   "take": "Attentive feature aggregation steered by zero-shot implicit illumination estimates, targeting efficient multispectral detection.",
-  "note": "全文不可得（Elsevier 付费墙、无预印本、无官方代码），且证据为全队列最薄：官方摘要未被任何开放索引收录，机制层内容全部来自四处同行转述并逐项标注。它是光照门谱系的第五代（IAF 解析门 → IATDNN 分类器读融合特征 → MBNet 分类器读 RGB → EI²Det 全局标量对 → 本篇零样本隐式引导）：变的是监督来源（据标题主张以零样本方式免去目标数据上的昼/夜标注）与注入形式（显式标量门 → 隐式嵌入引导注意力计算），不变的是语义——估计的仍是场景级光照状态先验（且据转述为整图二值昼/夜），不是逐模态健康度。「zero-shot」线索的产生方式（是否视觉语言模型、读哪一路、提示形式）在一切可核查材料中均无披露，拒绝猜测。整图二值态与逐模态健康正交：热红外条纹/NUC/坏点/饱和、可见光局部过曝没有一个会翻转二值光照答案，门对损坏模式原理上无感（结构推断）。融合为跨模态注意力聚合，softmax 权重恒正、只能再分配，无压零通路——五代光照门无一具备接管/弃权语义。退化/缺失/故障评测在可核查范围内为零；头条精度、效率数字与单模态对照行均无一读到，「Efficient」只有定性主张、无定量证据可引。"
+  "note": "全文不可得（Elsevier 付费墙、无预印本、无官方代码），且证据为全队列最薄：官方摘要未被任何开放索引收录，机制层内容全部来自四处同行转述并逐项标注。它是光照门谱系的第五代（IAF 解析门 → IATDNN 分类器读融合特征 → MBNet 分类器读 RGB → EI²Det 全局标量对 → 本篇零样本隐式引导）：变的是监督来源（据标题主张以零样本方式免去目标数据上的昼/夜标注）与注入形式（显式标量门 → 隐式嵌入引导注意力计算），不变的是语义——估计的仍是场景级光照状态先验（且据转述为整图二值昼/夜），不是逐模态健康度。「zero-shot」线索的产生方式（是否视觉语言模型、读哪一路、提示形式）在一切可核查材料中均无披露，拒绝猜测。整图二值态与逐模态健康正交：热红外条纹/NUC/坏点/饱和、可见光局部过曝没有一个会翻转二值光照答案，门对损坏模式原理上无感（结构推断）。融合为跨模态注意力聚合，softmax 权重恒正、只能再分配，无压零通路——五代光照门无一具备接管/弃权语义。退化/缺失/故障评测在可核查范围内为零；头条精度、效率数字与单模态对照行均无一读到，「Efficient」只有定性主张、无定量证据可引。",
+  "take_en": "Attentive feature aggregation steered by zero-shot implicit illumination estimates, targeting efficient multispectral detection.",
+  "req04_detail_en": "Not mentioned (the experimental setup was not read at all)"
  },
  "Bridging Multimodal Fusion and Expert Routing via Spectral Reliability Descriptors for Robust Object Detection": {
   "ord": 68,
@@ -1921,7 +2057,9 @@
     "局限",
     "作者自承：二值频带划分 + 全局 Pearson 相关刻画不了空间非平稳（局部可靠性不同）的情形；更广的自然鲁棒性基准超出本文范围。证据结构上：主鲁棒性证据正文只来自 DroneVehicle 一个数据集、六种退化在正文各只有一个强度点；补充已核实三档强度扫描（S5）与错位/衰减两条连续扫描（S27/S28），同一协议亦复现于 M3FD 与 FLIR-Aligned（S8）；补充有五种复合腐化（含热红外衰减 λ=0.5/0.25 + 平移），但复合均耦合一致性损伤与单路质量损伤，两路独立同时受损仍未测；没有遮挡类退化。错位只测整数像素平移这一理想化形式；表 2 的跨方法对照是异配方转录、作者自己限定只作上下文。描述子是全局量——一路局部受损（如画面一角过曝）时全局统计会被平均掉。"
    ]
-  ]
+  ],
+  "take_en": "Parameter-free 7-D spectral reliability descriptors computed at fusion time drive both spectral reliability fusion (SRF) and reliability-conditioned expert routing (RCER) for RGB-infrared detection.",
+  "req04_detail_en": "Degradation types: Gaussian blur (both streams), low-light brightness ×0.35 (RGB only), additive noise σ=0.08 (RGB only), modality dropping (dropping the thermal infrared stream), misalignment 10/20 px; the main text uses one intensity per type, while the supplementary material includes a three-level intensity sweep, continuous misalignment / attenuation sweeps, five types of compound corruption, and whole-stream zeroing; the metric is retention rate; there is also a comparison on natural day/night subsets of DroneVehicle (recorded here only under B-strict); no real thermal faults such as stripe noise / NUC drift / dead pixels / thermal saturation."
  },
  "Representation Space Constrained Learning with Modality Decoupling for Multimodal Object Detection": {
   "ord": 69,
@@ -1954,13 +2092,17 @@
     "局限",
     "理论推导的简化较强：融合被抽象为单个线性加权和，只推分类损失的梯度（框回归梯度未进入分析），并依赖若干近似假设；负样本梯度更大同样有害的论证借助正负样本主导原则作定性衔接，严格程度不及正样本情形；把可学习性与输入质量以同一措辞引入，从模态差异到 logit 量级的跳跃是断言而非证明。退化、缺失与传感器故障评测为零：无测试时损坏、无缺失模态、无模态丢弃、无噪声注入，全文所称的融合退化始终指训练期欠优化，与输入损坏无关，引用时须作区分。梯度抑制的经验证据偏弱：梯度可视化只给图、无范数数值，线性探测降幅只在一个数据集上给出。对比数字为多源转引、管线不齐，部分对照行数据不完整，优越性结论应按 AP50-95 单口径理解。文本瑕疵包括模块缩写混用、表中模型名与标题不一致、一处划分数字算术对不上、一处数值排版残缺。"
    ]
-  ]
+  ],
+  "take_en": "Analyses fusion degradation in multimodal detection — single-modality gradients suppressed, more strongly for the weak modality — and counters it with a representation-space constraint (RSC) and a modality-decoupling (MD) module.",
+  "req04_detail_en": "No controlled degradation experiments; fusion degradation in the text refers to under-optimization caused by gradient suppression during training and is unrelated to input corruption; no real sensor faults."
  },
  "Confidence-Aware Fusion via Dempster–Shafer (CMPD)": {
   "ord": 70,
   "take": "Per-modality confidence subnetworks combined evidentially for pedestrian detection.",
   "note": "RGBT 行人检测中置信度加权融合的代表：逐模态置信子网络 + Dempster–Shafer 证据组合。",
-  "paperNote": "IEEE TMM 25:3420–3431"
+  "paperNote": "IEEE TMM 25:3420–3431",
+  "take_en": "Per-modality confidence subnetworks combined evidentially for pedestrian detection.",
+  "req04_detail_en": "Not mentioned"
  },
  "Multimodal Object Detection via Probabilistic Ensembling": {
   "ord": 71,
@@ -1994,7 +2136,9 @@
     "作者自陈或文中明示的部分：条件独立假设在实践中并不成立——尤其是拿它融合 MidFusion、GAFF 这类本身已看过双模态的检测器输出时；作者的辩护是类比式的（高斯假设、朴素贝叶斯假设不真仍有效），但没有给出假设违反程度与性能退化之间的任何定量刻画。附录明确自承：组合研究的增益未必统计显著，且当代数据集太小、过拟合问题无法在此规模上研究，并公开呼吁社区建更大规模的多模态检测基准；全文结果均为单次运行、无方差报告。FLIR 标注跨帧不一致（连续帧中同一目标时有时无标注），作者指出这既压制了学习型融合的比较，也意味着 FLIR 的 AP 数字本身带噪。正文没有独立的 limitations 章节，上述自陈散见于附录。基于原文事实的结构性分析（笔记分析，非作者自述）：损坏模态这一轴完全缺席——ProbEn 的全部鲁棒性证据来自自然昼、夜与未对齐；乘法规则在损坏下的行为可从其结构直接推知且并不乐观：一路被损坏的检测器若系统性输出高分误检，两路一致错误会被乘法放大；若损坏使真类后验塌向零，则一票否决真实目标；它没有任何机制去识别这一路当前不可信——后验既是信号、又是唯一的信任度量。缺失的语义是目标级，不是模态级：它处理的是检测器没在这个目标上开火，与一路传感器整体失效或被污染是不同的事件，整体失效时失效路仍会持续产生错误的检测流，ProbEn 的边缘化叙事并不覆盖这种情形。没有不劣于单模态的保证：其最优性只断言条件独立成立时该融合规则是贝叶斯最优的融合方式，不构成对检测指标（LAMR / AP）的任何下界。对分数校准的隐性依赖：推导把 softmax 后验当作真实概率，而深度检测器以后验过度自信著称；一旦集成异源模型，必须先在验证集上调温度与平移——无需多模态训练数据属实，无需任何多模态验证数据调参则不尽然。聚类式融合的对应问题：融合以 IoU>0.5 的重叠集为单位硬切分，强未对齐数据中两路对同一目标的框存在系统性偏移时，对应错了，概率推导再干净也救不回来。"
    ]
   ],
-  "slug": "proben"
+  "slug": "proben",
+  "take_en": "Probabilistic late ensembling; marginalization handles missing modalities natively.",
+  "req04_detail_en": "No artificial damage experiments at all; difficult conditions are only the KAIST natural day/night split and strong misalignment in FLIR (noted here only under B-strict); what is handled is object-level detector non-triggering, whole-stream sensor failure was not experimentalized."
  },
  "Illumination-Aware Faster R-CNN for Robust Multispectral Pedestrian Detection": {
   "ord": 72,
@@ -2027,17 +2171,23 @@
     "局限",
     "（据全文指出的结构性局限；作者自陈的局限仅有「希望有更丰富光照标注」与未来融合 LiDAR 两点。）（1）门控信号是场景属性，不是模态健康估计：i_v 只由彩色图像算出、只受昼/夜标签监督，编码的是「场景有多暗」这一先验，它与「哪一路可信」的关联完全经由固定的昼夜先验中介；它对热红外一路的状态不提供任何信息；彩色图像本身若被腐化（过曝、噪声、镜头污损），i_v 是在腐化输入上算出的、无有效性校验。（2）全局标量、无空间粒度：一对权重管全图所有提议，混合光照场景（一半强光一半暗角）只能取一个折中权重对。（3）按设计不能把热红外压到零：「光照好时 w_thermal 不应太小」是写进设计约束的，学到的门也确实在 i_v=1 时停在 w_color≈0.63；这个不对称来自先验（热红外白天不添乱、彩色夜间添乱），不是来自对当前输入的证据——机制上不存在「发现热红外坏了并把它丢掉」的通路（反方向在夜间近似成立：i_v→0 时 w_color→≈0）。（4）无「不劣于更强单模态」的保证，且自家结果即反例：夜间 IAF 18.26 劣于热红外单模态 16.79——门控只是缩小了负融合的幅度，没有消除它。（5）退化/缺失评测为零（已核查全文）：无腐化注入、无整路模态丢弃、无条纹噪声/NUC 漂移/坏点/热饱和等真实故障模型；昼/夜是数据集固有内容划分，不是受控退化协议。（6）数字的口径依赖：头条 15.73 是改进标注（MR^I）口径；同一批方法在原始标注下读数高出一大截，跨论文拼表必须核对标注版本。"
    ]
-  ]
+  ],
+  "take_en": "Estimates scene illumination and uses it as a gate to adaptively weight the RGB and thermal sub-networks' detection scores.",
+  "req04_detail_en": "No controlled degradation experiments; only natural day/night subset splits on KAIST; no evaluation of real faults such as stripe noise / NUC drift / dead pixels / thermal saturation"
  },
  "Stabilizing Multispectral Pedestrian Detection with Evidential Hybrid Fusion": {
   "ord": 73,
   "take": "Evidential hybrid fusion combining feature- and decision-level evidence under Dempster-Shafer theory.",
-  "note": "Year by journal issue date (Apr 2024; early access 2023)."
+  "note": "Year by journal issue date (Apr 2024; early access 2023).",
+  "take_en": "Evidential hybrid fusion combining feature- and decision-level evidence under Dempster-Shafer theory.",
+  "req04_detail_en": "Not mentioned"
  },
  "Multiscale Cross-modal Homogeneity Enhancement and Confidence-aware Fusion for Multispectral Pedestrian Detection": {
   "ord": 74,
   "take": "Enhances cross-modal feature homogeneity at multiple scales, then fuses with per-modality confidence estimates.",
-  "note": "正文不可得（IEEE 付费墙、无预印本），机制层据官方代码逐行核读。标题中的「confidence」是自指的特征空间门控，不是模态健康或证据置信：内部置信 = 每路用自身池化框特征经卷积栈 + Sigmoid 生成的空间权重图，交互置信 = 两路特征通道均值导出的联合图，无任何显式监督或校准、只靠检测损失端到端学习，与 CMPD/EHF 的证据路线不同科。所有权重为 Sigmoid 及其乘积/平均 ∈(0,1) 开区间、非凸组合，数学上不能把一路压到零；且骨干 5 处 Mutual_Related 残差互注已在融合前把两路写进彼此——「丢弃一路」在此架构中不可表示，注入本身就是损坏传播通道。同质增强被操作化为参数共享的 SE 式通道注意力变换下两路的可通约成分。转引数字（TFDet 表 III）：KAIST reasonable MR⁻² All 6.71 / Day 7.58 / Night 5.52，其中 Far 36.75 为该表 17 个方法最佳——优势集中于远距离小行人，是干净数据上的尺度优势、非鲁棒性证据。代码里另有摘要未提的训练期噪声增广（每批以 10%/10% 概率把整批一路换成高斯噪声图），测试路径无对应评测、且无法确认是否用于论文实验。原文自报表格与消融未读到，第二个数据集身份未能核实。"
+  "note": "正文不可得（IEEE 付费墙、无预印本），机制层据官方代码逐行核读。标题中的「confidence」是自指的特征空间门控，不是模态健康或证据置信：内部置信 = 每路用自身池化框特征经卷积栈 + Sigmoid 生成的空间权重图，交互置信 = 两路特征通道均值导出的联合图，无任何显式监督或校准、只靠检测损失端到端学习，与 CMPD/EHF 的证据路线不同科。所有权重为 Sigmoid 及其乘积/平均 ∈(0,1) 开区间、非凸组合，数学上不能把一路压到零；且骨干 5 处 Mutual_Related 残差互注已在融合前把两路写进彼此——「丢弃一路」在此架构中不可表示，注入本身就是损坏传播通道。同质增强被操作化为参数共享的 SE 式通道注意力变换下两路的可通约成分。转引数字（TFDet 表 III）：KAIST reasonable MR⁻² All 6.71 / Day 7.58 / Night 5.52，其中 Far 36.75 为该表 17 个方法最佳——优势集中于远距离小行人，是干净数据上的尺度优势、非鲁棒性证据。代码里另有摘要未提的训练期噪声增广（每批以 10%/10% 概率把整批一路换成高斯噪声图），测试路径无对应评测、且无法确认是否用于论文实验。原文自报表格与消融未读到，第二个数据集身份未能核实。",
+  "take_en": "Enhances cross-modal feature homogeneity at multiple scales, then fuses with per-modality confidence estimates.",
+  "req04_detail_en": "The abstract does not mention controlled degradation evaluation; training-time replacement of a whole modality for a whole batch with Gaussian noise with 10% probability is a training augmentation (visible only in code, whether it was used in the original experiments is unverified) and does not constitute degradation evaluation; KAIST day/night is a natural subset split"
  },
  "Resilient Sensor Fusion Under Adverse Sensor Failures via Multi-Modal Expert Fusion": {
   "ord": 75,
@@ -2070,7 +2220,9 @@
     "局限",
     "（1）无任何保证式结论：没有定理、没有下界；“融合可能不如单个完好传感器”只出现在动机里，未被形式化，实验上也没有把失效条件下的 MoME 与同条件下的单模态检测器同协议正面对比——表 1 的单模态行只报 clean 和个别列。（2）路由监督 = drop 身份，不是质量估计：AQR 训练时只见过“整路丢弃”的三状态（1/3/1/3/1/3），没见过任何连续退化样本（噪声、模糊、曝光、强度衰减）；作者称 AQR“基于特征质量”选专家，但其训练信号本质上是合成 drop 的身份标签——路由器学的是“识别哪一路被整路丢弃”，对“模态还在场、但信号被污染且产生自信的错误特征”这一情形没有训练信号；天气场景下 94–99% 的 query 仍走融合专家，意味着污染经拼接特征进入的通道基本敞开。（3）硬路由全有全无：query 一旦分给融合专家，就完整消费含损坏模态的拼接特征，没有部分衰减、局部压制的中间档；粒度止于 object query，不是特征图区域级。（4）失效类型以“信息移除”为主：drop、束数减少、FOV 截断、框内点删除都是删信息；相机侧除泥点遮挡外没有信号级腐化，nuScenes-C 也只用了天气三项（其余 24 种腐化未评），真实传感器故障模型不在其列。（5）评测面窄：单一数据集、验证集评测；多个基线为作者复现；R 为比值指标，clean 崩塌时可超过 100，引用 R 必须同时给出 clean 绝对值；Rainy 子集的 72.2 mAP 高于其自身 clean 的 71.2，是子集构成不同所致，不可直接比。（6）体量与部署：VoVNet + VoxelNet + DETR 解码、274 ms 量级延迟，与轻量 2D 检测器不在同一部署区间。另注：正文称训练“分三个阶段”但只描述了两个，实验节与补充材料均作两阶段，应为原文笔误。"
    ]
-  ]
+  ],
+  "take_en": "Per-query routing among camera/LiDAR/fused experts by local feature quality.",
+  "req04_detail_en": "Missing and partial damage evaluated separately, mostly applied to a single stream: whole-stream dropping (LiDAR point cloud fully deleted, camera 6 views zeroed, supplementary sweep of 1–6 views), beam reduction (sweep of 1/4/8/16/32 beams), FOV restriction (swept to [-30°,30°]), in-box point deletion (ratio sweep 0–0.9), mud occlusion, plus three weather items Fog/Snow/Sunlight in nuScenes-C; Rainy/Night are natural subsets (noted here only under B-strict); no real sensor faults, all synthetic failures/corruptions"
  },
  "Robust Multimodal 3D Object Detection via Modality-Agnostic Decoding and Proximity-based Modality Ensemble": {
   "ord": 76,
@@ -2104,7 +2256,9 @@
     "全文没有形式化保证——“prevent negative fusion”只是目标宣称加实验佐证，没有 Perf_融合 ≥ 最优单模态 形式的约束或证明；负融合本身也没有可计算的度量（无负融合率之类统计），只靠退化场景的性能对比事后指认。PME 以双模态分支特征为 query 锚点，该分支若已被噪声主导、集成能否纠正未做失败分析。仅 nuScenes 单数据集、单一基座验证；退化类型有限（无标定误差、时序错位、点云密度渐变等）；两阶段训练与 PME 带来额外成本；原文未设局限章节。"
    ]
   ],
-  "slug": "meformer"
+  "slug": "meformer",
+  "take_en": "Defines and mitigates “negative fusion” from defective modalities.",
+  "req04_detail_en": "Controlled degradation at test time: whole-modality missing, LiDAR reduced to 4 beams, camera stain occlusion; night/rain are natural subsets (detail noted only under B-strict); no severity grading sweep, no real sensor faults (stains are simulated occlusion)"
  },
  "Multimodal Fusion on Low-quality Data: A Comprehensive Survey": {
   "ord": 77,
@@ -2137,7 +2291,9 @@
     "局限",
     "（1）以分类为中心：证据基础是音视频分类、情感、多视图聚类、医学诊断；检测从未作为有自身结构（定位、逐目标质量差异、每图多目标）的任务被分析，只在汇总表里作应用标签出现。RGB-T 检测的具体问题（热成像故障形态、腐化基准、逐样本损坏）在全文中完全缺席。（2）“噪声”的重心不在测试时传感器损坏：§II 主要讲训练数据噪声的去除与样本对错位；活体测试输入被传感器损坏这一形态被默认为 §V 的“质量动态变化”，但 §V 的方法全是训练期决定的融合机制，没有测试时适应这一范畴——唯一提到的测试时工作只在 §V-B 末尾一笔带过。（3）没有任何“融合不劣于单模态”的判据或开放问题：融合输给单模态的现象被承认两处，但都被框定为训练期的平衡/贪婪问题（解法是平衡训练），从未被提升为测试时的安全性质、评测判据或待解问题；结论的开放问题清单（基础模型、融合外任务、对抗等其他低质量形态）里也没有它。（4）质量 q(x) 从未操作化：四分法建立在 q 的统计形态上，但综述没有为任何任务给出 q 的可测定义或估计协议，对检测尤其如此；“动态”一支的判据（光照、注意力、不确定性）也大多是代理量而非质量本身。（5）时效边界：v3 止于 2024 年 11 月，2025 年以来的 RGB-T 鲁棒性工作自然不在覆盖内；个别分类格混列了不同抽象层级的判据，细读引用时须回原文核对。"
    ]
-  ]
+  ],
+  "take_en": "Taxonomy separating noisy, incomplete, imbalanced, quality-varying multimodal data.",
+  "req04_detail_en": "No own experiments, no own benchmark; a borrowed figure shows joint training being outperformed by single modality, a qualitative restatement rather than a controlled degradation experiment; no real sensor fault content"
  },
  "Dynamic Multimodal Fusion": {
   "ord": 78,
@@ -2170,7 +2326,9 @@
     "局限",
     "其一，与「模态可用性」无关：全文假设测试时全部模态恒在场。门控的输入本身就是全部模态的特征——某一路模态整体缺失时，门控连输入维度都不成立，论文没有定义、更没有评测这种情形。它跳过模态是出于「冗余、可省算力」，与「损坏、不可信」是正交的两件事。其二，唯一的损坏评测很薄：只有 RGB-D 分割上的高斯噪声注入（概率 1/3、测试时、单一噪声族），且结果只有曲线图、无数值、无统计重复；没有缺失评测、没有结构化传感器故障（如深度空洞、热红外条纹/非均匀性），没有「损坏但高置信」的对抗性情形。其三，门控的自指结构（结构分析，作者未讨论）：门控读取的正是待判模态自身的特征（含被污染的那一路），且门控只在干净数据上以任务损失 + 算力损失训练——它从未被教过识别损坏。一个被噪声污染但在干净分布下「看起来信息量大」的模态，完全可能被门控继续选中甚至加重使用；图 6 的鲁棒性更可能来自「深度通路可被整段跳过 + 通道注意力融合」的架构冗余，而非门控学会了避开坏模态，原文对鲁棒性来源未做任何隔离实验（如固定门控决策再注噪）。其四，效率数字的口径：分类任务的特征是离线预提取的，MAdds 节省不包含传感/编码前端；且「跳过」的实现以整专家/整 block 为单位，是粗粒度开关。其五，λ 需按部署预算逐任务调；软门控（λ=0）精度最好但比静态融合还贵，说明其精度增益与效率增益来自同一旋钮的两端，不可兼得。其六，作者自陈的未来工作（更好的动态架构、序贯决策任务、更多模态与任务）未提及模态失效/缺失方向。"
    ]
-  ]
+  ],
+  "take_en": "On-the-fly gating over modality and fusion-level computation paths.",
+  "req04_detail_en": "Only NYU Depth V2 segmentation: at test time Gaussian noise injected with probability 1/3 into RGB only / depth only / both modalities and noise levels swept, results only as curves with no numerical tables; no missing evaluation; no real sensor faults"
  },
  "Provable Dynamic Fusion for Low-Quality Multimodal Data (QMF)": {
   "ord": 79,
@@ -2203,7 +2361,9 @@
     "局限",
     "作者自承：权重完全依赖不确定性估计的质量，而其与损失的相关性在 NYU/SUN 上只能达到\"温和\"水平；全部理论建立在假设 1 之上，而某些场景下 OOD 检测本身不可学习，完整刻画仍是开放问题。结构性局限：定理只覆盖二分类 + logistic 损失 + 决策级加权求和，多分类只是直接套用、没有多分类定理；比较的是泛化误差上界而非实际误差，且要求动/静态两种融合的单模态分类器同架构；实验只有 2 个模态，向 ≥3 模态的推广未验证、未证明；保证的关键一步（用 logistic 损失凸性把融合损失放缩为单模态损失加权和）在检测的复合损失上不成立。原文未报告附录中其他噪声类型（盐椒噪声等）的正文数值。"
    ]
-  ]
+  ],
+  "take_en": "Energy-based uncertainty drives dynamic decision-level fusion weights, with guarantees.",
+  "req04_detail_en": "At test time damage applied to 50% of modalities (one-way, single-stream): image zero-mean Gaussian noise with variance ε∈{0,5,10} (ablated to 20), text blank noise, reporting mean and worst accuracy; no dedicated protocol for whole-modality missing, no real sensor faults"
  },
  "Trusted Multi-View Classification (TMC)": {
   "ord": 80,
@@ -2236,7 +2396,9 @@
     "局限",
     "（据草稿其余各节已述事实整理。）（1）没有任何理论保证：ICLR 版无定理、无命题、无误差/不确定性界，“trusted”全部是经验主张；声称“理论保证”的是后来的 TPAMI 期刊扩展版（另一篇论文），且扩展版改用了按冲突折扣的动态组合——等于作者后来自己承认原始 Dempster 组合对冲突的处理需要修补。（2）冲突被归一化丢弃：冲突质量 C 只出现在分母 1/(1−C) 里，既不重新分配给不确定性，也不产生任何冲突告警量，两视图强烈冲突时系统不会显式报警。（3）鲁棒性证据只有一种噪声形态：特征向量上的 iid 高斯噪声，合成、特征级、非传感器级；没有结构化损坏，也没有“某视图自信地出错”的设置；主实验用预提取特征 + 全连接网络完成，与端到端感知管线距离较远。（4）不确定性未做定量校准：没有 ECE 等校准指标，u 与真实错误率未定量对齐；且主表 Caltech101 的 AUROC 一格（99.90）输给深度集成（99.94），并非全面占优。（5）纯分类设定：每样本一个全局标签，无定位、无空间结构，逐视图质量是整样本级量；附录表 2 与主表 1 的 CUB 数字还互不一致，引用须以主表为准。"
    ]
-  ]
+  ],
+  "take_en": "Evidential per-view quality assessment with Dempster–Shafer fusion.",
+  "req04_detail_en": "Only feature-level iid Gaussian noise: noise added to features of half the views, σ swept from 0 to 10^9 (graded sweep), plus OOD samples constructed with σ=10 noise; appendix has experiments manually removing a single view; synthetic, feature-level, non-sensor-level, no real sensor faults"
  },
  "MODA: The First Challenging Benchmark for Multispectral Object Detection in Aerial Images": {
   "ord": 81,
@@ -2269,7 +2431,9 @@
     "局限",
     "其一，同名异物：与 RGB-T 文献的「multispectral」不是同一概念（单传感器可见—近红外立方体 vs 可见+热双传感器），跨谱系引用极易误读；其参考文献亦自成一系（高光谱检测/显著检测），与 RGB-T 融合文献零交集。其二，「challenging」在评测层不可证伪：8 个属性只记录、不分层计分，正文没有任何一张按属性拆分的表；低照度与低能见度作为最接近「条件退化」的两个属性，其上的性能从未被单独报告。补充材料未随预印本提供，无法核验是否存在分层结果。其三，条件多样性只有定性一句（diverse scenes, times, and weather），无时段/天气分布统计；且这些是场景级协变量，传感器全程健康，与故障退化是两回事。其四，文内不一致：波段范围正文 395–950 nm 与表 1 的 390–950 nm 不符；训练/测试划分有 9,156/4,885（图像数）与 70%/30%（子场景数）两种表述并存；相机原生 1280×960 与数据集 1200×900 的关系（裁剪/缩放）未说明。其五，HOD3K 上 S2ADet 的 mAP50 与 OSSDet 并列（93.4），「outperforms existing methods」的表述靠 mAP75/mAP 成立，mAP50 口径下应注并列。其六，方法侧：无任何波段级鲁棒性实验（连波段丢弃这种最廉价的协议都没有），OSSDet 对光谱输入完整性的隐含假设从未被检验；作者亦未讨论单传感器 MSI 相对双传感器系统在失效模式上的根本差异（单点失效即全模态失效）。"
    ]
-  ]
+  ],
+  "take_en": "Large-scale aerial multispectral detection dataset (14,041 images, 330,191 oriented annotations, 8 categories) with the OSSDet baseline.",
+  "req04_detail_en": "No controlled degradation or fault injection experiments of any kind, such as band dropping / noise injection / stripes / dead pixels / saturation; low illumination and low visibility are real-captured natural-condition attributes, recorded only and not scored in attribute-stratified form; the RGB versus 8 bands in Table 4 is an information-content comparison against a healthy band subset from the same sensor; no evaluation of real sensor faults"
  },
  "SM3Det: A Unified Model for Multi-Modal Remote Sensing Object Detection": {
   "ord": 82,
@@ -2302,7 +2466,9 @@
     "局限",
     "其一，作者自陈：未纳入多光谱（multispectral）数据集，因缺少大规模多光谱检测数据集；言下之意，其覆盖范围止于互不配对的单模态数据集，连同场景多光谱配对都不在其内。其二，输入设定决定其与退化/缺失议题绝缘：没有第二路输入，就没有可退化、可缺失的对象；DroneVehicle 的 RGB 半被主动丢弃，等于放弃了唯一现成的配对模态。其三，无任何鲁棒性维度：无损坏、无缺失、无噪声、无域偏移评测，三个数据集全是干净的官方划分。其四，实验严谨性：全部实验单次运行、无方差；DOTA 用验证集而另两集用测试集；Overall 合成公式未给出；表 1 与表 8 同一配置数字有 0.02–0.04 的出入，表 9 有一处明显误印（见关键数字）。其五，DSO 的作用域仅限训练期：它平衡的是数据集之间的学习难度，对测试时输入分布的任何变化（包括传感器退化）没有机制响应；模型部署后与普通检测器无异。其六，「单模型胜三模型」的幅度与代价：Overall 增益 +1.97 中 DOTA 仅 +1.16，且同尺度下参数（178M vs 126M）与 FLOPs（487G vs 403G）都更高——其真实卖点是单模型部署/维护形态与跨骨干、跨检测头的通用性，而非效率或大幅精度。"
    ]
-  ]
+  ],
+  "take_en": "Single unified detector trained jointly across multi-modal remote-sensing datasets with a grid-level sparse MoE backbone.",
+  "req04_detail_en": "Missing / corrupted evaluation is zero and not applicable under its input setting: the full text contains no noise injection, no modality dropping, no sensor faults, and no domain-shift evaluation; the three datasets all use clean official splits"
  },
  "SB-BEVFusion: Enhancing the Robustness against Sensor Malfunction and Corruptions": {
   "ord": 83,
@@ -2336,7 +2502,9 @@
     "其一，缺失处理的前提是 oracle 可用性：传感器是否缺失由外部标志给定。真实故障中更难的是「在场但静默退化」——本文对此无机制、无评测；损坏鲁棒性只是混合训练带来的平均耐受，幅度有限（mRA +0.02 量级）。其二，下限不对称：仅相机时（0.2002 mAP）远逊 UniBEV（0.35），恒等直通 + 共享分支并不保证每一路的下限；哪一路能「近无损接管」取决于该模态本身的信息量（LiDAR 几何主导）。相机侧的弱势作者归因于 UniBEV 在 BEV 投影前用了可变形注意力，属推测（原文用 conjecture 表述）。其三，无专用单模态检测器对照，故无法回答「融合结果是否不劣于最佳单模态模型」；表 2 的单模态行是融合模型自身的降级模式。其四，损坏全部为 MultiCorrupt 的合成损坏：beam reduction 属传感器层面的退化模型（削减光束数），fog / motion blur / 失准为模拟注入；无真实故障数据，无逐传感器的健康监测评测。其五，文表小不一致：正文称 SB-CA 对空间/时间失准 consistently superior，但表 1 中空间失准 s2/s3 实为 SB-Avg 更高（0.5110 / 0.4408 对 CA 的 0.4891 / 0.4215）；引用分项结论时以表为准。其六，作者自陈局限：只验证了相机 + LiDAR，radar 等其他模态的 BEV 化融合未测；且实验只训下游 3–4 epoch、上游冻结，结论限于此设定。"
    ]
   ],
-  "slug": "sb-bevfusion"
+  "slug": "sb-bevfusion",
+  "take_en": "BEV fusion explicitly treating corrupted vs missing sensors as distinct cases.",
+  "req04_detail_en": "Damage and missing evaluated separately: damage uses MultiCorrupt on nuScenes val with 5 types (LiDAR beam reduction, spatial misalignment, temporal misalignment, camera fog, motion blur) ×3 severity levels, applied to single-stream sensor flows before BEV projection; missing is whole-modality unavailability (availability given by an external binary flag); all damage is synthetic, no real fault data"
  },
  "MultiCorrupt: A Multi-Modal Robustness Dataset and Benchmark of LiDAR-Camera Fusion for 3D Object Detection": {
   "ord": 84,
@@ -2370,7 +2538,9 @@
     "其一，只有相对保持率，没有下限对照：RA 把每个模型对自身干净性能归一化，高 RA 不等于腐化下绝对可用；且被测集合全是融合模型、无单模态行、无晚期融合行，因此「融合在腐化下是否反而劣于丢弃受损一路」这一判据在 MultiCorrupt 协议内根本未被测量——它能给的只是融合架构之间的相对脆弱性排序与设计因子归因。其二，腐化全为合成：Fog/Snow 依赖物理模拟近似（LiDAR 雾/雪模型 + 图像侧参数平移），与真实传感器（含热像仪）在雾雪中的响应仍有差距；数据只有 nuScenes 一个来源（单一城市域、32 束 LiDAR、6 路相机）。其三，两模态的故障建模深度不对称：相机侧退化以全图光度变换（Darkness/Brightness）与整帧丢弃为主，没有针对相机成像链路的故障级注入（如坏点列、读出噪声条纹）；LiDAR 侧则相反，做到了按工作原理的采样退化。热像仪特有的条纹噪声、非均匀性漂移、坏点阵列、热饱和在其 10 类中全部缺席。其四，被测模型只有 5 个且同属一个时代的深度融合范式；masked-modal training 的增益结论未做受控复现，作者自承待验证。"
    ]
   ],
-  "slug": "multicorrupt"
+  "slug": "multicorrupt",
+  "take_en": "10 LiDAR-camera corruptions × 3 severities with Resistance Ability metric.",
+  "req04_detail_en": "10 types of synthetic corruption × 3 severity levels: camera side Darkness/Brightness/Missing Camera (random frame dropping), LiDAR side Points Reducing/Beams Reducing (32 beams reduced to 16/8/4), dual-modality Temporal/Spatial Misalignment (1°/2°/3°), Motion Blur, Fog, Snow; both single-stream and dual-stream present; all synthetic, no real sensor faults (thermal imager stripes/NUC/dead pixels/thermal saturation absent)"
  },
  "Benchmarking Robustness of 3D Object Detection to Common Corruptions": {
   "ord": 85,
@@ -2403,7 +2573,9 @@
     "局限",
     "其一，腐化全部为合成，且两侧保真度不对称：天气对 LiDAR 用物理模型、对相机用 imgaug 近似；合成-真实校验（附录 A.4）也只覆盖天气层，且承认 camera-only 模型上差距较大。其余四层（传感器/运动/目标/对齐）没有任何真实数据校验。其二，传感器层与器件物理脱节：只有通用噪声（高斯/均匀/脉冲）与丢点/密度/视场类操作，没有按传感器件工作原理构造的故障模型。点云侧的 Crosstalk（多机互扰）与 FOV Lost 尚属环境/系统层，相机侧连这类都没有——「传感器故障」在该基准中实际等于「传感器噪声」；热成像的条纹、非均匀性漂移、坏点、饱和在此更无对应物。其三，分类学里没有「模态缺失」这一类——最接近的是 FOV Lost（LiDAR 部分视场丢失）与 Temporal Misalignment（一路冻结在旧帧、本质是「在场但过期」）。整模态缺失不在 27 类之内：该谱系的坐标轴是「退化程度」，不是「可用性状态」。其四，目标层依赖 GT 框：局部腐化与 Shear/Scale/Rotation 都用标注框定位施加，部署时不可得，只适合离线基准；且 Cutout / FOV Lost 下目标已不可见但标注保留的口径问题作者自承未解决，这类样本对融合模型（可凭相机检出）与 LiDAR-only 模型并不同等公平。其五，指标混淆干净精度与鲁棒性：AP_cor 是绝对量，作者自己发现它与干净 AP 高度相关；RCE 是自参照相对量，掩盖绝对水平。加之腐化集合随模型类别而异、AP_cor 跨类别不可比，横向结论只能逐腐化逐档地读，不能读总排名。其六，失准严重度无跨数据集标尺：同一组标定噪声超参在 KITTI-C 打穿融合模型、在 nuScenes-C 几乎无损——对标定矩阵加同分布噪声不等于同等几何偏移，该基准内部的失准结论无法跨集对齐；时间失准也只模拟整帧冻结（卡死/延迟），不模拟连续漂移与抖动。其七，受评面与机制面都窄：融合模型总共只有 5 种（点级 2 + 查询/BEV 级 3），且无一带可靠性估计、门控或弃权。整个基准测的是现成检测器的被动耐受，没有任何「检出损坏并折扣某一路」的机制在评测之列——鲁棒性从哪来只能从对照中归因，不能从机制上验证。其八，只有单腐化、没有复合腐化：真实场景中天气与失准、噪声与运动常同时出现，作者在 §3 讨论中承认现实腐化是复合的，但基准只测单一腐化（图 4 的双路并发噪声是唯一例外，且只是同层噪声的并发）。"
    ]
-  ]
+  ],
+  "take_en": "27-corruption benchmark; fusion models more robust, motion corruptions worst.",
+  "req04_detail_en": "27 types of synthetic corruption ×5 severity levels (five layers: weather/sensor/motion/object/alignment), applied by modality to a single stream or both streams, plus a dual-stream concurrent noise control (Figure 4); includes spatial misalignment (noise added to the calibration matrix, rotation 0.02–0.10) and temporal misalignment (one stream frozen for previous {2,4,6,8,10} frames); no whole-modality missing category in the taxonomy; all synthetic corruption (weather uses a physical model for LiDAR and image augmentation approximation for camera), no real sensor faults"
  },
  "Contrastive Knowledge Distillation for Robust Multimodal Sentiment Analysis": {
   "ord": 86,
@@ -2437,7 +2609,9 @@
     "其一，作者自陈（§5）：无词汇时声学/视觉学生明显弱，承认「没有强生成 DNN 时难以向辅助模态传递高质量信息」是下一步挑战——即蒸馏不能无中生有，幸存模态本身不含的信息补不回来。其二，缺失形态单一：只有整模态移除。模态在场但受损（噪声、模糊、传感器退化）从未评测；其随机缺失协议也是逐样本的二值在/不在，没有严重度连续谱。其三，子集枚举不可扩展：学生数 = 2^M − 2，M=3 时是 6 个；模态数稍增即组合爆炸，且每个子集需在训练中被显式构造为视图。其四，可用性先验是给定的：部署须知道哪一路缺失（传感器整体掉线时成立），对「在场但静默损坏」无任何检测或降级机制——损坏的模态会被当作完好模态全额送入对应学生。其五，对照口径：基线结果为原论文报告值而非同环境复跑；成本表的训练时间 batch 不一致；教师在随机缺失 MR=0.6 的衰减快于填充方法，说明其鲁棒性上限受制于最强模态是否在场（词汇在场与否造成约 30 个点的 Acc2 落差，表 1）。其六，任务局限于情感回归这一强词汇主导的基准；两个数据集同源（CMU 系列），无跨域评测。"
    ]
   ],
-  "slug": "mm-ckd"
+  "slug": "mm-ckd",
+  "take_en": "Cross-modal knowledge distillation robust to missing modality (sentiment).",
+  "req04_detail_en": "Only whole-modality missing: fixed missing protocol reports six modality subsets one by one, random missing protocol sweeps missing rate MR∈{0.0, 0.2, 0.4, 0.6}; no present corruption (noise/blur) evaluation, no real sensor faults"
  },
  "MMPareto: Boosting Multimodal Learning with Innocent Unimodal Assistance": {
   "ord": 87,
@@ -2471,7 +2645,9 @@
     "其一，缺失/损坏评测严格为零（已核实）：全文无 missing / corruption / dropout 类协议（关键词核查无命中，robust 仅出现在引用他人工作处）。唯一的噪声是 MultiMNIST 右半的 50% 椒盐噪声——那是训练与测试同分布的静态数据集构造，目的只是拉大双任务的难度差以复现梯度不对称，不是测试时腐化协议，更不是模态级损坏：在那里「模态」甚至不是独立传感器，而是同一张图的左右两半。所有结论只适用于训练数据完整干净、测试分布不变的世界。其二，任务面窄：多模态实验全部为分类（音视频、多视图、情感），无检测；模态以两路为主，三模态只有附录一张表且边际很薄；多任务扩展（NYUv2）非全胜。其三，理论是启发式的：Hypothesis 1（多模态梯度幅值与协方差更小）是经验观察加直觉论证，非定理；噪声分析假设两损失梯度相互独立、协方差成固定比例 kC^m = C^u；收敛证明作者自承基于较理想的假设。cos β 是 batch 级随机量，冲突/非冲突的逐 iter 二分对噪声敏感，原文未做平滑或稳定性分析。其四，整合范围有限：整合只发生在每个编码器内部的（多模态，单模态）一对梯度之间，融合层与分类头（θ_other）不在整合之列；对「多模态损失 + 多个辅助目标」的一般多梯度情形，式 (5) 需升级为一般 MGDA 求解，本文只在三模态分类上做了附录级验证。其五，头条口径：「单模态精度超过单独训练的模型」中的单模态精度是冻结编码器 + 另训分类头的离线探测值，不是该融合模型在推理时真能给出的单模态预测，引用时须带此口径。"
    ]
   ],
-  "slug": "mmpareto"
+  "slug": "mmpareto",
+  "take_en": "Pareto-integrated gradients resolving multimodal/unimodal gradient conflict.",
+  "req04_detail_en": "Missing/damage evaluation is zero: the only noise is 50% salt-and-pepper noise on the right half of MultiMNIST, a static dataset construction with the same distribution in training/testing (widening the dual-task difficulty gap), not a test-time corruption protocol; no real sensor faults"
  },
  "Deep Multimodal Learning with Missing Modality: A Survey": {
   "ord": 88,
@@ -2504,7 +2680,9 @@
     "局限",
     "（1）问题空间自我设限（据全文核查）：把“不可用”一律建模为不在场，可用性是二值的；传感器在场但输出系统性错误内容（腐化、漂移、饱和、条纹）这一状态既无定义、无类别，也无任何方法条目——成因列举里明明写了 sensor malfunctions 与 environmental interference，建模时却全部塌缩为缺失。（2）任务覆盖偏斜：分类（情感、HAR、临床预测）与分割（MRI、驾驶场景）占绝大多数；目标检测只有集成类两三个条目与数据集罗列，无检测协议讨论——对 RGB-T 检测而言，它只能作为“缺失模态学习全景”的引用，不能作为检测鲁棒性的引用。（3）评测生态自承混乱：数据集多为完整数据 + 人工随机掩码，缺失率定义与训练/测试配置各行其是（§5 Limitations、§6 讨论、§7.3）；其统计数字（315 篇的百分比）建立在这种异质语料上，跨类比较需谨慎。（4）分类学是实践视角、无理论分析（§8 Limitations 作者自陈）：分类学按机器学习实践组织，不做理论剖析；对方法的优劣判断多为定性归纳。（5）时效：文献截至 2025 年 8 月；MLLM 部分自承发展过快、且无专用基准（§4.1.4）。"
    ]
-  ]
+  ],
+  "take_en": "Survey of imputation/representation/distillation approaches to missing modalities.",
+  "req04_detail_en": "Survey with no own experiments, no controlled degradation evaluation conducted; evaluations in the covered literature are mostly full data plus artificial random masking to simulate missing"
  },
  "ReconBoost: Boosting Can Achieve Modality Reconcilement": {
   "ord": 89,
@@ -2538,7 +2716,9 @@
     "其一，纯训练期方法，推理期零机制：最终预测器是无权重分数求和，没有逐模态可靠性估计、没有损坏检测、没有降权/弃权通路。测试时某一路损坏，它只能被动地把坏分数加进来；附录噪声表里的相对优势完全来自编码器被训得更好，不是任何测试时结构。其二，损坏评测窄且口径含混：只有附录 D.2 一种损坏（高斯噪声）、一个数据集（CREMA-D）、一个指标（Acc），50% 样本比例与 σ² 标定是通用数字腐化，与传感器故障模型（条纹、非均匀性漂移、坏点、饱和）无关；原文且未明确写明噪声是在训练阶段还是评测阶段注入（σ²=0 列与主表数字完全一致，两种读法都不能排除）。没有任何整模态缺失（移除/置零）评测。其三，与检测/RGB-T 零重叠：任务是情感、事件、3D 视图分类，情感三模态用预提取特征；其「模态」粒度、融合层级（分数求和）与中期特征融合的 RGB-T 检测器没有可直接迁移的结构对应。其四，理论范围有限：梯度提升等价性只对 CE 损失 + KL 调和的特定组合、在定理 3.1 的梯度匹配条件下成立；它是优化等价性陈述，不含任何泛化或性能下限保证——尤其不蕴含「融合不劣于任一单模态」之类的结论（其噪声表最坏档读数也确实仍高于干净幸存单模态，但那是 50% 比例温和协议下的经验现象，不是判据）。其五，报告口径：头条数字逐数据集选 λ（表 16 对照可见），跨数据集用同一 λ 时 CREMA-D 约低 0.5–2.7 个点。"
    ]
   ],
-  "slug": "reconboost"
+  "slug": "reconboost",
+  "take_en": "Modality-alternating boosting with KL reconcilement vs competition.",
+  "req04_detail_en": "Only one damage type in Appendix D.2: on CREMA-D, zero-mean Gaussian noise σ²∈{0,0.1,0.3,0.5,1.0} applied to 50% of the data, reporting Acc in three directions — image damage / audio damage / dual-modality same damage; but the original text does not explicitly state whether the noise was injected at training or evaluation stage (the σ²=0 column matches the main table, neither reading can be excluded); no whole-modality missing evaluation, no real sensor faults (merged ruling 2026-11-05: the stage of noise injection (training/evaluation) is not stated in the original text, treated as Unknown.)"
  },
  "PMR: Prototypical Modal Rebalance": {
   "ord": 90,
@@ -2571,7 +2751,9 @@
     "局限",
     "其一，问题域与评测面：全部证据来自完整模态、监督分类（情感/事件/合成数字）与一个事件定位迁移；失衡的定义是训练期学习速度差，与传感器状态无关。模态缺失、模态损坏、噪声/故障注入、测试时分布偏移——一概未评测，机制上也无对应物：ρ_t 需要真值标签与训练分布，推理期不存在；文中被对比的 Modality-Drop 是训练正则，不是缺失评测。换言之，它对「某一路在部署时坏掉」这一情形既无实验也无机制发言权。其二，度量自指（本篇最值得记的一点）：ρ_t 用每个模态自身当前表示 + 自身原型构成的分类器给该模态打分，再取比值。两点结构性含混：(i) 两个模态的分数产生于各自的表示几何，类内聚程度本就因模态而异，「分数低」混杂了「学得慢」与「该模态表示空间天然难聚类」两种成因，比值没有共同标度；(ii) 原型与分数都来自正在被训练的编码器，训练早期表示近乎随机、原型漂移，度量在最需要它的阶段（早期压制形成期）最不可靠。作者以动量更新原型、PER 只加早期等方式缓解，但全文没有把 ρ_t 与真实单模态验证精度做对照校准的实验。其三，增益边界：CG-MNIST 上全力再平衡后融合（78.5）仍远低于最佳单模态（99.3）。当一个模态是系统性捷径（训练分布内强相关、部署分布下失效）时，「拉起慢模态 + 放慢强模态」的训练期再平衡在原理上等价不了「丢弃有害模态」——而 PMR 的框架里没有任何丢弃/降权模态的选项，无论训练期还是推理期。其四，成本与适用面：每 epoch 需一次子集前向算原型（作者自承这是主要额外开销）；推导与实验均为双模态，多模态情形未实验；全部实验为分类式任务，无检测/分割/RGB-T 证据。"
    ]
-  ]
+  ],
+  "take_en": "Prototypes accelerate the slow-learning modality; entropy regularizer vs dominant modality.",
+  "req04_detail_en": "All experiments use complete-modality clean data, with no controlled degradation evaluation of any kind such as missing/damage/noise injection/distribution shift; the compared Modality-Drop is only a training regularizer, not an evaluation protocol"
  },
  "Multi-modal Learning with Missing Modality via Shared-Specific Feature Modelling": {
   "ord": 91,
@@ -2605,7 +2787,9 @@
     "其一，失效模型只有二值缺席：没有任何模态质量估计、门控或逐模态加权，融合权重由架构写死。一路模态「在场但不可信」时，模型没有任何量能表达这件事——这不在其问题设定之内，但也意味着该框架对损坏在场原理上无防御。其二，顶替规则静默假设幸存模态健康：均值顶替对幸存模态的 shared 特征无权平均、不做筛选；若某幸存模态本身带噪，它的特征既全额进入自己的槽位、又进入缺失槽位的顶替向量。论文未评测、未讨论这种情形。其三，N = 2 时退化为复制：双模态场景下顶替向量就是幸存模态的 shared 特征本身，没有产生任何新证据；其 Audiovision-MNIST 的优势因此主要来自训练期的表征塑形而非顶替机制。其四，证据强度：BraTS 数字来自 66 例的隐藏在线评测，无重复、无方差报告；分类基准 Audiovision-MNIST 只有 1500 个样本、属玩具量级；表 1 的大边距部分来自 U-HeMIS/U-HVED 等明显更早的基线。其五，「任务无关」只验证了两个任务：分割 + 分类，各配任务头；没有检测实验。dedicated 结果只报单模态设定（表 2），未覆盖全部组合。"
    ]
   ],
-  "slug": "shaspec"
+  "slug": "shaspec",
+  "take_en": "Shared-specific features + residual fusion for missing modality at train/test.",
+  "req04_detail_en": "Only whole-modality missing: on BraTS all 15 non-empty modality subsets are enumerated and evaluated separately (a dedicated setting reports single-modality availability only), Audiovision-MNIST sweeps training-time audio availability 5%–20%, OpenI trains with 30% missing images; no present damage/corruption/noise injection evaluation at all, no real sensor faults"
  },
  "Balanced Multimodal Learning via On-the-fly Gradient Modulation": {
   "ord": 92,
@@ -2639,7 +2823,9 @@
     "其一，作者自承的天花板（§5 Limitation）：即便加了 OGM-GE，联合模型内的单模态表现仍不超过最佳单模态模型；作者判断纯优化手段不能彻底解决失衡，需更先进的融合策略或架构。即本文改善的是融合总分与编码器欠优化程度，不提供任何「融合不劣于丢弃一路」式的下限，更没有该判据的对照实验设计。其二，信号的适用条件：ρ 依赖 logits 的可加分解与真标签；融合前强交互的架构中只能近似估计单模态贡献，增益随之缩小（PSP 类与 AVE 定位上仅 +0.7~+1.3）。多模态（>2）情形只作展望、未验证。其三，评测面严格为零的一侧：缺失/损坏/传感器故障/域偏移评测全部为零；其 imbalance 需标签与训练 batch，逐样本的测试时健康判断按构造不可能由此导出。其四，α 需按验证集逐数据集调（[0, 1] 内选），调制强度没有免调的设定。"
    ]
   ],
-  "slug": "ogm-ge"
+  "slug": "ogm-ge",
+  "take_en": "On-the-fly gradient modulation by modality contribution discrepancy.",
+  "req04_detail_en": "All experiments use complete-modality, clean, in-distribution splits, with no missing/damage/fault/domain-shift evaluation at all; Modality-Drop is only a compared training strategy, not a missing evaluation protocol"
  },
  "SMIL: Multimodal Learning with Severely Missing Modality": {
   "ord": 93,
@@ -2673,7 +2859,9 @@
     "其一，失效模型只有二值缺席一个档。全文无任何「在场但损坏」的评测：无注噪、无模糊、无传感器故障、无分布偏移实验；正文中的「noise」只指 ω 与 r 的高斯采样（模型内部随机性），与输入损坏无关。损坏在 SMIL 的词汇与开关逻辑中都不存在——重构网络开不开由「缺没缺」这个二值事实决定，没有第三种状态的位置。其二，缺失方向单向、比例构造化。三个数据集都把图像设为恒在场、只缺文本/音频；缺失按数据集级比例人工施加在原本完整的数据上。真实部署中哪一路会缺、缺多少、以什么时间结构缺，都不在其协议覆盖内；三模态以上的组合枚举也未触及（形式化只写双模态）。其三，重构保真度无从核查。全部证据是下游分类指标；重构特征与真实缺失特征的距离、逐样本重构失败案例、先验个数（K-means 的 K）敏感性均未报告。重构特征是先验的凸组合式混合，本质上是「这一类样本的该模态特征大概长这样」的群体猜测，个体证据在重构中不可恢复——作者对此不避讳（这正是设计取舍），但引用时不能把 SMIL 的数字读作「缺失信息被找回来了」。其四，参照系是上限而非下限。目标函数与叙事都是逼近 Upper-Bound；唯一的单模态对照 Lower-Bound 是单独训练的模型。在 avMNIST 模式 1 中 SMIL 确实高于 Lower-Bound（缺失端下重构补位净正），但这回答的是「补位 vs 不补」而非「融合 vs 丢弃在场证据」，两个问题不可互替。其五，规模与任务都很轻：小骨干、分类、千级到万级样本；元学习内外循环的计算开销未与基线做同预算对比。"
    ]
   ],
-  "slug": "smil"
+  "slug": "smil",
+  "take_en": "Bayesian meta-learning for severely (≤90%) missing modalities.",
+  "req04_detail_en": "Only whole-modality missing: missing applied one-way at dataset-level ratios η∈{10%,20%,100%} (avMNIST additionally swept to 5%) (images always 100% present, only text/audio missing), with evaluation for training/test/both missing; no present damage, noise injection, blur or sensor fault evaluation at all ('noise' in the main text refers only to internal Gaussian sampling in the model)"
  },
  "Inference-Time Intervention (ITI)": {
   "ord": 94,
@@ -2706,7 +2894,9 @@
     "局限",
     "作者自承（逐项可查）：(1) 「我们不主张 ITI 本身接近足以保证 LLM 给出真实答案」（§1）；(2) TruthfulQA 只覆盖「避免常见误解」这一窄义的真，向真实世界聊天场景的泛化是首要未来工作（§3.1、§6）；(3) 不对干预究竟改变了什么内部表征作机理主张——方向是相关还是因果，他们只做了部分探索（§2）；(4) GPT-judge 略高估真实率、略低估信息量（§4.1 人工校验）；(5) α 无理论指导、只能使用方试错（§3.3）；(6) 附录 B 自承：沿任一被选方向平移激活都不可避免地扭曲该空间编码的其他信息，「外科手术式干预不可能」。失败模式（原文证据）：α 过大 → 拒答激增、true*info 沿倒 U 下行（图 4、6B）；多选轨增益远小于生成轨（表 1 中 MC 仅 25.7→25.9）——干预主要改变生成倾向，对判别/排序能力几乎无作用；在已较强的 Vicuna 上 KL 达 1.41、CE +0.73，行为漂移不可忽略（表 2）。另须注意其干预是无条件、恒定的（分析推断，非原文结论）：头集与方向离线定死后，对每一个输入、每一个 token 以同一 α 施加，全程没有「当前输入是否需要干预」的判别器；其 OOD 迁移只在三个同源问答基准上验过 +1.5 到 +4.7 的小幅增益（表 4），方向跨模型、跨任务的稳定性并未建立。它的成功前提——探针精度远高于生成精度、即「正确答案已编码在内部、只需引出」——是特定于自回归语言模型与真实性这一属性的经验事实，不是一个可移植的定理。"
    ]
-  ]
+  ],
+  "take_en": "Shifts selected attention-head activations along probed directions at inference.",
+  "req04_detail_en": "No controlled degradation/corruption experiments; OOD evaluation is zero-shot transfer of directions and hyperparameters learned on TruthfulQA to Natural Questions/TriviaQA/MMLU, which by caliber is cross-dataset generalization and not counted as Yes; no modality concept, sensor faults not applicable"
  },
  "MEMO: Test Time Robustness via Adaptation and Augmentation": {
   "ord": 95,
@@ -2740,7 +2930,9 @@
     "其一，成本结构：每个测试点都要付 B 个视图的前向 + 全参数的一步反向，推理从「一次前向」变成「每点一次微型训练」。作者自己在 §5 把效率列为首要开放问题，并设想用置信度门控决定何时适应——即承认默认形态对高吞吐部署不友好。其二，安全性完全押在协议上：方法本身没有任何防退化机制——单步、逐点重置、边缘（而非条件）熵三者共同把漂移限制住。作者在 §5 披露：让 MEMO 在测试流上持续适应的初步实验直接退化为「对任何输入都以最大置信输出恒定标签」；修复只停留在设想（只适应 BN 参数、或向预训练模型正则化）。逐点情形下也没有任何逐点保证：附录 C 中 5 档模糊族的负格子说明，适应完全可能把某个点的预测改坏，且无信号提示。其三，熵目标是求置信、不是求正确：若模型在某点上自信地错且各视图一致，边缘熵已接近最小、无纠正信号；若各视图在错误类别上不一致，适应只保证收敛到某个一致答案，不保证是真答案。整个回路中没有标签、原型、第二模态等任何外部参照——适应信号全部来自被适应对象自身对同一点的多次观察（自指结构）。其四，设定边界：单一输入流、单标签分类、目标定义在一个全局类别分布上。输入可靠性、传感器健康、多证据源仲裁等概念在形式化中不存在；评测偏移均为整图、保标签的数字腐化/风格偏移，没有「输入本身是受损证据、需要被折扣」的情形。"
    ]
   ],
-  "slug": "memo"
+  "slug": "memo",
+  "take_en": "Per-test-point adaptation via marginal entropy over augmentations.",
+  "req04_detail_en": "Single-modality whole-image digital corruption: CIFAR-10-C / ImageNet-C with 15 corruption types ×5 severity levels in total and per-corruption readings; ImageNet-R (style/domain shift) and ImageNet-A (natural hard examples) are natural conditions, noted here only under B-strict and not used as Yes evidence; no sensor fault concept (single-stream input)"
  },
  "Tent: Fully Test-time Adaptation by Entropy Minimization": {
   "ord": 96,
@@ -2774,7 +2966,9 @@
     "作者自陈（§6）：(1) 对自然复现偏移无效：CIFAR-10.1 与 ImageNetV2 上误差明确更高（确有偏移），tent 却不改善泛化；对抗偏移未处理。(2) 熵损失不能逐点更新：「It needs batches for optimization, and cannot update episodically on one point at a time.」语义分割的单图适应靠「一张图 = 一批像素」绕过，分类无此迂回。(3) 大偏移下参数化不足（VisDA-C 需 SHOT 式近全层更新，见关键数字）；熵与 calibration 的相互作用被点名未解。熵目标失效模式的原文覆盖度（如实登记）：「自信地错」——未以此名讨论，但 MNIST→SVHN（71.3 → 79.8）就是其成文实例——初始预测大体错误时，熵最小化系统性强化错误；图 1 的「低熵 ≈ 低错误」只是腐化基准上的总体统计。「类别坍缩」——未讨论。防线只有 §3.1 的 batch 共享参数（防单点平凡解）；没有 SHOT 式多样性正则，batch 内整体滑向少类预测在原文中既无防护也无检验。「batch 组成敏感性」——未做 batch size 消融，BS（64/128）是按显存与 LR 规则选的。但机制上目标是 batch 预测的平均熵、统计是当前 batch 的经验统计——batch 的类别与偏移构成直接决定更新方向与归一化基线，这是结构事实，非作者实验结论。设定层面的隐含假设：目标流同分布且偏移状态持续足够长，统计才可累积、在线更新才有意义；混合偏移或逐样本异质的状态不在其坐标内。在线更新无回滚、无守门——一旦某批更新把参数推坏，后续所有推理继承之，原文无重置机制。任务覆盖：分类 + 稠密像素分割；无检测（无定位输出、无稀疏框集），无多模态，无模态可用性概念。"
    ]
   ],
-  "slug": "tent"
+  "slug": "tent",
+  "take_en": "Test-time entropy minimization over norm affine parameters.",
+  "req04_detail_en": "Single-modality image corruption: CIFAR-10-C/CIFAR-100-C/ImageNet-C with 15 corruption types × 5 severity levels in total, including per-level and highest-level reporting; also domain adaptation SVHN→MNIST etc. and GTA→Cityscapes evaluation; no modality dropping (no modality concept); all corruption is synthetic, no real sensor faults"
  },
  "OptNet: Differentiable Optimization as a Layer in Neural Networks": {
   "ord": 97,
@@ -2808,7 +3002,9 @@
     "作者自承（§3.3）与结构性局限，分开列。(1) 立方复杂度（自承）：精确求解对变量/约束数是立方量级，普通前馈层是平方量级；实用上限约 1000 维，实时场景远低于此。这从根上限定了它只能做「小而关键」的层，做不了大特征图上的稠密计算。(2) 稠密求解器不利用结构（自承）：真实优化问题的数据矩阵多有稀疏/结构，qpth 只做稠密运算；引入稀疏方法（如最小填充排序）复杂性大增，文中只有用 cuSOLVER 批量稀疏 QR 的初步尝试。(3) 训练更难调（自承）：参数空间存在对解无影响的流形（如约束行与右端同倍缩放不改变问题），冗余参数化使调参负担显著高于普通层；去噪实验中纯 OptNet 反输全连接网络即是实证。(4) 退化点上雅可比不唯一：定理 1 保证解映射处处次可微、但只在除测度零集合外可微；该例外集恰是「约束取紧但对偶变量为零」的弱积极约束点，此时 KKT 矩阵奇异、雅可比不唯一（补充材料 C.1 给出细节）。换言之，分段光滑的折点——层行为发生切换的地方——正是梯度不适定的地方，只能取次梯度。(5) 理论前提与可行性：干净结论需要 Q ≻ 0（严格凸、解唯一）与 A 满行秩；问题类只限凸 QP（等式 + 线性不等式），非凸问题不在范围内。另外 QP 不可行时层输出无定义——文中实验靠构造保证恒可行（b = Az0、h = Gz0 + s0），但作为通用层，不可行输入的处理没有方案，这是部署时真实存在的脆弱性（此点为结构推断，非作者自述）。(6) 梯度是「精确解处」的梯度（结构推断）：理论微分的是精确最优点，实践中微分的是 PDIPM 收敛到的数值解；求解容差与梯度精度如何相互影响，文中未量化。(7) 未证明的东西：只有表达力与可微性定理，没有任何学习保证——没有泛化/样本复杂度结论、没有训练收敛性结论；实验全是小规模概念验证（100 变量 QP、10 维 MNIST 层、4×4 数独、一维信号去噪），无一接近真实任务规模。"
    ]
   ],
-  "slug": "optnet"
+  "slug": "optnet",
+  "take_en": "Differentiable QP layers via implicit KKT differentiation.",
+  "req04_detail_en": "No degradation evaluation at all: experiments are solver speed, TV denoising (Gaussian noise signal is the task input, an application demonstration rather than a robustness protocol), MNIST and 4×4 Sudoku proof of concept; no modality concept"
  },
  "CD-Buffer: Complementary Dual-Buffer Framework for Test-Time Adaptation in Adverse Weather Object Detection": {
   "ord": 98,
@@ -2841,7 +3037,9 @@
     "局限",
     "论文没有单设局限章节，以下为基于全文的判断。基座与规模单一：只验证了 Faster R-CNN + ResNet-50 一套两阶段检测器，未涉及单阶段 / DETR 系检测器与不同骨干，通道抑制对 BN 结构的依赖在无 BN 架构上如何成立未讨论。合成退化占主导：KITTI / Cityscapes 的雾雨均为渲染合成，真实天气只有 ACDC 一个集、且雪一项并非最佳，合成到真实的差距没有被单独分析。在线成本：完整版把双缓冲铺满全部基本块，补充材料承认其推理速度慢于多数基线、需另行推出只挂部分阶段的 CD-Buffer Light 才适合实时场景。协议内部不一致（精读发现）：实现细节写目标抑制比例为 5%，而消融讨论又称抑制比例在 2–3% 内稳定、最终按此选参，两处口径不一致，复现时需以图 4 为准。仍需源统计与批次：源域特征均值要离线预计算随模型携带，差异估计基于批次特征（实验批大小 16），小批次 / 单帧流式条件下的稳定性未验证。"
    ]
-  ]
+  ],
+  "take_en": "Couples the additive (feature refinement) and subtractive (domain-sensitive channel pruning) test-time adaptation paradigms in a complementary dual-buffer framework, balanced per channel by a unified feature-level discrepancy measure.",
+  "req04_detail_en": "Single-modality RGB whole-image weather corruption: physically rendered synthetic KITTI-Fog (visibility 50/75/150m, three levels) and KITTI-Rain (75/100/200mm, three levels), Cityscapes synthetic fog (parameters 0.01/0.02), plus a 10-round continual TTA protocol; the real adverse-weather set ACDC (fog / snow / rain / night) is cross-dataset natural-condition transfer, recorded here only under B-strict; no concept of modality missing (single modality)"
  },
  "MM-TTA: Multi-Modal Test-Time Adaptation for 3D Semantic Segmentation": {
   "ord": 99,
@@ -2874,7 +3072,9 @@
     "局限",
     "其一，偏移类型与损坏脱节：只评数据集级域偏移（换传感器、昼夜、合成→真实），全部样本同分布地偏移；没有受控损坏、没有档位、没有单样本级损坏，更没有传感器故障（条纹、坏点、丢线、饱和一类）。对「某一路模态在此刻此样本上坏了」的情形，本文协议不提供任何证据。其二，可靠性信号是自指的：慢-快一致性是同一分支两个 BN 快照之间的一致性。若某模态被系统性污染但快/慢模型一致地错（两者权重相同、只差 BN 统计，污染足够稳定时两者很容易一致），该量保持高位，Inter-PR 会照常选中甚至加权该模态的错误伪标签；没有外部锚点校验「一致 ≠ 正确」。其三，无隔离/弃权机制：适应目标把两分支拉向同一个集成伪标签——受损模态的错误标签会反向污染健康分支的 BN 更新；Hard Select 是逐点全量二选一，不是逐样本的模态级弃权，框架不存在「本样本放弃某模态」的表达；两路同时退化时互教信号整体退化，框架无防线。其四，适应是转导式（transductive）、成 epoch 的：需要目标测试集整体可及、顺序过一遍并跨 batch 累积统计；不是逐帧在线、对单个损坏样本即时反应的机制，慢模型的稳定性依赖偏移在整个目标域内平稳。其五，任务结构依赖：Inter-PR 的逐点选择/加权以「两分支对同一组点、同一标签集逐点对齐的稠密预测」为前提（靠标定投影实现），且融合本身是决策级 softmax 平均；对没有逐点对应、输出为稀疏集合的中融合检测器，模块没有可作用的载体。其六，正文未报告适应速度/显存等部署成本；补充材料未随正文提供，Synthia 点云构建等细节只按正文转述、未直接核读。"
    ]
-  ]
+  ],
+  "take_en": "Extends test-time adaptation to multi-modal 3D semantic segmentation: intra-modal pseudo-labels and inter-modal pseudo-label refinement, the two modalities regularising each other.",
+  "req04_detail_en": "Only natural dataset-level domain shifts: A2D2→SemanticKITTI (sensor change), nuScenes Day→Night (illumination shift), Synthia→SemanticKITTI (synthetic to real); no controlled corruption injection, no severity grading, no modality dropping / zeroing; no sensor fault model (no LiDAR line dropping / point sparsification, no image noise / blur sweep)"
  },
  "Test-time Adaptation against Multi-modal Reliability Bias": {
   "ord": 100,
@@ -2907,7 +3107,9 @@
     "局限",
     "论文没有单设局限章节，结论仅说未来将拓展到更多应用场景。以下为基于全文的判断。协议覆盖窄：只评测“恰好一个模态受损”的温和设定；双模态同时受损、模态缺失、多种偏移在同一测试流中混合出现的情形均未覆盖（这些正是后续 SuMi 的 wild TTA 要补的口子），其损失在强偏移下是否仍稳定无证据。任务与架构绑定：只做音视频分类（动作识别/事件分类），骨干单一（CAV-MAE）；方法成立的前提是模型本身带注意力融合层，无注意力融合或非 Transformer 的多模态模型无法直接套用。阈值靠先验拍定：置信划分阈值在全部实验中固定为同一常数，未给自适应确定方法，不同任务的置信分布差异可能使该值失配。理论与实证的缝：损失的非单调梯度性质有定理支撑，但“高置信即干净”仍是启发式假设——主导模态受损时高置信也可能系统性错误，文中未给这类反例分析。双模态展示：形式化只以两模态为例，三模态以上时注意力配权的扩展未做实验验证。"
    ]
-  ]
+  ],
+  "take_en": "READ identifies the reliability-bias failure of multi-modal TTA — per-modality shifts making cross-modal reliability uneven — and counters it with adaptive attention modulation plus a robust objective.",
+  "req04_detail_en": "The defining protocol is that exactly one modality is corrupted and the rest remain clean (applied to a single stream): 15 corruptions on the video side (noise / blur / weather / digital) and 6 on the audio side (Gaussian, traffic, crowd, rain, thunder, wind), each with 5 severity levels, with the main table uniformly reporting severity 5; simultaneous corruption of both modalities, modality missing, and mixed shifts are not covered; all are digital corruptions and audio noise, with no real sensor faults"
  },
  "Smoothing the Shift: Towards Stable Test-Time Adaptation under Complex Multimodal Noises": {
   "ord": 101,
@@ -2940,6 +3142,8 @@
     "局限",
     "论文没有单设局限章节，结论只复述贡献。以下为基于全文的判断。仍是音视频分类、同骨干同基准：任务、数据集与源模型（CAV-MAE）与 READ 完全同源，没有跨任务（如检测/分割）、跨骨干的证据，wild TTA 的结论能否迁移到感知任务未知。强 OOD 的绝对性能依然很低：Mix 条件下 Kinetics50-C 只有 18.4、VGGSound-C 只有 6.7，“优于基线”更多是相对不崩，而非可用；作者未讨论这一可用性门槛。超参与时序开关较多：IQR 的 β、多/单模态熵阈值、μ、λ、以及 MIS 只开前半程的时序开关等都需要预设，其中 μ 的最优方向还随数据集的主导模态而反转（Kinetics 偏视频、VGGSound 偏音频），说明这些量并非与任务无关的常数。平滑的代价未量化：IQR 渐进放行意味着早期迭代主动不用最难的样本，适应速度 / 需要的总迭代数与在线延迟没有报告；表示级 IQR 对批组成也敏感，小批次下分位数估计的稳定性未验证。缺失只作类型、未作剂量：模态缺失只以 Vmiss / Amiss / Mix 三种定性形态出现，没有缺失率连续变化的曲线，无法回答“缺多少时方法失效”。"
    ]
-  ]
+  ],
+  "take_en": "SuMi targets in-the-wild multimodal test-time adaptation: IQR smoothing for abrupt distribution shifts, single-modality-guided selection of low-entropy informative samples, and cross-modal mutual-information sharing.",
+  "req04_detail_en": "Weak OOD: single-modality corruption (15 video types / 6 audio types, each with 5 severity levels, corrupting only one modality at a time); strong OOD: simultaneous corruption of both modalities (Both), whole-modality missing (Vmiss/Amiss), and one modality missing with the other corrupted (Mix); there are also ten mixed-ratio and mixed-severity conditions for weak / strong, with the main table reporting severity 5 and multi-level curves; all are synthetic corruption / missing, with no real sensor faults"
  }
 }
